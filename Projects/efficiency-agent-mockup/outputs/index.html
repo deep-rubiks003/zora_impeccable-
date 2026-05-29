@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zora Product OS — AI Weekly Optimization Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css">
+</head>
+
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Z</div>
+      <div>
+        <div class="brand-name">ZORA</div>
+        <div class="brand-sub">Coach Console</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active"><span class="dot"></span> Efficiency Agent <span class="nav-badge">2</span></div>
+      <div class="nav-item"><span class="dot"></span> Quality Agent <span class="nav-badge">3</span></div>
+      <div class="nav-item"><span class="dot"></span> AI Action Center</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Roster</div>
+      <div class="nav-item"><span class="dot"></span> All Members</div>
+      <div class="nav-item"><span class="dot"></span> At-Risk</div>
+      <div class="nav-item"><span class="dot"></span> Plans Due</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item"><span class="dot"></span> Messages</div>
+      <div class="nav-item"><span class="dot"></span> Reports</div>
+      <div class="nav-item"><span class="dot"></span> Settings</div>
+    </div>
+
+    <div class="coach-card">
+      <div class="avatar">RS</div>
+      <div class="coach-info">
+        <div class="coach-name">Riya Sharma</div>
+        <div class="coach-meta">142 active members</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs">
+        <strong>Efficiency Agent</strong>
+        <span class="sep">/</span>
+        <span id="crumb-tail">Overview</span>
+      </div>
+
+      <input class="search" placeholder="Search members, plans, signals…" />
+
+      <button class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- ============== SCREEN 1 ============== -->
+    <div class="page active animated-entrance" id="screen-1">
+
+      <div class="page-head page-head--hero">
+        <div>
+          <h1 class="page-title page-title--hero">Good morning, Riya — <em>36 plans</em> optimized overnight.</h1>
+          <p class="page-sub">2 athletes require urgent attention. All drafts are editable. Nothing sends without your
+            approval.</p>
+        </div>
+        <div class="page-meta">
+          <div class="live">Live · synced 2 min ago</div>
+          <div class="page-meta-date">MON · 28 MAY 2026 · 08:14</div>
+        </div>
+      </div>
+
+      <!-- Roster Stats Banner (PRD 3.1) -->
+      <div class="stats-banner animated-entrance stagger-1">
+        <div class="stats-card">
+          <div class="stats-card-num">142</div>
+          <div>
+            <div class="stats-card-label">Active Members</div>
+            <div class="stats-card-desc">98% training adherence</div>
+          </div>
+        </div>
+
+        <div class="stats-card stats-card--ok">
+          <div class="stats-card-num stats-card-num--ok">36<span class="stats-card-num-denom">/38</span></div>
+          <div>
+            <div class="stats-card-label">Plans Optimized</div>
+            <div class="stats-card-desc">Overnight sync completed</div>
+          </div>
+        </div>
+
+        <div class="stats-card stats-card--urgent">
+          <div class="stats-card-num stats-card-num--bad">2</div>
+          <div>
+            <div class="stats-card-label">Urgent Alerts</div>
+            <div class="stats-card-desc stats-card-desc--urgent">Intervention required</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Action Center -->
+      <div class="action-center">
+        <div class="ac-head">
+          <div class="ac-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path
+                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+            </svg>
+          </div>
+          <div>
+            <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 alerts</span> waiting for
+              review</div>
+            <div class="ac-sub">Overnight data streams analyzed. Select an athlete below to review adjustments.</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:var(--space-sm);align-items:center;">
+            <div class="sort-container">
+              <button class="btn-skip" id="sort-trigger">Sort: Priority ▾</button>
+              <div class="sort-dropdown" id="sort-dropdown">
+                <button class="sort-item active" data-sort="priority">
+                  <span>Priority</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+                <button class="sort-item" data-sort="recency">
+                  <span>Recency</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="display:none;">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+                <button class="sort-item" data-sort="name">
+                  <span>Athlete Name</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="display:none;">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button class="btn-edit" id="open-queue-btn">Open Queue →</button>
+          </div>
+        </div>
+
+        <div class="draft-row" id="drafts-container">
+          <!-- Draft 1: Sarah K -->
+          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0" data-priority="1" data-recency="2"
+            data-name="Sarah K.">
+            <div class="draft-inner">
+              <div class="draft-head">
+                <div class="draft-avatar av-1">SK</div>
+                <div>
+                  <div class="draft-name">Sarah K.</div>
+                  <div class="draft-meta">Week 8 · Half-Marathon</div>
+                </div>
+                <span class="draft-tag tag-crit">Exhaustion</span>
+              </div>
+              <div class="draft-summary">HRV down <strong>52%</strong>, sleep <strong>42/100</strong>. AI suggests
+                <strong>recovery walk</strong> &amp; long run shift.
+              </div>
+              <div class="draft-actions">
+                <button class="btn-edit">Review Plan</button>
+                <button class="btn-skip">Skip</button>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <div class="skipped-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+                <span class="skipped-msg">Sarah K. skipped</span>
+              </div>
+              <button class="btn-undo">Undo</button>
+            </div>
+          </div>
+
+          <!-- Draft 2: Marcus T -->
+          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0" data-priority="2" data-recency="3"
+            data-name="Marcus T.">
+            <div class="draft-inner">
+              <div class="draft-head">
+                <div class="draft-avatar av-2">MT</div>
+                <div>
+                  <div class="draft-name">Marcus T.</div>
+                  <div class="draft-meta">Week 6 · Strength</div>
+                </div>
+                <span class="draft-tag tag-crit">Churn Alert</span>
+              </div>
+              <div class="draft-summary">Workout Adherence <strong>40%</strong>, HRV ↓ <strong>24%</strong>. AI suggests
+                scaling back to <strong>joint mobility</strong>.</div>
+              <div class="draft-actions">
+                <button class="btn-edit">Review Plan</button>
+                <button class="btn-skip">Skip</button>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <div class="skipped-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+                <span class="skipped-msg">Marcus T. skipped</span>
+              </div>
+              <button class="btn-undo">Undo</button>
+            </div>
+          </div>
+
+          <!-- Draft 3: Aman Khanna -->
+          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0" data-priority="3" data-recency="1"
+            data-name="Aman Khanna">
+            <div class="draft-inner">
+              <div class="draft-head">
+                <div class="draft-avatar av-2">AK</div>
+                <div>
+                  <div class="draft-name">Aman Khanna</div>
+                  <div class="draft-meta">Week 14 · Hypertrophy</div>
+                </div>
+                <span class="draft-tag tag-deload">Deload</span>
+              </div>
+              <div class="draft-summary">HRV down <strong>18%</strong>, sleep <strong>5.4h avg</strong>. Plan suggests
+                <strong>deload week</strong> (reduced volume).
+              </div>
+              <div class="draft-actions">
+                <button class="btn-edit">Review Plan</button>
+                <button class="btn-skip">Skip</button>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <div class="skipped-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+                <span class="skipped-msg">Aman Khanna skipped</span>
+              </div>
+              <button class="btn-undo">Undo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-col layout -->
+      <div class="grid-2col">
+
+        <div>
+          <!-- Threads -->
+          <div class="section section--threads">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title">Threads</h2>
+                <div class="section-sub">the stories Zora has been watching</div>
+              </div>
+              <a href="#" class="section-link">Open all threads →</a>
+            </div>
+
+            <div class="threads">
+              <article class="thread thread--alert animated-entrance stagger-1" data-client="sarah-k"
+                tabindex="0" role="link" aria-label="Open thread for Sarah K.">
+                <div class="thread-anchor">
+                  <div class="thread-avatar">SK</div>
+                  <span class="thread-name">Sarah</span>
+                </div>
+                <p class="thread-sentence">Nine days ago her HRV started leaning. We pulled Saturday's long run before it tipped into a crash. Sleep is still catching up; HRV is following.</p>
+                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline points="0,10 22,12 44,17 66,23 88,27 110,26 132,22 154,18 178,15" />
+                  <circle cx="178" cy="15" r="2.4" />
+                </svg>
+                <div class="thread-status">
+                  <span class="thread-dot"></span>
+                  <span class="thread-state">recovering</span>
+                </div>
+              </article>
+
+              <article class="thread thread--watch animated-entrance stagger-2" data-client="marcus-t"
+                tabindex="0" role="link" aria-label="Open thread for Marcus T.">
+                <div class="thread-anchor">
+                  <div class="thread-avatar">MT</div>
+                  <span class="thread-name">Marcus</span>
+                </div>
+                <p class="thread-sentence">Four quiet days. No app opens, no replies, two sessions skipped. His biometrics are fine; he is just drifting away.</p>
+                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline points="0,12 22,14 44,15 66,17 88,20 110,22 132,24 154,25 178,26" />
+                  <circle cx="178" cy="26" r="2.4" />
+                </svg>
+                <div class="thread-status">
+                  <span class="thread-dot"></span>
+                  <span class="thread-state">watching</span>
+                </div>
+              </article>
+
+              <article class="thread thread--note animated-entrance stagger-3" data-client="meera-joshi"
+                tabindex="0" role="link" aria-label="Open thread for Meera Joshi">
+                <div class="thread-anchor">
+                  <div class="thread-avatar">MJ</div>
+                  <span class="thread-name">Meera</span>
+                </div>
+                <p class="thread-sentence">Protein has drifted four days in a row. Workouts are still landing, which is why this hasn't surfaced as a risk yet, but the curve is bending.</p>
+                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline points="0,8 22,9 44,10 66,12 88,15 110,18 132,20 154,22 178,23" />
+                  <circle cx="178" cy="23" r="2.4" />
+                </svg>
+                <div class="thread-status">
+                  <span class="thread-dot"></span>
+                  <span class="thread-state">drifting</span>
+                </div>
+              </article>
+
+              <article class="thread thread--stable animated-entrance stagger-4" data-client="priya-i"
+                tabindex="0" role="link" aria-label="Open thread for Priya I.">
+                <div class="thread-anchor">
+                  <div class="thread-avatar">PI</div>
+                  <span class="thread-name">Priya</span>
+                </div>
+                <p class="thread-sentence">Six weeks in and nothing notable moved this week. The plan is doing its job; Zora is not.</p>
+                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline points="0,15 22,14 44,15 66,13 88,14 110,12 132,13 154,11 178,12" />
+                  <circle cx="178" cy="12" r="2.4" />
+                </svg>
+                <div class="thread-status">
+                  <span class="thread-dot"></span>
+                  <span class="thread-state">steady</span>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Roster Grid -->
+          <div class="section">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title">Roster pulse</h2>
+                <div class="section-sub">42 members · last 7 days · sorted by status</div>
+              </div>
+              <a href="#" class="section-link">Filter &amp; sort →</a>
+            </div>
+
+            <div class="roster-list">
+              <!-- Header Row -->
+              <div class="roster-list-header">
+                <div class="col-athlete">Athlete</div>
+                <div class="col-status">Status</div>
+                <div class="col-hrv">HRV</div>
+                <div class="col-sleep">Sleep</div>
+                <div class="col-adh">Adherence</div>
+                <div class="col-trend">7d Recovery Trend</div>
+              </div>
+
+              <!-- Sarah K -->
+              <div class="roster-row animated-entrance stagger-1" tabindex="0">
+                <div class="col-athlete">
+                  <div class="tile-avatar av-1">SK</div>
+                  <div>
+                    <div class="tile-name">Sarah K.</div>
+                    <div class="tile-streak">Week 8 · Half-Marathon</div>
+                  </div>
+                </div>
+                <div class="col-status">
+                  <span class="status-indicator status-red"></span>
+                  <span class="status-text text-red">Exhaustion Risk</span>
+                </div>
+                <div class="col-hrv"><span class="val-num low">18 ms</span></div>
+                <div class="col-sleep"><span class="val-num low">4.2h</span></div>
+                <div class="col-adh"><span class="val-num">98%</span></div>
+                <div class="col-trend">
+                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#c0392b" stroke-width="1.5"
+                      points="0,5 14,8 28,12 42,16 56,18 70,20 84,21 100,22" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Marcus T -->
+              <div class="roster-row animated-entrance stagger-2" tabindex="0">
+                <div class="col-athlete">
+                  <div class="tile-avatar av-2">MT</div>
+                  <div>
+                    <div class="tile-name">Marcus T.</div>
+                    <div class="tile-streak">Week 6 · Strength Plan</div>
+                  </div>
+                </div>
+                <div class="col-status">
+                  <span class="status-indicator status-red"></span>
+                  <span class="status-text text-red">High Churn Risk</span>
+                </div>
+                <div class="col-hrv"><span class="val-num low">32 ms</span></div>
+                <div class="col-sleep"><span class="val-num">6.2h</span></div>
+                <div class="col-adh"><span class="val-num low">40%</span></div>
+                <div class="col-trend">
+                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#c0392b" stroke-width="1.5"
+                      points="0,6 14,8 28,11 42,15 56,19 70,20 84,21 100,21" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Aman Khanna -->
+              <div class="roster-row animated-entrance stagger-3" tabindex="0">
+                <div class="col-athlete">
+                  <div class="tile-avatar av-2">AK</div>
+                  <div>
+                    <div class="tile-name">Aman Khanna</div>
+                    <div class="tile-streak">Week 14 · Hypertrophy</div>
+                  </div>
+                </div>
+                <div class="col-status">
+                  <span class="status-indicator status-amber"></span>
+                  <span class="status-text text-amber">Deload Pending</span>
+                </div>
+                <div class="col-hrv"><span class="val-num low">42 ms</span></div>
+                <div class="col-sleep"><span class="val-num low">5.4h</span></div>
+                <div class="col-adh"><span class="val-num">71%</span></div>
+                <div class="col-trend">
+                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#e67e22" stroke-width="1.5"
+                      points="0,8 14,10 28,11 42,14 56,16 70,18 84,20 100,21" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Priya I -->
+              <div class="roster-row animated-entrance stagger-4" tabindex="0">
+                <div class="col-athlete">
+                  <div class="tile-avatar av-3">PI</div>
+                  <div>
+                    <div class="tile-name">Priya I.</div>
+                    <div class="tile-streak">Week 6 · Performance Focus</div>
+                  </div>
+                </div>
+                <div class="col-status">
+                  <span class="status-indicator status-green"></span>
+                  <span class="status-text text-green">Optimized</span>
+                </div>
+                <div class="col-hrv"><span class="val-num">71 ms</span></div>
+                <div class="col-sleep"><span class="val-num">7.8h</span></div>
+                <div class="col-adh"><span class="val-num">94%</span></div>
+                <div class="col-trend">
+                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#2d9e6b" stroke-width="1.5"
+                      points="0,18 14,15 28,12 42,11 56,9 70,7 84,6 100,5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side Rail -->
+        <div class="rail">
+          <div class="rail-card animated-entrance stagger-2">
+            <div class="rail-title">Roster adherence · 7d <span class="delta up">↑ 4.2%</span></div>
+            <div class="ring-row">
+              <div class="ring">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
+                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--ok)" stroke-width="6"
+                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="20" stroke-linecap="round" />
+                </svg>
+                <div class="ring-val" id="ring-val-1" data-percent="86">0%</div>
+              </div>
+              <div class="ring-body">
+                <div class="ring-name">Workout completion</div>
+                <div class="ring-meta">36 of 42 hitting target</div>
+              </div>
+            </div>
+            <div class="ring-row">
+              <div class="ring">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
+                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--warn)" stroke-width="6"
+                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="55" stroke-linecap="round" />
+                </svg>
+                <div class="ring-val" id="ring-val-2" data-percent="71">0%</div>
+              </div>
+              <div class="ring-body">
+                <div class="ring-name">Nutrition target</div>
+                <div class="ring-meta">Protein lagging on 9 members</div>
+              </div>
+            </div>
+            <div class="ring-row">
+              <div class="ring">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
+                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--accent)" stroke-width="6"
+                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="38" stroke-linecap="round" />
+                </svg>
+                <div class="ring-val" id="ring-val-3" data-percent="78">0%</div>
+              </div>
+              <div class="ring-body">
+                <div class="ring-name">Sleep &ge; 7h</div>
+                <div class="ring-meta">5 members chronically under</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rail-card animated-entrance stagger-3">
+            <div class="rail-title">Recovery trend · 14d</div>
+            <svg class="trend-chart" viewBox="0 0 280 120" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="trendG" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#7a5487" stop-opacity=".15" />
+                  <stop offset="100%" stop-color="#7a5487" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <line x1="0" x2="280" y1="40" y2="40" stroke="rgba(26,26,46,0.06)" stroke-dasharray="2,3" />
+              <line x1="0" x2="280" y1="80" y2="80" stroke="rgba(26,26,46,0.06)" stroke-dasharray="2,3" />
+              <path
+                d="M0,70 L20,65 L40,68 L60,55 L80,58 L100,50 L120,45 L140,52 L160,40 L180,48 L200,42 L220,35 L240,38 L260,30 L280,32"
+                fill="none" stroke="#7a5487" stroke-width="2" />
+              <path
+                d="M0,70 L20,65 L40,68 L60,55 L80,58 L100,50 L120,45 L140,52 L160,40 L180,48 L200,42 L220,35 L240,38 L260,30 L280,32 L280,120 L0,120 Z"
+                fill="url(#trendG)" />
+              <text x="0" y="115" class="trend-axis">14d ago</text>
+              <text x="240" y="115" class="trend-axis">Today</text>
+            </svg>
+            <div style="font-size:12px;color:var(--ink-4);margin-top:6px;line-height:1.45">Roster HRV recovering after
+              Mon–Wed dip. <b style="color:var(--ok)">+6.4% week-over-week.</b></div>
+          </div>
+
+          <div class="rail-card animated-entrance stagger-4">
+            <div class="rail-title">This week, AI saved</div>
+            <div
+              style="font-family:var(--font-geist);font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--ink)">
+              <span id="hours-saved-val" data-target="18.4">0.0</span> <span
+                style="font-size:18px;color:var(--ink-4);font-weight:500">hours</span>
+            </div>
+            <div style="font-size:12px;color:var(--ink-4);margin-top:6px;line-height:1.5">Across 36 plan drafts, 14
+              check-ins, and 9 deload recommendations. <a href="#" style="color:var(--accent);font-weight:600">See
+                breakdown</a></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =================== PANEL / DRAWER =================== -->
+  <div class="drawer-overlay" id="queue-drawer-overlay"></div>
+  <div class="drawer" id="queue-drawer">
+    <div class="drawer-header">
+      <div>
+        <h2 class="drawer-title">Optimized Queue</h2>
+        <p class="drawer-sub">36 plans optimized overnight</p>
+      </div>
+      <button class="icon-btn close-drawer-btn" id="close-drawer" title="Close Queue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-search-container">
+      <input type="text" class="drawer-search" id="drawer-search-input" placeholder="Search athlete or plan type..." />
+    </div>
+
+    <div class="drawer-content">
+      <div class="queue-item" data-name="Sarah K.">
+        <div class="qi-avatar av-1">SK</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Sarah K.</span>
+            <span class="qi-tag tag-crit">Exhaustion</span>
+          </div>
+          <div class="qi-meta">Half-Marathon · Week 8</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=sarah-k'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Marcus T.">
+        <div class="qi-avatar av-2">MT</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Marcus T.</span>
+            <span class="qi-tag tag-crit">Churn Alert</span>
+          </div>
+          <div class="qi-meta">Strength · Week 6</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=marcus-t'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Aman Khanna">
+        <div class="qi-avatar av-2">AK</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Aman Khanna</span>
+            <span class="qi-tag tag-deload">Deload</span>
+          </div>
+          <div class="qi-meta">Hypertrophy · Week 14</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini"
+            onclick="window.location.href='reco-card.html?client=aman-khanna'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Priya I.">
+        <div class="qi-avatar av-3">PI</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Priya I.</span>
+            <span class="qi-tag tag-plan">Optimized</span>
+          </div>
+          <div class="qi-meta">Performance · Week 6</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=priya-i'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Meera Joshi">
+        <div class="qi-avatar av-1">MJ</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Meera Joshi</span>
+            <span class="qi-tag tag-msg">Nutrition Drift</span>
+          </div>
+          <div class="qi-meta">Fat Loss · Week 3</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini"
+            onclick="window.location.href='reco-card.html?client=meera-joshi'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-placeholder-header">Other Optimized Drafts (31)</div>
+
+      <div class="queue-compact-item" data-name="David L.">
+        <span class="qci-name">David L. (Week 4 · Base Phase)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="David L.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Elena R.">
+        <span class="qci-name">Elena R. (Week 12 · Peak Volume)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Elena R.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Jordan M.">
+        <span class="qci-name">Jordan M. (Week 2 · Recovery)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Jordan M.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Tariq K.">
+        <span class="qci-name">Tariq K. (Week 9 · Conditioning)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Tariq K.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Sonia V.">
+        <span class="qci-name">Sonia V. (Week 5 · Strength)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Sonia V.">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Bind click listeners on Draft Recommendation Cards (Action Center)
+      const drafts = document.querySelectorAll('.draft');
+
+      const updateAlertCount = () => {
+        const activeAlertsCount = Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length;
+        const countSpan = document.getElementById('ac-count-span');
+        if (countSpan) {
+          if (activeAlertsCount === 0) {
+            countSpan.textContent = "All drafts reviewed";
+          } else {
+            countSpan.textContent = `${activeAlertsCount} alert${activeAlertsCount > 1 ? 's' : ''} waiting for review`;
+          }
+        }
+      };
+
+      drafts.forEach((draft) => {
+        // Card-level click
+        draft.addEventListener('click', (e) => {
+          // If clicked while skipped, ignore unless it is the Undo button
+          if (draft.classList.contains('is-skipped')) {
+            if (e.target.classList.contains('btn-undo')) {
+              e.stopPropagation();
+              draft.classList.remove('is-skipped');
+              updateAlertCount();
+            }
+            return;
+          }
+
+          // If clicking "Skip" button, trigger skip state
+          if (e.target.classList.contains('btn-skip')) {
+            e.stopPropagation();
+            draft.classList.add('is-skipped');
+            updateAlertCount();
+            return;
+          }
+
+          // Navigate for click on body or "Review Plan"
+          const name = draft.getAttribute('data-name');
+          let clientKey = 'sarah-k';
+          if (name.includes('Marcus')) clientKey = 'marcus-t';
+          if (name.includes('Aman')) clientKey = 'aman-khanna';
+          window.location.href = `reco-card.html?client=${clientKey}`;
+        });
+
+        // Keydown handler for accessibility Focus Routing
+        draft.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (draft.classList.contains('is-skipped')) {
+              const undoBtn = draft.querySelector('.btn-undo');
+              if (undoBtn) undoBtn.click();
+            } else {
+              draft.click();
+            }
+          }
+        });
+      });
+
+      // Sort Dropdown interaction
+      const sortTrigger = document.getElementById('sort-trigger');
+      const sortDropdown = document.getElementById('sort-dropdown');
+      const sortItems = document.querySelectorAll('.sort-item');
+      const draftsContainer = document.getElementById('drafts-container');
+
+      if (sortTrigger && sortDropdown) {
+        sortTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sortDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown on click outside
+        document.addEventListener('click', () => {
+          sortDropdown.classList.remove('show');
+        });
+
+        // Handle sort selection
+        sortItems.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const sortType = item.getAttribute('data-sort');
+
+            // Highlight active sort option
+            sortItems.forEach(si => {
+              si.classList.remove('active');
+              si.querySelector('svg').style.display = 'none';
+            });
+            item.classList.add('active');
+            item.querySelector('svg').style.display = 'block';
+
+            // Update button label
+            sortTrigger.textContent = `Sort: ${item.querySelector('span').textContent} ▾`;
+            sortDropdown.classList.remove('show');
+
+            // Apply crossfade state blur transition
+            draftsContainer.classList.add('transitioning');
+
+            setTimeout(() => {
+              // Perform actual sorting
+              const draftsArray = Array.from(draftsContainer.children);
+              draftsArray.sort((a, b) => {
+                let valA, valB;
+                if (sortType === 'priority') {
+                  valA = parseInt(a.getAttribute('data-priority'));
+                  valB = parseInt(b.getAttribute('data-priority'));
+                  return valA - valB;
+                } else if (sortType === 'recency') {
+                  valA = parseInt(a.getAttribute('data-recency'));
+                  valB = parseInt(b.getAttribute('data-recency'));
+                  return valA - valB;
+                } else if (sortType === 'name') {
+                  valA = a.getAttribute('data-name');
+                  valB = b.getAttribute('data-name');
+                  return valA.localeCompare(valB);
+                }
+                return 0;
+              });
+
+              // Re-append sorted draft elements
+              draftsArray.forEach(el => draftsContainer.appendChild(el));
+
+              // End transition
+              draftsContainer.classList.remove('transitioning');
+            }, 180);
+          });
+        });
+      }
+
+      // Queue Drawer interaction
+      const openQueueBtn = document.getElementById('open-queue-btn');
+      const closeQueueBtn = document.getElementById('close-drawer');
+      const queueDrawer = document.getElementById('queue-drawer');
+      const queueDrawerOverlay = document.getElementById('queue-drawer-overlay');
+      const drawerSearchInput = document.getElementById('drawer-search-input');
+
+      if (openQueueBtn && queueDrawer && queueDrawerOverlay) {
+        // Open
+        const openDrawer = () => {
+          queueDrawer.classList.add('show');
+          queueDrawerOverlay.classList.add('show');
+          document.body.style.overflow = 'hidden';
+        };
+
+        // Close
+        const closeDrawer = () => {
+          queueDrawer.classList.remove('show');
+          queueDrawerOverlay.classList.remove('show');
+          document.body.style.overflow = '';
+        };
+
+        openQueueBtn.addEventListener('click', openDrawer);
+        if (closeQueueBtn) closeQueueBtn.addEventListener('click', closeDrawer);
+        queueDrawerOverlay.addEventListener('click', closeDrawer);
+
+        // Escape key to close drawer (A11y)
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && queueDrawer.classList.contains('show')) {
+            closeDrawer();
+          }
+        });
+
+        // Search filtering in Drawer
+        if (drawerSearchInput) {
+          drawerSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const queueItems = queueDrawer.querySelectorAll('.queue-item');
+            const compactItems = queueDrawer.querySelectorAll('.queue-compact-item');
+
+            queueItems.forEach(item => {
+              const name = item.getAttribute('data-name').toLowerCase();
+              item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+
+            compactItems.forEach(item => {
+              const name = item.getAttribute('data-name').toLowerCase();
+              item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+          });
+        }
+
+        // Quick Approve action inside Drawer
+        const quickApproveBtns = queueDrawer.querySelectorAll('.btn-quick-approve');
+        quickApproveBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const athleteName = btn.getAttribute('data-athlete');
+            const item = btn.closest('.queue-compact-item');
+
+            // Animate exit in drawer
+            if (item) {
+              item.classList.add('is-approved');
+
+              // Remove element after transition ends
+              setTimeout(() => {
+                item.remove();
+              }, 200);
+            }
+
+            // Launch success toast
+            const toast = document.getElementById('success-toast');
+            const toastClient = document.getElementById('toast-client-name');
+            if (toast && toastClient) {
+              toastClient.textContent = athleteName;
+              toast.classList.add('show');
+              setTimeout(() => {
+                toast.classList.remove('show');
+              }, 4000);
+            }
+          });
+        });
+      }
+
+      // 2. Bind click + keyboard listeners on Threads rows
+      const threadRows = document.querySelectorAll('.thread');
+      threadRows.forEach((row) => {
+        const open = () => {
+          const clientKey = row.getAttribute('data-client') || 'sarah-k';
+          window.location.href = `reco-card.html?client=${clientKey}`;
+        };
+        row.addEventListener('click', open);
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open();
+          }
+        });
+      });
+
+      // 3. Bind click listeners on "Roster pulse" rows
+      const rosterRows = document.querySelectorAll('.roster-row');
+      rosterRows.forEach((row) => {
+        row.addEventListener('click', () => {
+          const nameEl = row.querySelector('.tile-name');
+          if (nameEl) {
+            const nameText = nameEl.textContent.trim().toLowerCase();
+            let clientKey = 'sarah-k';
+            if (nameText.includes('marcus')) clientKey = 'marcus-t';
+            if (nameText.includes('aman')) clientKey = 'aman-khanna';
+            if (nameText.includes('priya')) clientKey = 'priya-i';
+            window.location.href = `reco-card.html?client=${clientKey}`;
+          }
+        });
+
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            row.click();
+          }
+        });
+      });
+
+      // 4. Progress Rings & Percentage values loading animations (Delight)
+      const rings = document.querySelectorAll('.ring-fg');
+      rings.forEach((ring, idx) => {
+        const offset = ring.getAttribute('data-offset');
+        const valEl = document.getElementById(`ring-val-${idx + 1}`);
+        const targetPercent = parseInt(valEl.getAttribute('data-percent'));
+
+        setTimeout(() => {
+          ring.style.strokeDashoffset = offset;
+        }, 150);
+
+        let current = 0;
+        const duration = 1000;
+        const steps = 30;
+        const stepTime = duration / steps;
+        const increment = targetPercent / steps;
+
+        let step = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          step++;
+          if (step >= steps) {
+            valEl.textContent = `${targetPercent}%`;
+            clearInterval(timer);
+          } else {
+            valEl.textContent = `${Math.round(current)}%`;
+          }
+        }, stepTime);
+      });
+
+      // 5. Hours Saved Count Up digital animation (Delight)
+      const hoursVal = document.getElementById('hours-saved-val');
+      if (hoursVal) {
+        const target = parseFloat(hoursVal.getAttribute('data-target'));
+        let current = 0;
+        const duration = 1000;
+        const steps = 40;
+        const stepTime = duration / steps;
+        const increment = target / steps;
+
+        let step = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          step++;
+          if (step >= steps) {
+            hoursVal.textContent = target.toFixed(1);
+            clearInterval(timer);
+          } else {
+            hoursVal.textContent = current.toFixed(1);
+          }
+        }, stepTime);
+      }
+
+      // 6. Check for success parameter to launch success toast (Delight)
+      const urlParams = new URLSearchParams(window.location.search);
+      const successClient = urlParams.get('success');
+      if (successClient) {
+        const toast = document.getElementById('success-toast');
+        const toastClient = document.getElementById('toast-client-name');
+        if (toast && toastClient) {
+          toastClient.textContent = successClient;
+
+          setTimeout(() => {
+            toast.classList.add('show');
+          }, 350);
+
+          setTimeout(() => {
+            toast.classList.remove('show');
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+          }, 4350);
+        }
+      }
+    });
+  </script>
+
+  <!-- Success Toast (Delight Moment) -->
+  <div id="success-toast" class="toast">
+    <div class="toast-icon">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    </div>
+    <div>
+      <span style="font-weight: 600; display: block; line-height: 1.2;">Plan adjustment sent!</span>
+      <span style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
+        <span id="toast-client-name" style="font-weight: 600; color: #ffffff;">Sarah K.</span> was notified via their
+        mobile feed.
+      </span>
+    </div>
+  </div>
+
+</body>
+
+</html>

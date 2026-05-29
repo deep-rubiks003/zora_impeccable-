@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-29T08:01:45Z",
+  "title": "Design System: Zora Console Light",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Primary Purple", "canonical": "oklch(45% 0.12 300)" },
+      "neutral-bg": { "role": "neutral", "displayName": "Background", "canonical": "oklch(96% 0.005 240)" },
+      "card-bg": { "role": "neutral", "displayName": "Soft White", "canonical": "oklch(100% 0.0 0)" },
+      "ink": { "role": "neutral", "displayName": "Dark Text", "canonical": "oklch(20% 0.01 270)" },
+      "accent-bg": { "role": "accent", "displayName": "Purple Accent", "canonical": "oklch(90% 0.04 300)" },
+      "ok": { "role": "success", "displayName": "Success Green", "canonical": "oklch(62% 0.15 145)" },
+      "warn": { "role": "warning", "displayName": "Amber", "canonical": "oklch(65% 0.2 60)" },
+      "bad": { "role": "alert", "displayName": "Alert Red", "canonical": "oklch(45% 0.22 25)" },
+      "slate-text": { "role": "neutral", "displayName": "Slate Text", "canonical": "oklch(60% 0.0 0)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Page Title (H1)", "purpose": "Displaying main headings and title names." },
+      "headline": { "displayName": "Section Title (H2)", "purpose": "Titles for lists, grids, and sections." },
+      "title": { "displayName": "Card Header (H3)", "purpose": "Header labels inside cards." },
+      "body": { "displayName": "Body text", "purpose": "Reading and content copy." },
+      "label": { "displayName": "Meta Label", "purpose": "Buttons, tags, navigation items." }
+    },
+    "shadows": [
+      { "name": "soft-shadow", "value": "rgba(26, 26, 46, 0.02) 0px 4px 12px", "purpose": "Subtle card depth." }
+    ],
+    "motion": [
+      { "name": "transition-standard", "value": "200ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Transitions for hover/focus state updates." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Pill Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button used for confirmations and main actions.",
+      "html": "<button class=\"ds-btn-primary\">Approve Plan</button>",
+      "css": ".ds-btn-primary { background: #7a5487; color: #ffffff; border: none; border-radius: 9999px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity 200ms ease; } .ds-btn-primary:hover { opacity: 0.9; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary button for backing out of actions or secondary selections.",
+      "html": "<button class=\"ds-btn-secondary\">Edit Details</button>",
+      "css": ".ds-btn-secondary { background: #e8dced; color: #7a5487; border: none; border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: filter 200ms ease; } .ds-btn-secondary:hover { filter: brightness(0.95); }"
+    },
+    {
+      "name": "White Dashboard Card",
+      "kind": "card",
+      "refersTo": "card-spotlight",
+      "description": "Standard card container carrying clean summaries.",
+      "html": "<div class=\"ds-card-white\"><h3>Sarah K.</h3><p>Overtraining warning active.</p></div>",
+      "css": ".ds-card-white { background: #ffffff; border: 1px solid rgba(26, 26, 46, 0.06); border-radius: 12px; padding: 22px 28px; font-family: 'DM Sans', sans-serif; color: #1a1a2e; } .ds-card-white h3 { font-family: 'Geist', sans-serif; color: #1a1a2e; font-size: 18px; margin-bottom: 4px; font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Clean SaaS workspace with premium purple highlights",
+    "overview": "Zora Console Light utilizes a clean, high-contrast interface designed to convey professional utility and visual clarity. The app shell is anchored on a light background (#f5f5f7), framing pure white card surfaces (#ffffff) that hold user workflows. Accents of rich purple (#7a5487) define primary controls, interactive highlights, and status signifiers.",
+    "keyCharacteristics": [
+      "Clean light-mode palette using Soft White cards over a light gray shell.",
+      "Modern typography featuring crisp geometric headings (Geist/DM Sans).",
+      "Semantic color coding for warnings, positive completion, and alerts.",
+      "Tactile card layouts with subtle spacing and soft borders."
+    ],
+    "rules": [
+      { "name": "The White-on-Purple Rule", "body": "Any text overlaying a Primary Purple background must be pure white (#ffffff) or near-white to maintain an accessible contrast ratio of at least 4.5:1.", "section": "colors" },
+      { "name": "The Meta Tracking Rule", "body": "All meta labels must be rendered in uppercase with precise tracking (0.06em or 0.08em) to guarantee scan-readability at small font sizes.", "section": "typography" },
+      { "name": "The Flat-Border Rule", "body": "Card borders must use a thin border of 1px solid rgba(26, 26, 46, 0.06) or rgba(122, 84, 135, 0.12) instead of drop shadows to preserve a clean, flat-layout feel.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Soft White (#ffffff) for content card backgrounds and Background (#f5f5f7) for the outer layout shell.",
+      "Do apply Primary Purple (#7a5487) to all primary CTAs, active highlights, and page titles.",
+      "Do format meta labels in uppercase with explicit character spacing."
+    ],
+    "donts": [
+      "Don't use dark backgrounds or dark themes; the interface strictly employs the light SaaS console theme.",
+      "Don't use black text on a purple background; use pure white (#ffffff).",
+      "Don't use fluid text scaling on headings; stick to the fixed H1-H3 scale.",
+      "Don't apply heavy dark box shadows on card elements."
+    ]
+  }
+}

@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zora Product OS — AI Recommendation Detail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css">
+</head>
+
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Z</div>
+      <div>
+        <div class="brand-name">ZORA</div>
+        <div class="brand-sub">Coach Console</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active"><span class="dot"></span> Efficiency Agent <span class="nav-badge">2</span></div>
+      <div class="nav-item"><span class="dot"></span> Quality Agent <span class="nav-badge">3</span></div>
+      <div class="nav-item"><span class="dot"></span> AI Action Center</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Roster</div>
+      <div class="nav-item"><span class="dot"></span> All Members</div>
+      <div class="nav-item"><span class="dot"></span> At-Risk</div>
+      <div class="nav-item"><span class="dot"></span> Plans Due</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item"><span class="dot"></span> Messages</div>
+      <div class="nav-item"><span class="dot"></span> Reports</div>
+      <div class="nav-item"><span class="dot"></span> Settings</div>
+    </div>
+
+    <div class="coach-card">
+      <div class="avatar">RS</div>
+      <div class="coach-info">
+        <div class="coach-name">Riya Sharma</div>
+        <div class="coach-meta">142 active members</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs" style="font-size: 12.5px;">
+        <a href="index.html" class="back-crumb">← Roster Overview</a>
+        <span class="sep">/</span>
+        <span id="crumb-tail">Client Optimization</span>
+      </div>
+
+      <input class="search" placeholder="Search members, plans, signals…" />
+
+      <button class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- ============== SCREEN 2 MAIN CONTENT ============== -->
+    <div class="page active animated-entrance" style="padding-top: var(--space-md);">
+      
+      <div class="s2-grid">
+        
+        <!-- Left Main Area -->
+        <div>
+          <!-- Header Profile -->
+          <div class="s2-header">
+            <div class="s2-avatar" id="client-avatar">SK</div>
+            <div>
+              <div class="s2-name" id="client-name">Sarah K.</div>
+              <div class="s2-meta">
+                <span id="client-phase">Week 8 · Half-Marathon</span>
+                <span>Active since Jan 2026</span>
+              </div>
+            </div>
+            <div class="s2-tags">
+              <span class="s2-tag alert" id="client-tag">Exhaustion Risk</span>
+            </div>
+          </div>
+
+          <!-- Biometric Bento Insight Grid (Sleep & HRV Focused Highlights) -->
+          <div class="why-grid" style="margin-bottom: var(--space-md);">
+            <!-- Sleep Bento Card -->
+            <div class="why bento-focus" id="bento-sleep">
+              <div class="why-lbl">Focused Sleep Insight</div>
+              <div class="why-val" id="sleep-score-val">42<span class="unit">/100</span></div>
+              <div class="why-trend down" id="sleep-score-trend">▼ -45% vs baseline</div>
+              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="sleep-score-sub">
+                3.2 hrs · 12% REM · 8% Deep sleep
+              </div>
+            </div>
+
+            <!-- HRV Bento Card -->
+            <div class="why bento-focus" id="bento-hrv">
+              <div class="why-lbl">Autonomic Stress (HRV)</div>
+              <div class="why-val" id="hrv-val">18<span class="unit">ms</span></div>
+              <div class="why-trend down" id="hrv-trend">▼ -52% 7d change</div>
+              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="hrv-sub">
+                52% below rolling baseline
+              </div>
+            </div>
+
+            <!-- RHR Card -->
+            <div class="why" id="bento-rhr">
+              <div class="why-lbl">Resting Heart Rate</div>
+              <div class="why-val" id="rhr-val">68<span class="unit">bpm</span></div>
+              <div class="why-trend up" id="rhr-trend">▲ +8 bpm deviation</div>
+              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="rhr-sub">
+                Elevated (+12% above average)
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommendation Card -->
+          <div class="rec-card">
+            <div class="rec-banner">
+              <div class="rec-banner-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                </svg>
+              </div>
+              <div class="rec-banner-text"><b>Zora draft</b></div>
+              <div class="rec-banner-meta">Ready for Review</div>
+            </div>
+
+            <div class="rec-body">
+              <div class="rec-h1-row">
+                <h3 class="rec-h1">Recommended Weekly Schedule Adjustment</h3>
+                <button type="button" class="see-schedule-btn" id="btn-see-schedule" aria-haspopup="dialog">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="17" rx="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                  </svg>
+                  <span>View updated schedule</span>
+                  <span class="see-schedule-count" id="see-schedule-count">3 changes</span>
+                </button>
+              </div>
+
+              <!-- AI Narrative reasoning -->
+              <div class="rec-narrative" id="ai-narrative">
+                Sarah's acute training load has increased by <span class="hl">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class="hl">42/100</span>. HRV has plunged <span class="hl">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.
+              </div>
+
+              <!-- Unique Feature 1: The "Impact Preview" Graph Toggle -->
+              <div class="impact-card">
+                <div class="impact-header">
+                  <div class="impact-title">
+                    <span class="impact-title-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                      </svg>
+                    </span>
+                    Projected Autonomic Recovery Curve
+                  </div>
+                  
+                  <div class="impact-toggle-group">
+                    <button class="impact-toggle-btn active" id="toggle-without">Without Action</button>
+                    <button class="impact-toggle-btn" id="toggle-with">With Adjustment</button>
+                  </div>
+                </div>
+
+                <!-- SVG Graph Wrapper -->
+                <div class="impact-chart-wrapper">
+                  <svg class="impact-chart" viewBox="0 0 360 180">
+                    <!-- Horizontal Grid Lines -->
+                    <line class="impact-grid-line" x1="0" y1="30" x2="360" y2="30" />
+                    <line class="impact-grid-line" x1="0" y1="75" x2="360" y2="75" />
+                    <line class="impact-grid-line" x1="0" y1="120" x2="360" y2="120" />
+                    <line class="impact-grid-line" x1="0" y1="160" x2="360" y2="160" />
+
+                    <!-- Rolling Baseline Line -->
+                    <line class="impact-baseline-line" x1="0" y1="75" x2="360" y2="75" />
+                    <text x="355" y="70" class="impact-axis-text" text-anchor="end" fill="var(--ink-4)">HRV Baseline</text>
+
+                    <!-- Path A: Without Deload (Exhaustion crash curve) -->
+                    <path class="impact-path crash active" id="path-without" d="M 0 60 Q 100 70 180 150 T 360 160" />
+
+                    <!-- Path B: With Deload (Recovery curve) -->
+                    <path class="impact-path recovery inactive" id="path-with" d="M 0 60 Q 80 110 160 80 T 360 40" />
+
+                    <!-- Dynamic Annotations / Tooltips -->
+                    <g class="chart-marker active" id="marker-without">
+                      <circle cx="180" cy="150" r="5" fill="var(--bad)" stroke="#ffffff" stroke-width="2" />
+                      <g transform="translate(180, 115)">
+                        <rect class="chart-tooltip-box" x="-42" y="0" width="84" height="20" />
+                        <text class="chart-tooltip-text" x="0" y="13" id="marker-without-text">Crash (4d)</text>
+                      </g>
+                    </g>
+
+                    <g class="chart-marker inactive" id="marker-with">
+                      <circle cx="260" cy="55" r="5" fill="var(--ok)" stroke="#ffffff" stroke-width="2" />
+                      <g transform="translate(260, 20)">
+                        <rect class="chart-tooltip-box" x="-50" y="0" width="100" height="20" />
+                        <text class="chart-tooltip-text" x="0" y="13" id="marker-with-text">Rebound (5d)</text>
+                      </g>
+                    </g>
+
+                    <!-- Axis Labels -->
+                    <text x="5" y="172" class="impact-axis-text">Mon</text>
+                    <text x="90" y="172" class="impact-axis-text">Wed</text>
+                    <text x="180" y="172" class="impact-axis-text">Fri</text>
+                    <text x="270" y="172" class="impact-axis-text">Sun</text>
+                    <text x="355" y="172" class="impact-axis-text" text-anchor="end">Next Mon</text>
+                  </svg>
+
+                  <!-- Dynamic Text Description below Graph -->
+                  <div class="impact-desc-container" id="impact-description">
+                    Continuing at current training volume is projected to trigger a <strong>severe exhaustion crash in 3 days</strong>, increasing injury risk by <strong>4.2x</strong> and stalling baseline adaptation for <strong>3+ weeks</strong>.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom CTA Actions -->
+              <div class="rec-actions">
+                <button class="btn-primary" id="btn-approve">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Approve &amp; Send to Client
+                </button>
+                <button class="btn-secondary" id="btn-edit-ai">Edit with AI</button>
+                <button class="btn-ghost" id="btn-regenerate">Regenerate Draft</button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Sidebar Rail -->
+        <div class="s2-rail">
+          
+          <!-- Wearable Signals Details -->
+          <div class="data-card">
+            <div class="data-card-title">
+              Wearable Signals · 7d
+              <span class="live-dot" title="Live Sync Active"></span>
+            </div>
+            
+            <div class="metric">
+              <span class="metric-lbl">HRV Baseline</span>
+              <span class="metric-val" id="meta-hrv-base">38 ms</span>
+            </div>
+            <div class="metric">
+              <span class="metric-lbl">Sleep Consistency</span>
+              <div class="metric-right">
+                <div class="metric-bar"><div class="metric-bar-fill bad" id="fill-sleep-con" style="width: 45%;"></div></div>
+                <span class="metric-val" id="meta-sleep-con">45%</span>
+              </div>
+            </div>
+            <div class="metric">
+              <span class="metric-lbl">Sleep Deficit</span>
+              <span class="metric-val" id="meta-sleep-def">+4.2 hrs</span>
+            </div>
+            <div class="metric">
+              <span class="metric-lbl">Resting HR Avg</span>
+              <span class="metric-val" id="meta-rhr">62 bpm</span>
+            </div>
+            <div class="metric">
+              <span class="metric-lbl">Respiratory Rate</span>
+              <span class="metric-val">14.8 br/m</span>
+            </div>
+          </div>
+
+          <!-- Client Feedback quote snippet -->
+          <div class="data-card">
+            <div class="data-card-title">Client Feedback</div>
+            <div class="chat-snippet" id="client-feedback">
+              <b>Sarah K. (8:14 AM):</b> "My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall."
+            </div>
+          </div>
+
+          <!-- AI Confidence Metric -->
+          <div class="data-card">
+            <div class="data-card-title">Recommendation Confidence</div>
+            <div class="ai-confidence">
+              <div class="conf-bar"><div class="conf-fill" id="confidence-fill" style="width: 94%;"></div></div>
+              <span class="conf-val" id="confidence-val">94%</span>
+            </div>
+            <div style="font-size: 11px; color: var(--ink-4); margin-top: 10px; line-height: 1.4;">
+              Confidence score calculated based on model alignment with user history and structural biomarkers.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== CLIENT LOADING ENGINE ==================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Data ramp for athletes
+      const clientsData = {
+        'sarah-k': {
+          name: "Sarah K.",
+          initials: "SK",
+          avatarClass: "av-1",
+          phase: "Week 8 · Half-Marathon",
+          statusText: "Exhaustion Risk",
+          statusClass: "alert",
+          metrics: {
+            sleep: "42",
+            sleepSub: "3.2 hrs · 12% REM · 8% Deep sleep",
+            sleepTrend: "▼ -45% vs baseline",
+            sleepTrendClass: "down",
+            hrv: "18",
+            hrvSub: "52% below rolling baseline",
+            hrvTrend: "▼ -52% 7d change",
+            hrvTrendClass: "down",
+            rhr: "68",
+            rhrSub: "Elevated (+12% above average)",
+            rhrTrend: "▲ +8 bpm deviation",
+            rhrTrendClass: "up"
+          },
+          reasoning: "Sarah's acute training load has increased by <span class='hl'>35% week-over-week</span>, while Sleep Score has dropped to a critical <span class='hl'>42/100</span>. HRV has plunged <span class='hl'>52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.",
+          chatSnippet: "<b>Sarah K. (8:14 AM):</b> \"My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall.\"",
+          confidence: "94%",
+          meta: {
+            hrvBase: "38 ms",
+            sleepCon: "45%",
+            sleepConWidth: "45%",
+            sleepConClass: "bad",
+            sleepDef: "+4.2 hrs",
+            rhrBase: "62 bpm"
+          },
+          weekPlan: [
+            { name: "Mon", type: "Rec Walk",     detail: "30 min Zone 1",  edited: true,  remark: "AI Adjusted", originalType: "Threshold Run", originalDetail: "6 x 1 km @ 4:30" },
+            { name: "Tue", type: "Rest & Mob",   detail: "Stretch focus",  edited: true,  remark: "AI Adjusted", originalType: "Strength",      originalDetail: "Full session" },
+            { name: "Wed", type: "Aerobic Base", detail: "45 min Zone 2",  edited: false, remark: "" },
+            { name: "Thu", type: "Light Lift",   detail: "Core focus",     edited: false, remark: "" },
+            { name: "Fri", type: "Rest",         detail: "Sleep focus",    edited: false, remark: "" },
+            { name: "Sat", type: "Base Run",     detail: "30 min Zone 2",  edited: false, remark: "" },
+            { name: "Sun", type: "Long Run",     detail: "10 mi Zone 2",   edited: true,  remark: "Shifted from Sat", originalType: "Long Run", originalDetail: "12 mi Zone 2 (Sat)" }
+          ],
+          impact: {
+            without: {
+              desc: "Continuing at current training volume is projected to trigger a <strong>severe exhaustion crash in 3 days</strong>, increasing injury risk by <strong>4.2x</strong> and stalling baseline adaptation for <strong>3+ weeks</strong>.",
+              path: "M 0 60 Q 100 70 180 150 T 360 160",
+              markerX: 180,
+              markerY: 150,
+              markerText: "Crash (4d)"
+            },
+            with: {
+              desc: "Implementing the recommended active recovery and run shifting is projected to <strong>restore HRV to baseline within 4 days</strong>, leading to supercompensation and peak readiness by next week.",
+              path: "M 0 60 Q 80 110 160 80 T 360 40",
+              markerX: 260,
+              markerY: 55,
+              markerText: "Rebound (5d)"
+            }
+          }
+        },
+        'marcus-t': {
+          name: "Marcus T.",
+          initials: "MT",
+          avatarClass: "av-2",
+          phase: "Week 6 · Strength Plan",
+          statusText: "High Churn Risk",
+          statusClass: "alert",
+          metrics: {
+            sleep: "62",
+            sleepSub: "6.2 hrs · 15% REM · 10% Deep sleep",
+            sleepTrend: "▼ -15% vs baseline",
+            sleepTrendClass: "down",
+            hrv: "32",
+            hrvSub: "24% below rolling baseline",
+            hrvTrend: "▼ -24% 14d change",
+            hrvTrendClass: "down",
+            rhr: "64",
+            rhrSub: "Baseline within normal limits",
+            rhrTrend: "■ Unchanged",
+            rhrTrendClass: "flat"
+          },
+          reasoning: "Marcus's workout adherence has dropped to <span class='hl'>40% over the last 10 days</span>, accompanied by a <span class='hl'>24% decline in HRV</span>. Wearable sleep staging shows increased restlessness. He is entering a high churn risk window. AI suggests scaling back to joint mobility to maintain consistency.",
+          chatSnippet: "<b>Marcus T. (9:02 AM):</b> \"Just busy with work and feeling super stiff. Hard to get motivated for heavy lifting when I'm this tired.\"",
+          confidence: "88%",
+          meta: {
+            hrvBase: "42 ms",
+            sleepCon: "60%",
+            sleepConWidth: "60%",
+            sleepConClass: "warn",
+            sleepDef: "+1.8 hrs",
+            rhrBase: "64 bpm"
+          },
+          weekPlan: [
+            { name: "Mon", type: "Mobility Flow",  detail: "15 min gentle", edited: true,  remark: "AI Adjusted", originalType: "Strength A", originalDetail: "Full session, 60 min" },
+            { name: "Tue", type: "Rest",           detail: "Hydration focus", edited: false, remark: "" },
+            { name: "Wed", type: "Core & Stretch", detail: "20 min light",  edited: true,  remark: "AI Adjusted", originalType: "Conditioning", originalDetail: "30 min intervals" },
+            { name: "Thu", type: "Rest",           detail: "Recovery walk", edited: false, remark: "" },
+            { name: "Fri", type: "Light Lift",     detail: "50% load 30m",  edited: true,  remark: "AI Adjusted", originalType: "Strength B", originalDetail: "Full session, 60 min" },
+            { name: "Sat", type: "Rest",           detail: "Active recovery", edited: false, remark: "" },
+            { name: "Sun", type: "Active Walk",    detail: "30 min outdoor", edited: false, remark: "" }
+          ],
+          impact: {
+            without: {
+              desc: "Maintaining the heavy strength plan will likely lead to <strong>complete workout cessation (0% adherence)</strong> and eventual program drop-out within <strong>7-10 days</strong>.",
+              path: "M 0 70 Q 120 90 200 160 T 360 170",
+              markerX: 200,
+              markerY: 160,
+              markerText: "Drop-out"
+            },
+            with: {
+              desc: "Scaling back to low-friction mobility and light resistance is projected to <strong>restore weekly workout adherence to 80%+ within 5 days</strong>, maintaining positive habit loops.",
+              path: "M 0 70 Q 100 120 180 90 T 360 60",
+              markerX: 270,
+              markerY: 70,
+              markerText: "Habit Retained"
+            }
+          }
+        },
+        'aman-khanna': {
+          name: "Aman Khanna",
+          initials: "AK",
+          avatarClass: "av-2",
+          phase: "Week 14 · Hypertrophy Cycle",
+          statusText: "Deload Pending",
+          statusClass: "warning",
+          metrics: {
+            sleep: "58",
+            sleepSub: "5.4 hrs average sleep duration",
+            sleepTrend: "▼ -20% vs baseline",
+            sleepTrendClass: "down",
+            hrv: "42",
+            hrvSub: "18% below rolling baseline",
+            hrvTrend: "▼ -18% 7d change",
+            hrvTrendClass: "down",
+            rhr: "62",
+            rhrSub: "+2 bpm normal deviation",
+            rhrTrend: "▲ +2 bpm deviation",
+            rhrTrendClass: "flat"
+          },
+          reasoning: "Aman is in week 14 of an intense hypertrophy cycle. His sleep duration has declined (<span class='hl'>5.4h average</span>), while muscle soreness has peaked at <span class='hl'>8/10</span>. HRV shows an <span class='hl'>18% downward trend</span>. AI suggests a structured deload week to clear soreness and restore capacity.",
+          chatSnippet: "<b>Aman K. (Yesterday):</b> \"Muscles are super sore and sleep has been terrible this week. Hard to recover between sets.\"",
+          confidence: "91%",
+          meta: {
+            hrvBase: "51 ms",
+            sleepCon: "68%",
+            sleepConWidth: "68%",
+            sleepConClass: "warn",
+            sleepDef: "+3.1 hrs",
+            rhrBase: "60 bpm"
+          },
+          weekPlan: [
+            { name: "Mon", type: "Deload Chest",  detail: "3x8 @60% 1RM",  edited: true,  remark: "AI Adjusted", originalType: "Heavy Chest", originalDetail: "5x5 @85% 1RM" },
+            { name: "Tue", type: "Rest",          detail: "Sleep focus",    edited: false, remark: "" },
+            { name: "Wed", type: "Deload Legs",   detail: "3x10 @55% 1RM", edited: true,  remark: "AI Adjusted", originalType: "Heavy Squat", originalDetail: "5x5 @80% 1RM" },
+            { name: "Thu", type: "Rest",          detail: "Active stretch", edited: false, remark: "" },
+            { name: "Fri", type: "Deload Back",   detail: "3x8 @60% 1RM",  edited: true,  remark: "AI Adjusted", originalType: "Heavy Pulls", originalDetail: "5x5 @85% 1RM" },
+            { name: "Sat", type: "Mobility Flow", detail: "20 min stretch", edited: false, remark: "" },
+            { name: "Sun", type: "Rest",          detail: "Recovery walk",  edited: false, remark: "" }
+          ],
+          impact: {
+            without: {
+              desc: "Continuing heavy training is projected to cause an <strong>overtraining plateau</strong>, halting muscle growth progress and increasing the risk of joint strain by <strong>2.8x</strong>.",
+              path: "M 0 65 Q 120 75 190 120 T 360 135",
+              markerX: 190,
+              markerY: 120,
+              markerText: "Plateau"
+            },
+            with: {
+              desc: "A 1-week structured deload is projected to <strong>clear muscular soreness</strong>, restore nervous system readiness, and trigger a <strong>15% increase in hypertrophic adaptation</strong> next cycle.",
+              path: "M 0 65 Q 90 95 170 75 T 360 45",
+              markerX: 265,
+              markerY: 55,
+              markerText: "Supercompensation"
+            }
+          }
+        },
+        'meera-joshi': {
+          name: "Meera Joshi",
+          initials: "MJ",
+          avatarClass: "av-3",
+          phase: "Week 6 · Nutrition Focus",
+          statusText: "Nutrition Drift",
+          statusClass: "warning",
+          metrics: {
+            sleep: "78",
+            sleepSub: "7.2 hrs · 18% REM · 15% Deep",
+            sleepTrend: "■ Normal baseline",
+            sleepTrendClass: "flat",
+            hrv: "68",
+            hrvSub: "Within normal limits (+4ms)",
+            hrvTrend: "▲ Stable baseline",
+            hrvTrendClass: "up",
+            rhr: "58",
+            rhrSub: "Optimal range",
+            rhrTrend: "▼ Stable",
+            rhrTrendClass: "down"
+          },
+          reasoning: "Meera's average protein intake has dropped to <span class='hl'>62% of target across 5 days</span>, accompanied by a drop in meal consistency. Her recovery is currently stable but building logs show negative lean mass adaptation. AI recommends automated meal prep drafts and adjusting protein goal distribution.",
+          chatSnippet: "<b>Meera J. (Yesterday):</b> \"Struggling to hit my protein targets this week because of travel. Finding it hard to eat enough clean food on the go.\"",
+          confidence: "86%",
+          meta: {
+            hrvBase: "64 ms",
+            sleepCon: "80%",
+            sleepConWidth: "80%",
+            sleepConClass: "ok",
+            sleepDef: "-0.2 hrs",
+            rhrBase: "59 bpm"
+          },
+          weekPlan: [
+            { name: "Mon", type: "Prep Draft",  detail: "High protein meal prep",  edited: true,  remark: "AI Adjusted", originalType: "Free Day", originalDetail: "No nutrition target" },
+            { name: "Tue", type: "Strength",    detail: "45 min upper body",       edited: false, remark: "" },
+            { name: "Wed", type: "Prep Draft",  detail: "Protein shake target",    edited: true,  remark: "AI Adjusted", originalType: "Free Day", originalDetail: "No nutrition target" },
+            { name: "Thu", type: "Mobility",    detail: "Gentle stretch",          edited: false, remark: "" },
+            { name: "Fri", type: "Strength",    detail: "45 min lower body",       edited: false, remark: "" },
+            { name: "Sat", type: "Active Walk", detail: "30 min outdoors",         edited: false, remark: "" },
+            { name: "Sun", type: "Rest",        detail: "Meal prep focus",         edited: true,  remark: "AI Adjusted", originalType: "Rest", originalDetail: "Unstructured" }
+          ],
+          impact: {
+            without: {
+              desc: "Neglecting the protein targets is projected to **halt muscular recovery**, leading to increased fatigue and a **12% loss in training adaptations** over the next 2 weeks.",
+              path: "M 0 60 Q 100 80 180 130 T 360 145",
+              markerX: 180,
+              markerY: 130,
+              markerText: "Recovery Stalls"
+            },
+            with: {
+              desc: "Adopting the automated meal-prep suggestions is projected to **restore protein intake to 95% of target**, driving recovery adaptation and muscle mass retention.",
+              path: "M 0 60 Q 80 90 160 70 T 360 42",
+              markerX: 260,
+              markerY: 52,
+              markerText: "Muscle Retained"
+            }
+          }
+        },
+        'priya-i': {
+          name: "Priya I.",
+          initials: "PI",
+          avatarClass: "av-3",
+          phase: "Week 6 · Performance Focus",
+          statusText: "Optimized",
+          statusClass: "ok",
+          metrics: {
+            sleep: "78",
+            sleepSub: "7.8 hrs · 22% REM · 18% Deep",
+            sleepTrend: "■ Stable baseline",
+            sleepTrendClass: "flat",
+            hrv: "71",
+            hrvSub: "Within normal limits (+3ms)",
+            hrvTrend: "▲ Stable baseline",
+            hrvTrendClass: "up",
+            rhr: "56",
+            rhrSub: "Optimal range",
+            rhrTrend: "▼ Stable",
+            rhrTrendClass: "down"
+          },
+          reasoning: "Priya is performing exceptionally. Her sleep duration and consistency are stable at 7.8 hours, and HRV remains high at 71 ms. Adherence is at 94%. No weekly schedule adjustments are required; continue with her current training plan.",
+          chatSnippet: "<b>Priya I. (2 days ago):</b> \"Feeling great! Strength is increasing and recovery has been really fast this week. Ready for the next phase.\"",
+          confidence: "98%",
+          meta: {
+            hrvBase: "68 ms",
+            sleepCon: "92%",
+            sleepConWidth: "92%",
+            sleepConClass: "ok",
+            sleepDef: "-0.4 hrs",
+            rhrBase: "56 bpm"
+          },
+          weekPlan: [
+            { name: "Mon", type: "Active Lift", detail: "Strength 50 min", edited: false, remark: "" },
+            { name: "Tue", type: "Rest", detail: "Sleep focus", edited: false, remark: "" },
+            { name: "Wed", type: "Active Run", detail: "40 min Zone 2", edited: false, remark: "" },
+            { name: "Thu", type: "Rest", detail: "Recovery stretch", edited: false, remark: "" },
+            { name: "Fri", type: "Active Lift", detail: "Strength 50 min", edited: false, remark: "" },
+            { name: "Sat", type: "Base Run", detail: "30 min Zone 2", edited: false, remark: "" },
+            { name: "Sun", type: "Rest", detail: "Active recovery", edited: false, remark: "" }
+          ],
+          impact: {
+            without: {
+              desc: "Continuing with the current optimized volume is projected to maintain high performance readiness and baseline autonomic adaptations.",
+              path: "M 0 50 Q 120 45 240 40 T 360 38",
+              markerX: 200,
+              markerY: 42,
+              markerText: "Peak Ready"
+            },
+            with: {
+              desc: "Modifying the volume unnecessarily might disrupt her current positive recovery-performance adaptation cycle.",
+              path: "M 0 50 Q 100 65 190 75 T 360 80",
+              markerX: 260,
+              markerY: 70,
+              markerText: "Suboptimal"
+            }
+          }
+        }
+      };
+
+      // 2. Load active client config
+      const urlParams = new URLSearchParams(window.location.search);
+      const clientKey = urlParams.get('client') || 'sarah-k';
+      
+      const client = clientsData[clientKey] || clientsData['sarah-k']; // fallback to Sarah
+
+      // 3. Populate page items
+      document.title = `Zora Console — ${client.name} AI Optimization`;
+      document.getElementById('crumb-tail').textContent = client.name;
+      
+      // Avatar
+      const avEl = document.getElementById('client-avatar');
+      avEl.textContent = client.initials;
+      avEl.className = 's2-avatar ' + client.avatarClass;
+      
+      // Header details
+      document.getElementById('client-name').textContent = client.name;
+      document.getElementById('client-phase').textContent = client.phase;
+      
+      // Tag
+      const tagEl = document.getElementById('client-tag');
+      tagEl.textContent = client.statusText;
+      tagEl.className = 's2-tag ' + client.statusClass;
+
+      // Bento cards
+      document.getElementById('sleep-score-val').innerHTML = `${client.metrics.sleep}<span class="unit">/100</span>`;
+      document.getElementById('sleep-score-trend').textContent = client.metrics.sleepTrend;
+      document.getElementById('sleep-score-trend').className = 'why-trend ' + client.metrics.sleepTrendClass;
+      document.getElementById('sleep-score-sub').textContent = client.metrics.sleepSub;
+
+      document.getElementById('hrv-val').innerHTML = `${client.metrics.hrv}<span class="unit">ms</span>`;
+      document.getElementById('hrv-trend').textContent = client.metrics.hrvTrend;
+      document.getElementById('hrv-trend').className = 'why-trend ' + client.metrics.hrvTrendClass;
+      document.getElementById('hrv-sub').textContent = client.metrics.hrvSub;
+
+      document.getElementById('rhr-val').innerHTML = `${client.metrics.rhr}<span class="unit">bpm</span>`;
+      document.getElementById('rhr-trend').textContent = client.metrics.rhrTrend;
+      document.getElementById('rhr-trend').className = 'why-trend ' + client.metrics.rhrTrendClass;
+      document.getElementById('rhr-sub').textContent = client.metrics.rhrSub;
+
+      // Narrative
+      document.getElementById('ai-narrative').innerHTML = client.reasoning;
+
+      // Dynamic Sidebar signals
+      document.getElementById('meta-hrv-base').textContent = client.meta.hrvBase;
+      document.getElementById('meta-sleep-con').textContent = client.meta.sleepCon;
+      const sleepConFill = document.getElementById('fill-sleep-con');
+      sleepConFill.style.width = client.meta.sleepConWidth;
+      sleepConFill.className = 'metric-bar-fill ' + client.meta.sleepConClass;
+      
+      document.getElementById('meta-sleep-def').textContent = client.meta.sleepDef;
+      document.getElementById('meta-rhr').textContent = client.meta.rhrBase;
+      
+      // Feedback Chat
+      document.getElementById('client-feedback').innerHTML = client.chatSnippet;
+
+      // Confidence
+      document.getElementById('confidence-val').textContent = client.confidence;
+      document.getElementById('confidence-fill').style.width = client.confidenceFill;
+
+      // (Schedule cards generator removed; weekly schedule lives in the
+      //  "View updated schedule" popup, populated from client.weekPlan.)
+
+      // ==================== IMPACT TOGGLE LOGIC ====================
+      const toggleWithout = document.getElementById('toggle-without');
+      const toggleWith = document.getElementById('toggle-with');
+      const pathWithout = document.getElementById('path-without');
+      const pathWith = document.getElementById('path-with');
+      const markerWithout = document.getElementById('marker-without');
+      const markerWith = document.getElementById('marker-with');
+      const descContainer = document.getElementById('impact-description');
+
+      // Populate SVG paths based on active client data
+      pathWithout.setAttribute('d', client.impact.without.path);
+      pathWith.setAttribute('d', client.impact.with.path);
+
+      // Populate markers
+      const circleWithout = markerWithout.querySelector('circle');
+      circleWithout.setAttribute('cx', client.impact.without.markerX);
+      circleWithout.setAttribute('cy', client.impact.without.markerY);
+      markerWithout.querySelector('g').setAttribute('transform', `translate(${client.impact.without.markerX}, ${client.impact.without.markerY - 35})`);
+      document.getElementById('marker-without-text').textContent = client.impact.without.markerText;
+
+      const circleWith = markerWith.querySelector('circle');
+      circleWith.setAttribute('cx', client.impact.with.markerX);
+      circleWith.setAttribute('cy', client.impact.with.markerY);
+      markerWith.querySelector('g').setAttribute('transform', `translate(${client.impact.with.markerX}, ${client.impact.with.markerY - 35})`);
+      document.getElementById('marker-with-text').textContent = client.impact.with.markerText;
+
+      // Init description text
+      descContainer.innerHTML = client.impact.without.desc;
+
+      // Event handlers for Toggle Buttons
+      function handleToggle(activeToggle) {
+        // Apply Emil Kowalski's blur masking transition to description
+        descContainer.classList.add('transitioning');
+
+        if (activeToggle === 'without') {
+          toggleWithout.classList.add('active');
+          toggleWith.classList.remove('active');
+
+          // SVG paths active state swap
+          pathWithout.className.baseVal = "impact-path crash active";
+          pathWith.className.baseVal = "impact-path recovery inactive";
+
+          // Markers active state swap
+          markerWithout.className.baseVal = "chart-marker active";
+          markerWith.className.baseVal = "chart-marker inactive";
+
+          // Delay slightly, swap text and remove blur to complete premium crossfade
+          setTimeout(() => {
+            descContainer.innerHTML = client.impact.without.desc;
+            descContainer.classList.remove('transitioning');
+          }, 150);
+        } else {
+          toggleWithout.classList.remove('active');
+          toggleWith.classList.add('active');
+
+          // SVG paths active state swap
+          pathWithout.className.baseVal = "impact-path crash inactive";
+          pathWith.className.baseVal = "impact-path recovery active";
+
+          // Markers active state swap
+          markerWithout.className.baseVal = "chart-marker inactive";
+          markerWith.className.baseVal = "chart-marker active";
+
+          // Delay slightly, swap text and remove blur to complete premium crossfade
+          setTimeout(() => {
+            descContainer.innerHTML = client.impact.with.desc;
+            descContainer.classList.remove('transitioning');
+          }, 150);
+        }
+      }
+
+      toggleWithout.addEventListener('click', () => handleToggle('without'));
+      toggleWith.addEventListener('click', () => handleToggle('with'));
+
+      // Approve Action feedback
+      document.getElementById('btn-approve').addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        btn.style.background = 'var(--ok)';
+        btn.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;">
+            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10" />
+          </svg>
+          Sending Plan...
+        `;
+        btn.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+          btn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Plan Sent to ${client.name}!
+          `;
+          
+          // Toast or return feedback
+          setTimeout(() => {
+            window.location.href = `index.html?success=${encodeURIComponent(client.name)}`;
+          }, 800);
+        }, 1200);
+      });
+
+      // Edit with AI handler — opens Screen 3 (prompt + regenerate modal, in-page popup)
+      document.getElementById('btn-edit-ai').addEventListener('click', () => {
+        if (typeof window.__openPromptModal === 'function') {
+          window.__openPromptModal();
+        }
+      });
+
+      // Regenerate draft handler
+      document.getElementById('btn-regenerate').addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        btn.textContent = "Regenerating...";
+        btn.style.pointerEvents = 'none';
+        setTimeout(() => {
+          btn.textContent = "Regenerate Draft";
+          btn.style.pointerEvents = 'auto';
+        }, 1000);
+      });
+    });
+  </script>
+
+  <style>
+    /* Inline helper spinner for approve animation */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .s2-tag.ok {
+      background: var(--ok);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* =================== H1 ROW (heading + view-schedule button) =================== */
+    .rec-h1-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .rec-h1-row .rec-h1 {
+      margin: 0;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    /* =================== VIEW UPDATED SCHEDULE BUTTON =================== */
+    .see-schedule-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Geist', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -.005em;
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.09);
+      border: 1px solid rgba(122, 84, 135, 0.26);
+      border-radius: 9px;
+      padding: 9px 12px 9px 14px;
+      cursor: pointer;
+      transition: background .14s ease-out, border-color .14s ease-out, transform .14s ease-out, box-shadow .14s ease-out;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    }
+    .see-schedule-btn:hover {
+      background: rgba(122, 84, 135, 0.14);
+      border-color: rgba(122, 84, 135, 0.4);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 2px 8px rgba(122, 84, 135, 0.18);
+    }
+    .see-schedule-btn:active { transform: scale(.99); }
+    .see-schedule-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .see-schedule-btn svg {
+      color: var(--accent-deep);
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+    }
+    .see-schedule-btn .see-schedule-count {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--accent-deep);
+      border-radius: 999px;
+      padding: 2px 8px;
+      letter-spacing: .01em;
+      line-height: 1.4;
+    }
+    @media (max-width: 640px) {
+      .rec-h1-row { gap: 12px; }
+      .see-schedule-btn { width: 100%; justify-content: center; }
+      .see-schedule-btn .see-schedule-count { margin-left: auto; }
+    }
+
+    /* =================== SCHEDULE PREVIEW POPUP =================== */
+    .sched-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px;
+      background: rgba(247, 246, 243, 0.5);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s cubic-bezier(.16,1,.3,1);
+      overflow-y: auto;
+    }
+    .sched-overlay.is-open { opacity: 1; pointer-events: auto; }
+
+    .sched-modal {
+      width: min(520px, 100%);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 1px 2px rgba(26, 26, 46, 0.06),
+        0 24px 48px rgba(26, 26, 46, 0.14);
+      border-radius: 16px;
+      overflow: hidden;
+      transform: translateY(8px) scale(.98);
+      transition: transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    .sched-overlay.is-open .sched-modal { transform: translateY(0) scale(1); }
+    @media (prefers-reduced-motion: reduce) {
+      .sched-overlay, .sched-modal { transition: none; }
+    }
+
+    .sched-head {
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.06);
+      position: relative;
+    }
+    .sched-head h3 {
+      font-family: 'Geist', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -.015em;
+      color: var(--ink);
+      margin: 0 0 4px;
+    }
+    .sched-head p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      color: var(--ink-3);
+      margin: 0;
+      line-height: 1.45;
+    }
+    .sched-head p b { color: var(--accent-deep); font-weight: 600; }
+    .sched-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: transparent;
+      border: 0;
+      color: var(--ink-3);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background .14s ease-out;
+    }
+    .sched-close:hover { background: rgba(26, 26, 46, 0.06); color: var(--ink); }
+    .sched-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .sched-list { padding: 6px 6px; }
+
+    .sched-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 10px 16px;
+      border-radius: 8px;
+      transition: background .14s ease-out;
+    }
+    .sched-row + .sched-row { margin-top: 2px; }
+
+    .sched-day {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-4);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .sched-body { min-width: 0; }
+    .sched-type {
+      font-family: 'Geist', sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -.005em;
+    }
+    .sched-detail {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    /* Edited row treatment: faint purple wash, plus a before/after stack */
+    .sched-row--edited {
+      background: rgba(122, 84, 135, 0.06);
+      border: 1px solid rgba(122, 84, 135, 0.16);
+    }
+    .sched-row--edited .sched-day { color: var(--accent-deep); }
+    .sched-row--edited .sched-type { color: var(--accent-deep); }
+    .sched-before {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      color: var(--ink-4);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+    .sched-before s {
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+      text-decoration-color: rgba(26, 26, 46, 0.35);
+    }
+    .sched-before .sched-arrow {
+      color: var(--accent-deep);
+      font-weight: 600;
+      margin: 0 6px;
+    }
+    .sched-edit-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.14);
+      border-radius: 4px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      letter-spacing: .02em;
+      text-transform: lowercase;
+    }
+    .sched-rest {
+      opacity: 0.7;
+    }
+
+    .sched-empty {
+      padding: 30px 22px;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ink-3);
+      line-height: 1.5;
+    }
+
+    .sched-foot {
+      padding: 12px 22px 16px;
+      border-top: 1px solid rgba(26, 26, 46, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      color: var(--ink-4);
+    }
+    .sched-foot .sched-legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sched-foot .sched-legend::before {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      background: rgba(122, 84, 135, 0.18);
+      border: 1px solid rgba(122, 84, 135, 0.3);
+    }
+    .sched-foot .sched-done {
+      font-family: 'Geist', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(26, 26, 46, 0.1);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .sched-foot .sched-done:hover { background: rgba(26, 26, 46, 0.04); }
+
+    /* =================== PROMPT MODAL (Screen 3 / PRD 3.3) ===================
+       Glass overlay popup. Triggered from "Edit with AI". Backdrop-filter
+       blurs the whole reco-card behind. Closes on Escape, X, Cancel, and
+       click on the overlay outside the modal. */
+
+    .prompt-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px;
+      background: rgba(247, 246, 243, 0.55);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s cubic-bezier(.16,1,.3,1);
+      overflow-y: auto;
+    }
+    .prompt-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .prompt-stack {
+      display: grid;
+      gap: 20px;
+      width: min(640px, 100%);
+      transform: translateY(8px) scale(.98);
+      transition: transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    .prompt-overlay.is-open .prompt-stack { transform: translateY(0) scale(1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .prompt-overlay, .prompt-stack { transition: none; }
+    }
+
+    .pm-modal {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 1px 2px rgba(26, 26, 46, 0.06),
+        0 24px 48px rgba(26, 26, 46, 0.14);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .pm-head {
+      padding: 22px 26px 16px;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.06);
+      position: relative;
+    }
+    .pm-head h2 {
+      font-family: 'Geist', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -.018em;
+      color: var(--ink);
+      margin: 0 0 4px;
+    }
+    .pm-head h2 em {
+      font-style: normal;
+      color: var(--accent-deep);
+      font-weight: 500;
+    }
+    .pm-head p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ink-3);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .pm-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: transparent;
+      border: 0;
+      color: var(--ink-3);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background .14s ease-out;
+    }
+    .pm-close:hover { background: rgba(26, 26, 46, 0.06); color: var(--ink); }
+    .pm-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .pm-body { padding: 18px 26px 4px; }
+
+    .pm-inputs { margin: 6px 0 18px; }
+    .pm-inputs-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--ink-3);
+      text-transform: lowercase;
+      letter-spacing: .02em;
+      margin-bottom: 8px;
+    }
+    .pm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pm-chip {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.08);
+      border: 1px solid rgba(122, 84, 135, 0.18);
+      border-radius: 5px;
+      padding: 3px 8px;
+    }
+    .pm-chip--neutral {
+      color: var(--ink-2);
+      background: rgba(26, 26, 46, 0.04);
+      border-color: rgba(26, 26, 46, 0.08);
+    }
+
+    .pm-prompt-shell {
+      position: relative;
+      border: 1px solid rgba(26, 26, 46, 0.1);
+      border-radius: 10px;
+      background: rgba(247, 246, 243, 0.6);
+      transition: border-color .15s ease-out, background .15s ease-out, box-shadow .15s ease-out;
+    }
+    .pm-prompt-shell:focus-within {
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(122, 84, 135, 0.1);
+    }
+    .pm-prompt-shell::before {
+      content: '$';
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      pointer-events: none;
+    }
+    .pm-prompt {
+      display: block;
+      width: 100%;
+      min-height: 96px;
+      padding: 14px 16px 14px 30px;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      resize: vertical;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      letter-spacing: -.005em;
+    }
+    .pm-prompt::placeholder { color: var(--ink-4); }
+    .pm-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px 10px;
+      border-top: 1px solid rgba(26, 26, 46, 0.06);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      color: var(--ink-4);
+    }
+    .pm-hint kbd {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10.5px;
+      color: var(--ink-2);
+      background: #ffffff;
+      border: 1px solid rgba(26, 26, 46, 0.12);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin: 0 1px;
+    }
+
+    .pm-quick {
+      margin: 16px 0 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pm-quick-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(26, 26, 46, 0.1);
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background .14s ease-out, border-color .14s ease-out, color .14s ease-out;
+    }
+    .pm-quick-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.06);
+    }
+    .pm-quick-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .pm-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 26px 20px;
+      border-top: 1px solid rgba(26, 26, 46, 0.06);
+      margin-top: 16px;
+    }
+    .pm-foot-meta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      color: var(--ink-4);
+    }
+    .pm-foot-actions { display: flex; gap: 8px; }
+    .pm-btn-ghost {
+      font-family: 'Geist', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(26, 26, 46, 0.12);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background .14s ease-out;
+    }
+    .pm-btn-ghost:hover { background: rgba(26, 26, 46, 0.04); }
+    .pm-btn-primary {
+      font-family: 'Geist', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -.005em;
+      color: #ffffff;
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background .14s ease-out, transform .14s ease-out;
+    }
+    .pm-btn-primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+    .pm-btn-primary:active { transform: scale(.985); }
+    .pm-btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .pm-btn-primary[disabled] {
+      background: rgba(26, 26, 46, 0.08);
+      border-color: transparent;
+      color: var(--ink-4);
+      cursor: not-allowed;
+    }
+
+    /* Loading state */
+    .pm-modal[data-state="loading"] .pm-body,
+    .pm-modal[data-state="result"]  .pm-body { display: none; }
+
+    .pm-loading {
+      display: none;
+      padding: 40px 26px 36px;
+      text-align: center;
+    }
+    .pm-modal[data-state="loading"] .pm-loading { display: block; }
+
+    .pm-pulse {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 18px;
+      position: relative;
+    }
+    .pm-pulse::before,
+    .pm-pulse::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(122, 84, 135, 0.35), rgba(122, 84, 135, 0) 65%);
+      animation: pm-pulse 1.6s cubic-bezier(.16,1,.3,1) infinite;
+    }
+    .pm-pulse::after { animation-delay: .8s; }
+    @keyframes pm-pulse {
+      0%   { transform: scale(.3); opacity: 0.9; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .pm-pulse-core {
+      position: absolute;
+      inset: 38%;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 16px rgba(122, 84, 135, 0.5);
+    }
+    .pm-loading-line {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12.5px;
+      color: var(--accent-deep);
+      margin: 0;
+      min-height: 18px;
+    }
+    .pm-loading-line .pm-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: -2px;
+      animation: pm-blink 1s steps(2) infinite;
+    }
+    @keyframes pm-blink { 50% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pm-pulse::before, .pm-pulse::after { animation: none; opacity: .4; transform: scale(1); }
+      .pm-loading-line .pm-cursor { animation: none; }
+    }
+
+    /* Result state */
+    .pm-result { display: none; padding: 22px 26px 6px; }
+    .pm-modal[data-state="result"] .pm-result { display: block; }
+
+    .pm-result-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--accent-deep);
+      letter-spacing: .04em;
+      text-transform: lowercase;
+      margin-bottom: 6px;
+    }
+    .pm-result-summary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--ink);
+      margin: 0 0 16px;
+      max-width: 56ch;
+    }
+    .pm-result-summary b { font-weight: 600; }
+
+    .pm-diff {
+      margin: 12px 0 4px;
+      border-top: 1px solid rgba(26, 26, 46, 0.06);
+    }
+    .pm-diff-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 1fr;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.06);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12.5px;
+    }
+    .pm-diff-row:last-child { border-bottom: 0; }
+    .pm-diff-day {
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 10.5px;
+      align-self: center;
+    }
+    .pm-diff-before {
+      color: var(--ink-4);
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
+    .pm-diff-after {
+      color: var(--accent-deep);
+      font-weight: 500;
+    }
+    .pm-diff-after.unchanged {
+      color: var(--ink-3);
+      font-weight: 400;
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .pm-head, .pm-body, .pm-foot, .pm-result, .pm-loading { padding-left: 18px; padding-right: 18px; }
+      .pm-diff-row { grid-template-columns: 56px 1fr; }
+      .pm-diff-row .pm-diff-after { grid-column: 2; }
+    }
+  </style>
+
+  <!-- =================== SCHEDULE PREVIEW POPUP =================== -->
+  <div class="sched-overlay" id="sched-overlay" role="dialog" aria-modal="true" aria-labelledby="sched-title" aria-hidden="true">
+    <div class="sched-modal">
+      <div class="sched-head">
+        <h3 id="sched-title">Updated weekly schedule</h3>
+        <p><b id="sched-edit-count">3 days</b> rewritten by Zora. <span id="sched-client-name">Sarah K.</span> sees this draft after your approval.</p>
+        <button class="sched-close" id="sched-close" type="button" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sched-list" id="sched-list" aria-live="polite"></div>
+      <div class="sched-foot">
+        <span class="sched-legend">tinted rows = Zora's changes</span>
+        <button class="sched-done" id="sched-done" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById('sched-overlay');
+      const list    = document.getElementById('sched-list');
+      const cnt     = document.getElementById('sched-edit-count');
+      const nameEl  = document.getElementById('sched-client-name');
+      const trigger = document.getElementById('btn-see-schedule');
+      const triggerCount = document.getElementById('see-schedule-count');
+      const closeBtn = document.getElementById('sched-close');
+      const doneBtn  = document.getElementById('sched-done');
+
+      function build() {
+        if (typeof client === 'undefined') return;
+        const plan = client.weekPlan || [];
+        const edits = plan.filter(d => d.edited).length;
+
+        // Update trigger button count + popup header
+        if (triggerCount) {
+          triggerCount.textContent = edits === 1 ? '1 change' : `${edits} changes`;
+        }
+        cnt.textContent = edits === 1 ? '1 day' : `${edits} days`;
+        nameEl.textContent = client.name || 'The client';
+
+        list.innerHTML = '';
+        if (edits === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'sched-empty';
+          empty.innerHTML = `Zora left this week as it was. ${client.name || 'The client'} is on track; no adjustments needed.`;
+          list.appendChild(empty);
+          return;
+        }
+
+        plan.forEach(day => {
+          const row = document.createElement('div');
+          const isRest = (day.type || '').toLowerCase().includes('rest');
+          row.className = `sched-row ${day.edited ? 'sched-row--edited' : ''} ${isRest ? 'sched-rest' : ''}`;
+
+          const before = day.edited && day.originalType
+            ? `<div class="sched-before"><s>${day.originalType} — ${day.originalDetail || ''}</s><span class="sched-arrow">→</span>${day.type}</div>`
+            : '';
+
+          const tag = day.edited
+            ? `<span class="sched-edit-tag">${(day.remark || 'edited').replace(/^AI\s+/i, '').toLowerCase()}</span>`
+            : '';
+
+          row.innerHTML = `
+            <div class="sched-day">${day.name}</div>
+            <div class="sched-body">
+              <div class="sched-type">${day.type}</div>
+              <div class="sched-detail">${day.detail || ''}</div>
+              ${before}
+            </div>
+            ${tag}
+          `;
+          list.appendChild(row);
+        });
+      }
+
+      function open() {
+        build();
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => closeBtn.focus(), 200);
+      }
+      function close() {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      // Wire trigger after the existing client-render block has populated `client`.
+      // The schedule button is hidden by default if there are no edits — wait, we still
+      // want it visible (it'll say "0 changes" gracefully). Render the count on load.
+      build();
+
+      trigger.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      doneBtn.addEventListener('click', close);
+      overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+      });
+    })();
+  </script>
+
+  <!-- =================== PROMPT MODAL OVERLAY (Screen 3) =================== -->
+  <div class="prompt-overlay" id="prompt-overlay" role="dialog" aria-modal="true" aria-labelledby="pm-title" aria-hidden="true">
+    <div class="prompt-stack">
+      <div class="pm-modal" id="pm-modal" data-state="idle">
+        <div class="pm-head">
+          <h2 id="pm-title">Steer Zora <em id="pm-name">for Sarah K.</em></h2>
+          <p>Tell her what to change. She rewrites the week in plain English back to you.</p>
+          <button class="pm-close" id="pm-close" type="button" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="pm-body">
+          <div class="pm-inputs">
+            <div class="pm-inputs-label">current plan inputs</div>
+            <div class="pm-chips" id="pm-chips"></div>
+          </div>
+
+          <div class="pm-prompt-shell">
+            <textarea
+              class="pm-prompt"
+              id="pm-prompt"
+              rows="4"
+              placeholder="make it easier this week, but keep the friday long run she's been looking forward to."
+              spellcheck="true"></textarea>
+            <div class="pm-hint">
+              <span>Plain English. Zora reads it like a colleague does.</span>
+              <span><kbd>⌘</kbd><kbd>↵</kbd> to regenerate</span>
+            </div>
+          </div>
+
+          <div class="pm-quick" role="group" aria-label="Quick prompts">
+            <button class="pm-quick-btn" type="button" data-prompt="Make it easier this week. Keep her friday long run.">Make it easier</button>
+            <button class="pm-quick-btn" type="button" data-prompt="Push her one notch harder; HRV has recovered and she's asked for more.">Push harder</button>
+            <button class="pm-quick-btn" type="button" data-prompt="Add a nutrition focus: protein and consistent meal timing all week.">Add nutrition focus</button>
+            <button class="pm-quick-btn" type="button" data-prompt="Make it travel-friendly; she's in Singapore Tue through Thu.">Travel week</button>
+            <button class="pm-quick-btn" type="button" data-prompt="Hold this week. She needs rest more than load.">Hold the week</button>
+          </div>
+        </div>
+
+        <div class="pm-loading" aria-live="polite">
+          <div class="pm-pulse"><div class="pm-pulse-core"></div></div>
+          <p class="pm-loading-line" id="pm-loading-line">reading sarah's last 14 days<span class="pm-cursor"></span></p>
+        </div>
+
+        <div class="pm-result" aria-live="polite">
+          <div class="pm-result-eyebrow">zora rewrote the week</div>
+          <p class="pm-result-summary" id="pm-result-summary">
+            Held the volume cut at <b>30%</b>, but kept Friday's <b>14 km long run</b> as planned. Moved the second heavy session to Sunday mobility. Sleep target stays at <b>7.5 hours</b>; she'll see a check-in Tuesday morning.
+          </p>
+          <div class="pm-diff">
+            <div class="pm-diff-row"><div class="pm-diff-day">Mon</div><div class="pm-diff-before">Threshold intervals, 6 × 1 km</div><div class="pm-diff-after">Easy run, 5 km</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Tue</div><div class="pm-diff-before">Strength, full session</div><div class="pm-diff-after">Mobility, 25 min · plus check-in nudge</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Wed</div><div class="pm-diff-before">Rest</div><div class="pm-diff-after unchanged">Rest</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Thu</div><div class="pm-diff-before">Tempo, 8 km</div><div class="pm-diff-after">Easy run, 5 km</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Fri</div><div class="pm-diff-before">Rest</div><div class="pm-diff-after">Long run, 14 km · she asked to keep this</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Sat</div><div class="pm-diff-before">Long run, 14 km</div><div class="pm-diff-after">Rest</div></div>
+            <div class="pm-diff-row"><div class="pm-diff-day">Sun</div><div class="pm-diff-before">Easy run, 5 km</div><div class="pm-diff-after">Mobility, 30 min</div></div>
+          </div>
+        </div>
+
+        <div class="pm-foot">
+          <div class="pm-foot-meta" id="pm-foot-meta">She'll see the new plan at 5:30 am tomorrow.</div>
+          <div class="pm-foot-actions">
+            <button class="pm-btn-ghost" id="pm-cancel" type="button">Cancel</button>
+            <button class="pm-btn-primary" id="pm-regen" type="button" disabled>Regenerate plan</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById('prompt-overlay');
+      const modal = document.getElementById('pm-modal');
+      const promptEl = document.getElementById('pm-prompt');
+      const regenBtn = document.getElementById('pm-regen');
+      const cancelBtn = document.getElementById('pm-cancel');
+      const closeBtn = document.getElementById('pm-close');
+      const loadingLine = document.getElementById('pm-loading-line');
+      const footMeta = document.getElementById('pm-foot-meta');
+      const chips = document.getElementById('pm-chips');
+      const nameEl = document.getElementById('pm-name');
+
+      // Per-client plan inputs (mirrors clientsData but shows the AI's parameter handles).
+      const clientInputs = {
+        'sarah-k':     { inputs: ['deload week','volume −30%','sleep priority','friday rest'], signals: ['HRV 18 ms','sleep 42/100'] },
+        'marcus-t':    { inputs: ['hold week','send check-in','no plan push'],                  signals: ['idle 4 days','no replies'] },
+        'aman-khanna': { inputs: ['deload','volume −30%','low intensity','two heavy → one'],   signals: ['HRV −18%','soreness 8/10'] },
+        'meera-joshi': { inputs: ['hold training','protein 1.6 g/kg','tuesday meal nudge'],    signals: ['protein 62%','meal score 54'] },
+        'priya-i':     { inputs: ['continue base','one strides session'],                       signals: ['HRV 71 ms','sleep 7.8 h'] }
+      };
+
+      function renderChips() {
+        const key = (typeof clientKey !== 'undefined') ? clientKey : 'sarah-k';
+        const data = clientInputs[key] || clientInputs['sarah-k'];
+        chips.innerHTML = '';
+        data.inputs.forEach(t => {
+          const el = document.createElement('span');
+          el.className = 'pm-chip';
+          el.textContent = t;
+          chips.appendChild(el);
+        });
+        data.signals.forEach(t => {
+          const el = document.createElement('span');
+          el.className = 'pm-chip pm-chip--neutral';
+          el.textContent = t;
+          chips.appendChild(el);
+        });
+        const c = (typeof client !== 'undefined') ? client : { name: 'Sarah K.', first: 'Sarah' };
+        nameEl.textContent = `for ${c.name}`;
+        footMeta.textContent = `${c.first} will see the new plan at 5:30 am tomorrow.`;
+      }
+
+      function open() {
+        renderChips();
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => promptEl.focus(), 200);
+      }
+
+      function close() {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        // Reset state for next open
+        modal.dataset.state = 'idle';
+        promptEl.value = '';
+        regenBtn.disabled = true;
+        regenBtn.textContent = 'Regenerate plan';
+        cancelBtn.textContent = 'Cancel';
+      }
+
+      function setRegenEnabled() {
+        if (modal.dataset.state === 'result') return;
+        regenBtn.disabled = promptEl.value.trim().length < 4;
+      }
+      promptEl.addEventListener('input', setRegenEnabled);
+
+      document.querySelectorAll('.pm-quick-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          promptEl.value = b.dataset.prompt;
+          setRegenEnabled();
+          promptEl.focus();
+        });
+      });
+
+      // Loading copy rotates so the wait feels intentional.
+      const loadingTemplates = [
+        'reading {first}\'s last 14 days',
+        'comparing against past deloads',
+        'redrafting the week',
+        'checking it lands at the right load'
+      ];
+      let loadingTimer = null;
+      function startLoading() {
+        const first = ((typeof client !== 'undefined') ? client.first : 'Sarah').toLowerCase();
+        modal.dataset.state = 'loading';
+        footMeta.textContent = 'Zora is rewriting the week.';
+        regenBtn.disabled = true;
+        regenBtn.textContent = 'Rewriting…';
+        let i = 0;
+        const swap = () => {
+          loadingLine.innerHTML = loadingTemplates[i].replace('{first}', first) + '<span class="pm-cursor"></span>';
+          i = (i + 1) % loadingTemplates.length;
+        };
+        swap();
+        loadingTimer = setInterval(swap, 850);
+        setTimeout(showResult, 3000);
+      }
+
+      function showResult() {
+        clearInterval(loadingTimer);
+        const first = (typeof client !== 'undefined') ? client.first : 'Sarah';
+        modal.dataset.state = 'result';
+        regenBtn.disabled = false;
+        regenBtn.textContent = 'Approve & send';
+        cancelBtn.textContent = 'Try another prompt';
+        footMeta.textContent = `${first} will see the new plan at 5:30 am tomorrow.`;
+      }
+
+      regenBtn.addEventListener('click', () => {
+        const s = modal.dataset.state || 'idle';
+        if (s === 'idle') {
+          startLoading();
+        } else if (s === 'result') {
+          regenBtn.textContent = 'Sent';
+          regenBtn.disabled = true;
+          const first = (typeof client !== 'undefined') ? client.first : 'Sarah';
+          footMeta.textContent = `Plan delivered to ${first}. She'll see it at 5:30 am.`;
+          setTimeout(close, 1100);
+        }
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        if (modal.dataset.state === 'result') {
+          modal.dataset.state = 'idle';
+          regenBtn.textContent = 'Regenerate plan';
+          cancelBtn.textContent = 'Cancel';
+          const first = (typeof client !== 'undefined') ? client.first : 'Sarah';
+          footMeta.textContent = `${first} will see the new plan at 5:30 am tomorrow.`;
+          promptEl.value = '';
+          setRegenEnabled();
+          promptEl.focus();
+        } else {
+          close();
+        }
+      });
+
+      closeBtn.addEventListener('click', close);
+
+      // Click on backdrop closes (but not clicks inside the stack)
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) close();
+      });
+
+      // Escape closes; ⌘↵ regenerates
+      document.addEventListener('keydown', e => {
+        if (!overlay.classList.contains('is-open')) return;
+        if (e.key === 'Escape') { close(); }
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !regenBtn.disabled) {
+          e.preventDefault();
+          regenBtn.click();
+        }
+      });
+
+      // Expose opener globally so the existing Edit with AI handler can call it.
+      window.__openPromptModal = open;
+    })();
+  </script>
+</body>
+
+</html>
