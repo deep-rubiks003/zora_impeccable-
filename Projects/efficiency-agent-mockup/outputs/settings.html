@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zora — Settings</title>
+<script>(function(){try{var s=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',s||'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="tokens.css"/>
+<link rel="stylesheet" href="shell.css"/>
+<style>
+  .slayout { display:grid; grid-template-columns:236px 1fr; gap:28px; max-width:1080px; }
+  .sindex { position:sticky; top:88px; align-self:start; }
+  .sgrp { margin-bottom:18px; }
+  .sgrp-l { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-5); font-weight:700; padding:0 10px 7px; }
+  .sidx { display:flex; align-items:center; gap:10px; padding:8px 11px; border-radius:var(--r-sm); font-size:var(--t-sm); font-weight:500; color:var(--ink-2); cursor:pointer; margin-bottom:1px; }
+  .sidx svg { width:16px; height:16px; color:var(--ink-4); flex:none; }
+  .sidx:hover { background:var(--surface); }
+  .sidx.active { background:var(--brand-tint); color:var(--brand-ink); font-weight:600; }
+  .sidx.active svg { color:var(--brand); }
+
+  .panel { display:none; }
+  .panel.active { display:block; animation:rise .35s var(--ease-out) both; }
+  .ph { margin-bottom:8px; }
+  .ph h1 { font-size:var(--t-h1); font-weight:800; letter-spacing:-.01em; }
+  .ph p { color:var(--ink-3); margin-top:5px; font-size:var(--t-sm); }
+  .ph-hr { margin:18px 0 22px; }
+
+  .scard { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--sh-1); margin-bottom:18px; overflow:hidden; }
+  .scard-h { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+  .scard-h .t { font-weight:700; font-size:var(--t-h3); }
+  .scard-h .d { font-size:var(--t-xs); color:var(--ink-4); margin-top:2px; }
+  .scard-b { padding:6px 20px; }
+
+  .row { display:flex; align-items:center; gap:16px; padding:15px 0; border-bottom:1px solid var(--hairline); }
+  .row:last-child { border-bottom:0; }
+  .row .ri { flex:1; min-width:0; }
+  .row .rt { font-weight:600; font-size:var(--t-sm); }
+  .row .rd { font-size:var(--t-xs); color:var(--ink-4); margin-top:3px; line-height:1.45; }
+
+  /* toggle */
+  .tog { width:42px; height:24px; border-radius:99px; background:var(--border-2); position:relative; cursor:pointer; flex:none; transition:background .2s; }
+  .tog::after { content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:var(--sh-1); transition:left .2s; }
+  .tog.on { background:var(--brand); }
+  .tog.on::after { left:21px; }
+
+  /* segmented */
+  .seg3 { display:flex; gap:4px; background:var(--surface-2); border:1px solid var(--border); padding:3px; border-radius:var(--r-sm); }
+  .seg3 button { border:0; background:transparent; padding:6px 13px; border-radius:6px; font-size:var(--t-xs); font-weight:600; color:var(--ink-4); }
+  .seg3 button.active { background:var(--surface); color:var(--brand-ink); box-shadow:var(--sh-1); }
+
+  /* profile head */
+  .profhead { display:flex; align-items:center; gap:16px; padding:6px 0 18px; }
+  .profhead .ed { margin-left:auto; }
+  .ff { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+  .ff .fcol { display:flex; flex-direction:column; gap:6px; }
+  .ff .fcol.full { grid-column:1/-1; }
+  .ff label { font-size:var(--t-xs); font-weight:700; color:var(--ink-2); }
+
+  /* agent card */
+  .agent { display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--hairline); }
+  .agent:last-child { border-bottom:0; }
+  .agent .aic { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; }
+  .agent .aic svg { width:21px; height:21px; }
+  .agent .abody { flex:1; }
+  .agent .an { font-weight:700; display:flex; align-items:center; gap:9px; }
+  .agent .ad { font-size:var(--t-xs); color:var(--ink-4); margin-top:3px; line-height:1.5; }
+  .auto { margin-top:13px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md); padding:13px; }
+  .auto .al { font-size:var(--t-xs); font-weight:700; display:flex; justify-content:space-between; margin-bottom:10px; }
+  .auto .al b { color:var(--brand-ink); font-family:var(--font-num); }
+  .slider { height:6px; border-radius:99px; background:var(--bg-2); position:relative; }
+  .slider .fill { position:absolute; left:0; top:0; bottom:0; border-radius:99px; background:var(--brand); }
+  .slider .knob { position:absolute; top:50%; width:16px; height:16px; border-radius:50%; background:#fff; border:2px solid var(--brand); transform:translate(-50%,-50%); box-shadow:var(--sh-1); }
+  .auto .ticks { display:flex; justify-content:space-between; font-size:10px; color:var(--ink-5); margin-top:8px; }
+
+  /* integrations */
+  .intg { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .icard { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:15px; box-shadow:var(--sh-1); display:flex; gap:12px; align-items:flex-start; }
+  .icard .ilogo { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex:none; font-size:15px; }
+  .icard .it { font-weight:700; font-size:var(--t-sm); }
+  .icard .id { font-size:var(--t-xs); color:var(--ink-4); margin-top:3px; line-height:1.4; }
+  .icard .ist { margin-top:10px; }
+
+  /* role table */
+  .rtable { width:100%; border-collapse:collapse; }
+  .rtable th { text-align:left; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-4); font-weight:700; padding:0 0 11px; border-bottom:1px solid var(--border); }
+  .rtable td { padding:13px 0; border-bottom:1px solid var(--hairline); font-size:var(--t-sm); }
+  .rtable td:last-child,.rtable th:last-child { text-align:right; }
+  .uc { display:flex; align-items:center; gap:10px; }
+  .uc .un { font-weight:600; } .uc .ue { font-size:var(--t-xs); color:var(--ink-4); }
+
+  /* billing */
+  .plan { background:linear-gradient(135deg,var(--brand-tint),transparent); border:1px solid var(--brand-tint-2); border-radius:var(--r-md); padding:18px; display:flex; align-items:center; gap:16px; }
+  .plan .pname { font-size:var(--t-h3); font-weight:800; color:var(--brand-ink); }
+  .plan .pp { font-size:var(--t-xs); color:var(--brand-ink); opacity:.85; margin-top:3px; }
+  .plan .pamt { margin-left:auto; text-align:right; }
+  .plan .pamt .v { font-family:var(--font-num); font-size:26px; font-weight:700; }
+  .plan .pamt .u { font-size:var(--t-xs); color:var(--ink-4); }
+  .usage { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px; }
+  .ub { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md); padding:14px; }
+  .ub .uv { font-family:var(--font-num); font-size:20px; font-weight:700; }
+  .ub .ul { font-size:var(--t-xs); color:var(--ink-4); }
+
+  @media (max-width:920px){ .slayout{grid-template-columns:1fr} .sindex{position:static} .ff,.intg{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<script>window.ZORA={active:'settings',sub:'profile',copilot:true,context:'Settings',
+  copilotIntro:"I can change settings for you. Try 'turn off auto-approve for the Quality Agent' or 'add a team coach'.",
+  copilotChips:['Explain agent autonomy','Connect WhatsApp','Set quiet hours'],
+  copilotScript:{'autonomy':'Autonomy sets how much an agent does without you. At <b>High</b> it auto-approves anything above your confidence bar overnight; at <b>Low</b> everything waits as a draft. The Efficiency Agent is currently High (85% bar); Quality is Medium.','whatsapp':'WhatsApp Business connects in Integrations → Messaging. Once linked, the Copilot can send approved client messages there directly. Want me to start the connection?','quiet':'Set in Notifications. Quiet hours pause all non-urgent agent pings; urgent churn/health alerts still come through. Default is 9pm–7am.'}};</script>
+
+<main class="zmain">
+  <div class="ztopbar">
+    <div class="zcrumbs"><strong>Settings</strong><span class="sep">/</span><span id="crumb">Profile &amp; Account</span></div>
+    <div class="zsearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Search settings…<kbd>/</kbd></div>
+    <button class="btn btn-primary btn-sm" style="margin-left:0">Save changes</button>
+  </div>
+
+  <div class="zmain-scroll" data-screen-label="Settings">
+    <div class="slayout">
+      <!-- INDEX -->
+      <aside class="sindex">
+        <div class="sgrp">
+          <div class="sgrp-l">Account</div>
+          <div class="sidx active" data-p="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>Profile &amp; Account</div>
+          <div class="sidx" data-p="team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M16 7a4 4 0 1 0-8 0M2 21v-1a5 5 0 0 1 10 0v1M17 14a5 5 0 0 1 5 5v1"/></svg>Team &amp; Roles</div>
+          <div class="sidx" data-p="security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Security</div>
+        </div>
+        <div class="sgrp">
+          <div class="sgrp-l">Business</div>
+          <div class="sidx" data-p="business"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg>Business &amp; Services</div>
+          <div class="sidx" data-p="billing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Billing &amp; Plan</div>
+        </div>
+        <div class="sgrp">
+          <div class="sgrp-l">Intelligence</div>
+          <div class="sidx" data-p="agents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z"/></svg>AI Agents</div>
+          <div class="sidx" data-p="notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Notifications</div>
+        </div>
+        <div class="sgrp">
+          <div class="sgrp-l">Platform</div>
+          <div class="sidx" data-p="integrations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Integrations</div>
+        </div>
+      </aside>
+
+      <!-- PANELS -->
+      <div class="spanels">
+
+        <!-- PROFILE -->
+        <section class="panel active" data-panel="profile">
+          <div class="ph"><h1>Profile &amp; Account</h1><p>How you appear to clients and across Zora.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard">
+            <div class="scard-b">
+              <div class="profhead">
+                <div class="avatar av-plum lg" style="width:64px;height:64px;font-size:20px">RS</div>
+                <div><div style="font-weight:800;font-size:18px">Riya Sharma</div><div style="font-size:var(--t-xs);color:var(--ink-4)">Head Coach · Sharma Performance · 142 active members</div></div>
+                <button class="btn btn-ghost btn-sm ed">Change photo</button>
+              </div>
+              <div class="ff">
+                <div class="fcol"><label>Full name</label><input class="field" value="Riya Sharma"/></div>
+                <div class="fcol"><label>Display title</label><input class="field" value="Head Coach"/></div>
+                <div class="fcol"><label>Work email</label><input class="field" value="riya@sharmaperformance.co"/></div>
+                <div class="fcol"><label>Phone</label><input class="field" value="+91 98••• ••210"/></div>
+                <div class="fcol full"><label>Coach bio · shown to prospects</label><input class="field" value="Endurance & strength coach. 9 years, 600+ athletes coached to their first finish line."/></div>
+              </div>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Preferences</div><div class="d">Locale and appearance</div></div></div>
+            <div class="scard-b">
+              <div class="row"><div class="ri"><div class="rt">Timezone</div><div class="rd">Used for session scheduling and overnight agent runs</div></div><div class="seg3"><button class="active">IST</button><button>GMT</button><button>EST</button></div></div>
+              <div class="row"><div class="ri"><div class="rt">Appearance</div><div class="rd">Match your console theme</div></div><div class="seg3"><button class="active">Light</button><button>Dark</button><button>Auto</button></div></div>
+              <div class="row"><div class="ri"><div class="rt">Week starts on</div><div class="rd">Affects program and revenue views</div></div><div class="seg3"><button class="active">Mon</button><button>Sun</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TEAM -->
+        <section class="panel" data-panel="team">
+          <div class="ph"><h1>Team &amp; Roles</h1><p>Invite coaches and assistants, control who sees what.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Members</div><div class="d">3 of 5 seats used on Studio plan</div></div><button class="btn btn-primary btn-sm" style="margin-left:auto">Invite member</button></div>
+            <div class="scard-b">
+              <table class="rtable">
+                <thead><tr><th>Member</th><th>Role</th><th>Clients</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td><div class="uc"><div class="avatar av-plum sm">RS</div><div><div class="un">Riya Sharma</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="07756e7e6647746f66756a667762756168756a66696462296468">[email&#160;protected]</a></div></div></div></td><td><span class="pill badge-brand">Owner</span></td><td class="num">142</td><td style="text-align:right"><span class="pill badge-ok"><span class="dot"></span>Active</span></td></tr>
+                  <tr><td><div class="uc"><div class="avatar av-teal sm">DV</div><div><div class="un">Dev Verma</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="83e7e6f5c3f0ebe2f1eee2f3e6f1e5ecf1eee2ede0e6ade0ec">[email&#160;protected]</a></div></div></div></td><td><span class="pill">Coach</span></td><td class="num">38</td><td style="text-align:right"><span class="pill badge-ok"><span class="dot"></span>Active</span></td></tr>
+                  <tr><td><div class="uc"><div class="avatar av-bronze sm">NA</div><div><div class="un">Nisha A.</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f6989f859e97b6859e97849b978693849099849b97989593d89599">[email&#160;protected]</a></div></div></div></td><td><span class="pill">Assistant</span></td><td class="num">—</td><td style="text-align:right"><span class="pill badge-warn"><span class="dot"></span>Invited</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Role permissions</div><div class="d">What each role can do</div></div></div>
+            <div class="scard-b">
+              <div class="row"><div class="ri"><div class="rt">Coaches can approve AI drafts</div><div class="rd">Review &amp; send agent-generated plans for their own clients</div></div><div class="tog on"></div></div>
+              <div class="row"><div class="ri"><div class="rt">Coaches can see revenue</div><div class="rd">Access Growth OS and billing figures</div></div><div class="tog"></div></div>
+              <div class="row"><div class="ri"><div class="rt">Assistants can message clients</div><div class="rd">Send approved messages on your behalf</div></div><div class="tog on"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECURITY -->
+        <section class="panel" data-panel="security">
+          <div class="ph"><h1>Security</h1><p>Protect your account and your clients' data.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard"><div class="scard-b">
+            <div class="row"><div class="ri"><div class="rt">Password</div><div class="rd">Last changed 3 months ago</div></div><button class="btn btn-ghost btn-sm">Change</button></div>
+            <div class="row"><div class="ri"><div class="rt">Two-factor authentication</div><div class="rd">Authenticator app · required for revenue access</div></div><span class="pill badge-ok"><span class="dot"></span>On</span></div>
+            <div class="row"><div class="ri"><div class="rt">Active sessions</div><div class="rd">2 devices · MacBook (this), iPhone 15</div></div><button class="btn btn-ghost btn-sm">Manage</button></div>
+            <div class="row"><div class="ri"><div class="rt">Client data export</div><div class="rd">Download all client records (GDPR)</div></div><button class="btn btn-ghost btn-sm">Request export</button></div>
+          </div></div>
+        </section>
+
+        <!-- BUSINESS -->
+        <section class="panel" data-panel="business">
+          <div class="ph"><h1>Business &amp; Services</h1><p>Your coaching packages, pricing, and how clients pay.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Coaching packages</div><div class="d">Growth OS uses these for renewal &amp; upsell forecasting</div></div><button class="btn btn-primary btn-sm" style="margin-left:auto">Add package</button></div>
+            <div class="scard-b">
+              <div class="row"><div class="ri"><div class="rt">1:1 Online Coaching <span class="pill badge-ok" style="font-size:9px">Most popular</span></div><div class="rd">Monthly · programming + weekly check-ins · 86 active</div></div><div style="font-family:var(--font-num);font-weight:700">$360<span style="font-size:11px;color:var(--ink-4)">/mo</span></div></div>
+              <div class="row"><div class="ri"><div class="rt">Hybrid Coaching</div><div class="rd">Programming + nutrition · 41 active</div></div><div style="font-family:var(--font-num);font-weight:700">$240<span style="font-size:11px;color:var(--ink-4)">/mo</span></div></div>
+              <div class="row"><div class="ri"><div class="rt">Self-Guided + App</div><div class="rd">App-only program · 15 active</div></div><div style="font-family:var(--font-num);font-weight:700">$90<span style="font-size:11px;color:var(--ink-4)">/mo</span></div></div>
+              <div class="row"><div class="ri"><div class="rt">Race-Prep 1:1 Add-on</div><div class="rd">Upsell offered by Growth OS · 8 active</div></div><div style="font-family:var(--font-num);font-weight:700">+$180<span style="font-size:11px;color:var(--ink-4)">/mo</span></div></div>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Payments &amp; renewals</div><div class="d">Defaults Growth OS applies to new offers</div></div></div>
+            <div class="scard-b">
+              <div class="row"><div class="ri"><div class="rt">Auto-renew memberships</div><div class="rd">Charge on cycle end unless cancelled</div></div><div class="tog on"></div></div>
+              <div class="row"><div class="ri"><div class="rt">Loyalty rate for 3-month resigns</div><div class="rd">Discount the agent may offer to retain at-risk clients</div></div><div class="seg3"><button>0%</button><button class="active">10%</button><button>15%</button></div></div>
+              <div class="row"><div class="ri"><div class="rt">Renewal reminder window</div><div class="rd">How far ahead the agent drafts renewals</div></div><div class="seg3"><button>7d</button><button class="active">14d</button><button>30d</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BILLING -->
+        <section class="panel" data-panel="billing">
+          <div class="ph"><h1>Billing &amp; Plan</h1><p>Your Zora subscription and usage.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard"><div class="scard-b" style="padding:20px">
+            <div class="plan">
+              <div><div class="pname">Studio</div><div class="pp">Up to 5 coaches · 200 clients · all agents</div></div>
+              <div class="pamt"><div class="v">$149<span class="u">/mo</span></div><div class="u">Renews 1 Jul 2026</div></div>
+            </div>
+            <div class="usage">
+              <div class="ub"><div class="uv">142<span style="font-size:13px;color:var(--ink-4)">/200</span></div><div class="ul">Clients</div></div>
+              <div class="ub"><div class="uv">3<span style="font-size:13px;color:var(--ink-4)">/5</span></div><div class="ul">Coach seats</div></div>
+              <div class="ub"><div class="uv">8.2k</div><div class="ul">AI actions this month</div></div>
+            </div>
+            <div class="row" style="margin-top:6px"><div class="ri"><div class="rt">Payment method</div><div class="rd">Visa ending 4242 · expires 09/27</div></div><button class="btn btn-ghost btn-sm">Update</button></div>
+            <div class="row"><div class="ri"><div class="rt">Invoices</div><div class="rd">Download past statements</div></div><button class="btn btn-ghost btn-sm">View all</button></div>
+          </div></div>
+        </section>
+
+        <!-- AGENTS -->
+        <section class="panel" data-panel="agents">
+          <div class="ph"><h1>AI Agents</h1><p>Tune how much each agent does on its own. You always keep the final say.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard"><div class="scard-b">
+            <div class="agent">
+              <div class="aic" style="background:var(--ok-bg);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+              <div class="abody">
+                <div class="an">Efficiency Agent <span class="pill badge-ok" style="font-size:9px"><span class="dot"></span>Active</span></div>
+                <div class="ad">Optimises training plans overnight from wearable &amp; adherence data.</div>
+                <div class="auto"><div class="al"><span>Autonomy · auto-approve above confidence</span><b>High · 85%</b></div><div class="slider"><div class="fill" style="width:78%"></div><div class="knob" style="left:78%"></div></div><div class="ticks"><span>Draft only</span><span>Balanced</span><span>Full auto</span></div></div>
+              </div>
+            </div>
+            <div class="agent">
+              <div class="aic" style="background:var(--info-bg);color:var(--info)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="abody">
+                <div class="an">Quality Agent <span class="pill badge-ok" style="font-size:9px"><span class="dot"></span>Active</span></div>
+                <div class="ad">Reviews form check-ins and flags technique or programming concerns.</div>
+                <div class="auto"><div class="al"><span>Autonomy · auto-approve above confidence</span><b>Medium · 70%</b></div><div class="slider"><div class="fill" style="width:50%"></div><div class="knob" style="left:50%"></div></div><div class="ticks"><span>Draft only</span><span>Balanced</span><span>Full auto</span></div></div>
+              </div>
+            </div>
+            <div class="agent">
+              <div class="aic" style="background:var(--brand-tint);color:var(--brand)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 3.5 3.5L21 6"/><path d="M15 6h6v6"/></svg></div>
+              <div class="abody">
+                <div class="an">Growth Agent <span class="pill badge-ok" style="font-size:9px"><span class="dot"></span>Active</span></div>
+                <div class="ad">Owns the revenue lifecycle — drafts renewals, upsells, referrals, win-backs.</div>
+                <div class="auto"><div class="al"><span>Autonomy · money actions always need approval</span><b>Low · draft only</b></div><div class="slider"><div class="fill" style="width:22%"></div><div class="knob" style="left:22%"></div></div><div class="ticks"><span>Draft only</span><span>Balanced</span><span>Full auto</span></div></div>
+              </div>
+            </div>
+          </div></div>
+          <div class="scard"><div class="scard-b">
+            <div class="row"><div class="ri"><div class="rt">Overnight agent runs</div><div class="rd">Agents prepare your morning between 2–5am</div></div><div class="tog on"></div></div>
+            <div class="row"><div class="ri"><div class="rt">Copilot can see live client data</div><div class="rd">Lets the Copilot cite real metrics in answers</div></div><div class="tog on"></div></div>
+            <div class="row"><div class="ri"><div class="rt">Agent voice matches my tone</div><div class="rd">Drafts client messages in your writing style</div></div><div class="tog on"></div></div>
+          </div></div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="panel" data-panel="notifications">
+          <div class="ph"><h1>Notifications</h1><p>Decide what reaches you, and when.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard"><div class="scard-b">
+            <div class="row"><div class="ri"><div class="rt">Client at-risk alerts</div><div class="rd">Churn or health risk detected</div></div><div class="seg3"><button class="active">Push</button><button>Email</button><button>Off</button></div></div>
+            <div class="row"><div class="ri"><div class="rt">Revenue &amp; renewal events</div><div class="rd">Renewals due, payments, upsell wins</div></div><div class="seg3"><button class="active">Push</button><button>Email</button><button>Off</button></div></div>
+            <div class="row"><div class="ri"><div class="rt">Morning brief</div><div class="rd">Daily summary of what agents prepared</div></div><div class="seg3"><button>Push</button><button class="active">Email</button><button>Off</button></div></div>
+            <div class="row"><div class="ri"><div class="rt">Quiet hours</div><div class="rd">Pause non-urgent pings · 9:00pm – 7:00am</div></div><div class="tog on"></div></div>
+          </div></div>
+        </section>
+
+        <!-- INTEGRATIONS -->
+        <section class="panel" data-panel="integrations">
+          <div class="ph"><h1>Integrations</h1><p>Connect the tools your coaching business already runs on.</p></div>
+          <hr class="hr ph-hr"/>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Connected</div><div class="d">Feeding data to your agents</div></div></div>
+            <div class="scard-b" style="padding:16px 20px">
+              <div class="intg">
+                <div class="icard"><div class="ilogo" style="background:#34C759">W</div><div><div class="it">WHOOP</div><div class="id">HRV, sleep, recovery streams</div><div class="ist"><span class="pill badge-ok"><span class="dot"></span>Connected</span></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:#000">⌚</div><div><div class="it">Apple Health</div><div class="id">Workouts &amp; vitals · 78 clients</div><div class="ist"><span class="pill badge-ok"><span class="dot"></span>Connected</span></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:#635BFF">S</div><div><div class="it">Stripe</div><div class="id">Payments, renewals, MRR for Growth OS</div><div class="ist"><span class="pill badge-ok"><span class="dot"></span>Connected</span></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:#25D366">✆</div><div><div class="it">WhatsApp Business</div><div class="id">Approved client messaging</div><div class="ist"><span class="pill badge-ok"><span class="dot"></span>Connected</span></div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="scard-h"><div><div class="t">Available</div><div class="d">One click to add</div></div></div>
+            <div class="scard-b" style="padding:16px 20px">
+              <div class="intg">
+                <div class="icard"><div class="ilogo" style="background:#4285F4">G</div><div><div class="it">Google Calendar</div><div class="id">Two-way session sync</div><div class="ist"><button class="btn btn-ghost btn-sm">Connect</button></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:#FF4612">G</div><div><div class="it">Garmin</div><div class="id">Training &amp; recovery data</div><div class="ist"><button class="btn btn-ghost btn-sm">Connect</button></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:#E1306C">IG</div><div><div class="it">Instagram Leads</div><div class="id">Pipe DMs into Growth OS pipeline</div><div class="ist"><button class="btn btn-ghost btn-sm">Connect</button></div></div></div>
+                <div class="icard"><div class="ilogo" style="background:var(--ink-2)">{ }</div><div><div class="it">Webhooks / API</div><div class="id">Build custom automations</div><div class="ist"><button class="btn btn-ghost btn-sm">Set up</button></div></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="zora-shell.js"></script>
+<script>
+  const idx=document.querySelectorAll('.sidx'),panels=document.querySelectorAll('.panel'),crumb=document.getElementById('crumb');
+  function go(p,label){idx.forEach(i=>i.classList.toggle('active',i.dataset.p===p));panels.forEach(pl=>pl.classList.toggle('active',pl.dataset.panel===p));if(label)crumb.textContent=label;document.querySelector('.zmain-scroll').scrollTop=0;}
+  idx.forEach(i=>i.addEventListener('click',()=>{go(i.dataset.p,i.textContent.trim());history.replaceState(null,'','#'+i.dataset.p);}));
+  // toggles
+  document.querySelectorAll('.tog').forEach(t=>t.addEventListener('click',()=>t.classList.toggle('on')));
+  // segmented
+  document.querySelectorAll('.seg3').forEach(s=>s.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{s.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');})));
+  // deep link
+  const h=location.hash.replace('#','');if(h){const el=[...idx].find(i=>i.dataset.p===h);if(el)go(h,el.textContent.trim());}
+</script>
+</body>
+</html>
