@@ -77,34 +77,34 @@ components:
 
 **Creative North Star: "Clean SaaS workspace with premium purple highlights"**
 
-Zora Console Light utilizes a clean, high-contrast interface designed to convey professional utility and visual clarity. The app shell is anchored on a light background (`#f5f5f7`), framing pure white card surfaces (`#ffffff`) that hold user workflows. Accents of rich purple (`#7a5487`) define primary controls, interactive highlights, and status signifiers. Typography is modern, geometric, and structured, prioritizing readability and systematic sizing. The visual language feels lightweight, approachable, yet highly technical.
+Zora Console utilizes a clean, high-contrast interface designed to convey professional utility and visual clarity. The app shell features support for both Light Mode (anchored on a light background `#f5f5f7` framing pure white cards `#ffffff`) and Dark Mode (anchored on `#0e0e14` with deep purple radial glow layers and dark-translucent glass cards `#1c1c27`). Accents of rich purple (`#7a5487` in Light Mode, `#b48bc1` in Dark Mode) define primary controls, interactive highlights, and status signifiers. Typography is modern, geometric, and structured, prioritizing readability and systematic sizing.
 
 ### Key Characteristics:
-- Clean light-mode palette using Soft White cards over a light gray shell.
+- Dual light and dark mode color systems matching system preferences or user selection.
+- Premium glassmorphic app shell surfaces with frosted glass borders and hardware-accelerated transitions.
 - Modern typography featuring crisp geometric headings (Geist/DM Sans).
 - Semantic color coding for warnings, positive completion, and alerts.
 - Tactile card layouts with subtle spacing and soft borders.
 
 ## Colors
 
-The system uses a highly structured light-mode scheme pairing soft card backgrounds with rich purple highlights.
+The system uses a highly structured dual-theme scheme pairing soft card backgrounds with rich purple highlights, maintaining accessibility across both light and dark backgrounds.
 
-### Primary
-- **Primary Purple** (`#7a5487`): Used for CTAs, headings, AI highlights, active states, and focus states.
+### Light Mode Palette
+*   **Primary Purple** (`#7a5487`): Used for primary CTAs, headings, AI highlights, and focus indicators.
+*   **Purple Accent** (`#e8dced`): Used for subtle tints, recommendation card background washes, and secondary controls.
+*   **Soft White** (`#ffffff`): Main card backgrounds and modals.
+*   **Background** (`#f5f5f7`): Light app shell backdrop.
+*   **Dark Text** (`#1a1a2e`): Main headings and body text.
+*   **Success Green** (`#2d9e6b`), **Amber** (`#e67e22`), **Alert Red** (`#c0392b`): Standard semantic alerts.
 
-### Accent
-- **Purple Accent** (`#e8dced`): Used for subtle highlights, background tints of recommendation cards, and secondary controls.
-
-### Neutral
-- **Soft White** (`#ffffff`): Card backgrounds, modal containers, and clean active surfaces.
-- **Background** (`#f5f5f7`): App shell background, sidebars, inactive areas, and light body fills.
-- **Dark Text** (`#1a1a2e`): Dominant body copy, table headers, and page titles.
-- **Slate Text** (`#888888`): Secondary metadata, labels, and helper text.
-
-### Semantic
-- **Success Green** (`#2d9e6b`): Positive metrics and completion states.
-- **Amber** (`#e67e22`): Warning states and moderate risk indicators.
-- **Alert Red** (`#c0392b`): High churn risk and critical alerts.
+### Dark Mode Palette
+*   **Primary Purple Accent** (`#b48bc1`): High-contrast purple shifted lighter to maintain contrast on dark backgrounds.
+*   **Purple Accent Wash** (`rgba(180, 139, 193, 0.14)`): Translucent purple accent backgrounds.
+*   **Dark Card Surface** (`#1c1c27`): Rich dark card and modal background panels.
+*   **Dark Background** (`#14141c` / `#0e0e14`): Dark app shell backdrop and gradients.
+*   **Light Ink** (`#f4f4f7` / `#e6e6ec`): Main headings and body text.
+*   **Success Green** (`#4dc28a`), **Amber** (`#f0a04b`), **Alert Red** (`#e06155`): Lifted semantic status alerts for readability.
 
 ### Named Rules
 **The White-on-Purple Rule.** Any text overlaying a Primary Purple background must be pure white (`#ffffff`) or near-white to maintain an accessible contrast ratio of at least 4.5:1.
@@ -150,6 +150,7 @@ All interface components must feel highly responsive, tactile, and fluid. The fo
   - Small elements (buttons, segmented toggles, navigation tabs): `transform: scale(0.97)`
   - Large elements (bento cards, client roster cards, list rows): `transform: scale(0.985)`
 - **Entrance Transitions (Cascade & Stagger)**: Layout elements must animate in sequentially using CSS animation delays (staggers) from `stagger-1` to `stagger-7` (increments of `30ms-50ms` steps). Elements slide upward by entering from `scale(0.96)` and `opacity: 0` using a smooth ease-out curve (`cubic-bezier(0.23, 1, 0.32, 1)`).
+- **Sliding Pill Tab Transitions**: The background indicator (`.signals-toggle-indicator`) translates horizontally and resizes dynamically in width via JavaScript using `offsetWidth` and `offsetLeft` adjustments, bound to window resize handlers, transitioning smoothly with `cubic-bezier(0.23, 1, 0.32, 1)`.
 - **Crossfade State Blur**: When toggling visual datasets (e.g., swapping SVG graph curves) or sorting grids, apply a temporary CSS blur class (`.transitioning` with `filter: blur(1.5px); opacity: 0.6`) for `150ms-180ms` to mask direct visual shifts and create a premium transition effect.
 - **Dynamic Count-Ups (Delight)**: Key statistics (such as hours saved) and circular progress rings animate dynamically from `0` to their active values over `1000ms-1200ms` on initial page load, drawing focus to system efficiency.
 - **Transient Success Toasts (Delight)**: Standard plan approvals trigger a slide-up toast notification (`.toast`) in the bottom-right corner. It stays visible for `4s` and automatically purges success parameter hooks from the URL context using clean History API replacement (no page reload).
@@ -170,10 +171,14 @@ All interface components must feel highly responsive, tactile, and fluid. The fo
 - **Secondary Block**: Background Purple Accent (`#e8dced`), text Primary Purple (`#7a5487`), `8px` corner radius.
 
 ### Cards & Layout Containers
-- **Dashboard Card**: Background Soft White (`#ffffff`), border `1px solid rgba(26, 26, 46, 0.06)`, `14px` corner radius.
-- **Recommendation Card**: Background Purple Accent (`#e8dced`), border `1px solid rgba(122, 84, 135, 0.15)`, `14px` corner radius.
-- **Bento Focus Cards**: Highlighted metrics (such as Sleep Score and HRV) use `.bento-focus` structure, featuring a subtle accent container tint (`var(--paper-3)`) and larger typography for increased readability.
-- **Roster Pulse List Table**: A structured data table container. Background Soft White (`#ffffff`), border `1px solid var(--line)`, `14px` corner radius. Columns (Athlete, Status, HRV, Sleep, Adherence, 7-Day Trend) align using CSS grid. Progressive responsive column hiding collapses the grid and hides non-essential data columns on smaller screens (Trend/Sleep hide on tablets, Adherence on mobile) to maintain readability.
+- Dashboard Card: Background Soft White (`#ffffff`), border `1px solid rgba(26, 26, 46, 0.06)`, `14px` corner radius. In dark mode, switches to background `#1c1c27` and border `1px solid rgba(255, 255, 255, 0.08)`.
+- Recommendation Card: Background Purple Accent (`#e8dced`), border `1px solid rgba(122, 84, 135, 0.15)`, `14px` corner radius.
+- Bento Focus Cards: Highlighted metrics (such as Sleep Score and HRV) use `.bento-focus` structure, featuring a subtle accent container tint (`var(--paper-3)`) and larger typography for increased readability.
+- Roster Pulse List Table: A structured data table container. Background Soft White (`#ffffff`), border `1px solid var(--line)`, `14px` corner radius. Columns (Athlete, Status, HRV, Sleep, Adherence, 7-Day Trend) align using CSS grid. Progressive responsive column hiding collapses the grid and hides non-essential data columns on smaller screens (Trend/Sleep hide on tablets, Adherence on mobile) to maintain readability.
+- Distilled Hero Layout: Combines greeting, interactive badge, and live sync metadata in a single, balanced horizontal flex row, reducing vertical scroll. Stacks into clean vertical block on mobile.
+- Ribbon Stats Banner: Flex/grid button-tiles (`.ribbon__tile`) containing active sparklines, circular progress arcs, active pulsing dots (`.ribbon__pulse`), and chevrons. Includes vertical and horizontal gradient hairline dividers.
+- Theme Toggle: Segmented switcher `.theme-toggle` with a `.theme-toggle__thumb` hosting sun/moon SVGs that transition in rotation/scale when clicked or when matching system settings.
+- Weekly Schedule Popup Grid: Uses a 7-card grid `.sched-day-card` layout with tinted highlights for Zora-edited days alongside `.sched-change` list elements.
 
 ### Inputs
 - **Search & Text Fields**: Background Soft White (`#ffffff`), border `1px solid rgba(26, 26, 46, 0.1)`, `8px` corner radius.
@@ -181,14 +186,15 @@ All interface components must feel highly responsive, tactile, and fluid. The fo
 ## Do's and Don'ts
 
 ### Do:
-- **Do** use Soft White (`#ffffff`) for content card backgrounds and Background (`#f5f5f7`) for the outer layout shell.
-- **Do** apply Primary Purple (`#7a5487`) to all primary CTAs, active highlights, and page titles.
+- **Do** use standard theme-mapped surface variables (`--paper` for app background, `--card` or `--paper-2` for content card backgrounds).
+- **Do** apply Primary Purple (`--accent`) to all primary CTAs, active highlights, and page titles, ensuring it shifts for dark-mode contrast.
 - **Do** format meta labels in uppercase with explicit character spacing.
 - **Do** enforce tabular numbers on all tables and lists containing numerical scores.
 - **Do** expand tiny tap targets using absolute pseudo-element buffers.
+- **Do** support unified dark mode toggles with a pre-paint boot script to avoid theme flashing.
 
 ### Don't:
-- **Don't** use dark backgrounds or dark themes; the interface strictly employs the light SaaS console theme.
+- **Don't** use hardcoded color values (`#ffffff` or `#f5f5f7`) directly for layout nodes; use theme-mapped CSS variables.
 - **Don't** use black text on a purple background; use pure white (`#ffffff`).
 - **Don't** use fluid text scaling on headings; stick to the fixed H1-H3 scale.
 - **Don't** apply heavy dark box shadows on card elements.

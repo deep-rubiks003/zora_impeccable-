@@ -9,6 +9,438 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="design-tokens.css">
+  <style>
+    /* Tabs & Grid Layout */
+    .detail-grid-container {
+      display: grid;
+      grid-template-columns: 1fr 80px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .detail-grid-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+    .detail-tab-content-panel {
+      display: none;
+      animation: panelEntrance 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .detail-tab-content-panel.active {
+      display: block;
+    }
+    @keyframes panelEntrance {
+      from { opacity: 0; transform: translateY(8px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Hero Intervention Card */
+    .risk-hero-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--bad);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .risk-hero-card.healthy {
+      border-left-color: var(--ok);
+    }
+    
+    .risk-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .risk-headline {
+      font-family: var(--font-geist);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.3;
+    }
+    .risk-value-group {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .risk-value-num {
+      font-family: var(--font-geist);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent-deep);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .risk-value-num.healthy-val {
+      color: var(--ok);
+    }
+    .risk-value-lbl {
+      font-family: var(--font-dm-sans);
+      font-size: 11px;
+      color: var(--ink-4);
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+    .reasoning-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .reasoning-chip {
+      font-family: var(--font-dm-sans);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      background: var(--paper-3);
+      border: 1px solid var(--line-soft);
+      padding: 4px 10px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .intervention-block {
+      background: var(--accent-soft);
+      border: 1px solid rgba(122, 84, 135, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .intervention-block.healthy-block {
+      background: rgba(46, 204, 113, 0.06);
+      border-color: rgba(46, 204, 113, 0.15);
+    }
+    .intervention-lbl {
+      font-family: var(--font-geist);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-deep);
+    }
+    .intervention-lbl.healthy-lbl {
+      color: var(--ok);
+    }
+    
+    .intervention-textarea {
+      width: 100%;
+      border: 1px solid rgba(122, 84, 135, 0.15);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 10px 12px;
+      font-family: var(--font-dm-sans);
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--ink);
+      resize: vertical;
+      min-height: 72px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.15s ease;
+    }
+    .intervention-textarea:focus {
+      border-color: var(--accent);
+    }
+    .intervention-textarea.healthy-textarea {
+      border-color: rgba(46, 204, 113, 0.2);
+    }
+    .intervention-textarea.healthy-textarea:focus {
+      border-color: var(--ok);
+    }
+
+    .suggestion-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .suggestion-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-dm-sans);
+      font-size: 12.5px;
+      color: var(--ink-2);
+    }
+    
+    .predicted-impact-text {
+      font-family: var(--font-dm-sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ok);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Accordion Drawer */
+    .accordion-drawer {
+      border-top: 1px solid var(--line-soft);
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+    .accordion-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      font-family: var(--font-geist);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-3);
+      cursor: pointer;
+    }
+    .accordion-trigger:hover {
+      color: var(--accent);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .accordion-content.expanded {
+      max-height: 500px;
+    }
+    .accordion-inner {
+      padding: 12px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-family: var(--font-dm-sans);
+      font-size: 12.5px;
+      color: var(--ink-3);
+      line-height: 1.45;
+    }
+
+    /* SVGs & Charts styling */
+    .timeline-row-lbl {
+      font-family: var(--font-geist);
+      font-size: 10.5px;
+      font-weight: 600;
+      fill: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .timeline-gridline {
+      stroke: var(--line-soft);
+      stroke-dasharray: 2 2;
+    }
+    .timeline-dot {
+      transition: transform 0.15s ease, r 0.15s ease;
+    }
+    .timeline-dot:hover {
+      transform: scale(1.3);
+      r: 6;
+      cursor: pointer;
+    }
+    .timeline-date-text {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      fill: var(--ink-4);
+    }
+    
+    .sparkline-path {
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .sparkbar-rect {
+      transition: height 0.3s ease, y 0.3s ease;
+    }
+
+    /* Adherence Heatmap grid */
+    .heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      transition: transform 0.1s ease;
+      position: relative;
+    }
+    .heatmap-cell:hover {
+      transform: scale(1.15);
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+    .heatmap-cell.good { background: #2ecc71; }
+    .heatmap-cell.warn { background: #f1c40f; }
+    .heatmap-cell.bad { background: #e74c3c; }
+    .heatmap-cell.empty { background: var(--paper-3); border: 1px solid var(--line-soft); }
+
+    /* Fix suggestions styling */
+    .fix-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--paper-2);
+      border: 1px solid var(--line-soft);
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .fix-row:hover {
+      border-color: rgba(122, 84, 135, 0.25);
+      background: var(--paper-3);
+    }
+    .fix-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .fix-title {
+      font-family: var(--font-geist);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .fix-desc {
+      font-family: var(--font-dm-sans);
+      font-size: 11.5px;
+      color: var(--ink-4);
+    }
+    .fix-btn {
+      font-family: var(--font-geist);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.08);
+      border: 1px solid rgba(122, 84, 135, 0.2);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .fix-btn:hover {
+      background: rgba(122, 84, 135, 0.15);
+      border-color: rgba(122, 84, 135, 0.35);
+    }
+    .fix-btn:active {
+      transform: scale(0.96);
+    }
+    .fix-btn.applied {
+      background: rgba(46, 204, 113, 0.08);
+      border-color: rgba(46, 204, 113, 0.2);
+      color: var(--ok);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Intervention History list */
+    .history-item {
+      position: relative;
+      padding-left: 24px;
+      border-left: 1.5px solid var(--line-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 16px;
+    }
+    .history-item:last-child {
+      padding-bottom: 0;
+      border-left-color: transparent;
+    }
+    .history-dot {
+      position: absolute;
+      left: -5.5px;
+      top: 2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--line);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1px var(--line-soft);
+    }
+    .history-dot.active-dot {
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(122, 84, 135, 0.2);
+    }
+    .history-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .history-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .history-title {
+      font-family: var(--font-geist);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .history-date {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-4);
+    }
+    .history-outcome {
+      font-family: var(--font-dm-sans);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-radius: 4px;
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+    .history-outcome.ok { background: rgba(46, 204, 113, 0.1); color: var(--ok); }
+    .history-outcome.neutral { background: var(--paper-3); color: var(--ink-3); }
+    .history-outcome.bad { background: rgba(231, 76, 60, 0.1); color: var(--bad); }
+
+    .history-desc {
+      font-family: var(--font-dm-sans);
+      font-size: 12px;
+      color: var(--ink-3);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* Modal active states */
+    .prompt-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Slideover */
+    .chat-slideover.show {
+      transform: translateX(0);
+    }
+    
+    /* Segment colors for quality score bar */
+    .qbar-seg {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    .qbar-seg.c1 { background: #9b59b6; }
+    .qbar-seg.c2 { background: #3498db; }
+    .qbar-seg.c3 { background: #e67e22; }
+    .qbar-seg.c4 { background: #1abc9c; }
+    .qbar-seg.c5 { background: #e74c3c; }
+
+    /* Utility */
+    .client-name-span {
+      font-weight: 600;
+    }
+  </style>
 </head>
 
 <body>
@@ -72,241 +504,391 @@
           <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </svg>
       </button>
+
+      <button
+        type="button"
+        id="theme-toggle"
+        class="theme-toggle"
+        role="switch"
+        aria-checked="false"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+        style="margin-left: 12px;"
+      >
+        <span class="theme-toggle__thumb" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </span>
+      </button>
     </div>
 
     <!-- ============== SCREEN 2 MAIN CONTENT ============== -->
     <div class="page active animated-entrance" style="padding-top: var(--space-md);">
       
-      <div class="s2-grid">
-        
-        <!-- Left Main Area -->
-        <div>
-          <!-- Header Profile -->
-          <div class="s2-header">
-            <div class="s2-avatar" id="client-avatar">SK</div>
-            <div>
-              <div class="s2-name" id="client-name">Sarah K.</div>
-              <div class="s2-meta">
-                <span id="client-phase">Week 8 · Half-Marathon</span>
-                <span>Active since Jan 2026</span>
-              </div>
-            </div>
-            <div class="s2-tags">
-              <span class="s2-tag alert" id="client-tag">Exhaustion Risk</span>
-            </div>
+      <!-- Persistent Header Strip -->
+      <div class="persistent-header-strip">
+        <div class="strip-identity">
+          <div class="strip-avatar av-1" id="strip-avatar">SK</div>
+          <div class="strip-title-group">
+            <div class="strip-name" id="strip-name">Sarah K.</div>
+            <div class="strip-context" id="strip-program">Half-Marathon · Week 8</div>
           </div>
-
-          <!-- Biometric Bento Insight Grid (Sleep & HRV Focused Highlights) -->
-          <div class="why-grid" style="margin-bottom: var(--space-md);">
-            <!-- Sleep Bento Card -->
-            <div class="why bento-focus" id="bento-sleep">
-              <div class="why-lbl">Focused Sleep Insight</div>
-              <div class="why-val" id="sleep-score-val">42<span class="unit">/100</span></div>
-              <div class="why-trend down" id="sleep-score-trend">▼ -45% vs baseline</div>
-              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="sleep-score-sub">
-                3.2 hrs · 12% REM · 8% Deep sleep
-              </div>
-            </div>
-
-            <!-- HRV Bento Card -->
-            <div class="why bento-focus" id="bento-hrv">
-              <div class="why-lbl">Autonomic Stress (HRV)</div>
-              <div class="why-val" id="hrv-val">18<span class="unit">ms</span></div>
-              <div class="why-trend down" id="hrv-trend">▼ -52% 7d change</div>
-              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="hrv-sub">
-                52% below rolling baseline
-              </div>
-            </div>
-
-            <!-- RHR Card -->
-            <div class="why" id="bento-rhr">
-              <div class="why-lbl">Resting Heart Rate</div>
-              <div class="why-val" id="rhr-val">68<span class="unit">bpm</span></div>
-              <div class="why-trend up" id="rhr-trend">▲ +8 bpm deviation</div>
-              <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="rhr-sub">
-                Elevated (+12% above average)
-              </div>
-            </div>
-          </div>
-
-          <!-- Recommendation Card -->
-          <div class="rec-card">
-            <div class="rec-banner">
-              <div class="rec-banner-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                </svg>
-              </div>
-              <div class="rec-banner-text"><b>Zora draft</b></div>
-              <div class="rec-banner-meta">Ready for Review</div>
-            </div>
-
-            <div class="rec-body">
-              <div class="rec-h1-row">
-                <h3 class="rec-h1">Recommended Weekly Schedule Adjustment</h3>
-                <button type="button" class="see-schedule-btn" id="btn-see-schedule" aria-haspopup="dialog">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="17" rx="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                  </svg>
-                  <span>View updated schedule</span>
-                  <span class="see-schedule-count" id="see-schedule-count">3 changes</span>
-                </button>
-              </div>
-
-              <!-- AI Narrative reasoning -->
-              <div class="rec-narrative" id="ai-narrative">
-                Sarah's acute training load has increased by <span class="hl">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class="hl">42/100</span>. HRV has plunged <span class="hl">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.
-              </div>
-
-              <!-- Unique Feature 1: The "Impact Preview" Graph Toggle -->
-              <div class="impact-card">
-                <div class="impact-header">
-                  <div class="impact-title">
-                    <span class="impact-title-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="20" x2="18" y2="10" />
-                        <line x1="12" y1="20" x2="12" y2="4" />
-                        <line x1="6" y1="20" x2="6" y2="14" />
-                      </svg>
-                    </span>
-                    Projected Autonomic Recovery Curve
-                  </div>
-                  
-                  <div class="impact-toggle-group">
-                    <button class="impact-toggle-btn active" id="toggle-without">Without Action</button>
-                    <button class="impact-toggle-btn" id="toggle-with">With Adjustment</button>
-                  </div>
-                </div>
-
-                <!-- SVG Graph Wrapper -->
-                <div class="impact-chart-wrapper">
-                  <svg class="impact-chart" viewBox="0 0 360 180">
-                    <!-- Horizontal Grid Lines -->
-                    <line class="impact-grid-line" x1="0" y1="30" x2="360" y2="30" />
-                    <line class="impact-grid-line" x1="0" y1="75" x2="360" y2="75" />
-                    <line class="impact-grid-line" x1="0" y1="120" x2="360" y2="120" />
-                    <line class="impact-grid-line" x1="0" y1="160" x2="360" y2="160" />
-
-                    <!-- Rolling Baseline Line -->
-                    <line class="impact-baseline-line" x1="0" y1="75" x2="360" y2="75" />
-                    <text x="355" y="70" class="impact-axis-text" text-anchor="end" fill="var(--ink-4)">HRV Baseline</text>
-
-                    <!-- Path A: Without Deload (Exhaustion crash curve) -->
-                    <path class="impact-path crash active" id="path-without" d="M 0 60 Q 100 70 180 150 T 360 160" />
-
-                    <!-- Path B: With Deload (Recovery curve) -->
-                    <path class="impact-path recovery inactive" id="path-with" d="M 0 60 Q 80 110 160 80 T 360 40" />
-
-                    <!-- Dynamic Annotations / Tooltips -->
-                    <g class="chart-marker active" id="marker-without">
-                      <circle cx="180" cy="150" r="5" fill="var(--bad)" stroke="#ffffff" stroke-width="2" />
-                      <g transform="translate(180, 115)">
-                        <rect class="chart-tooltip-box" x="-42" y="0" width="84" height="20" />
-                        <text class="chart-tooltip-text" x="0" y="13" id="marker-without-text">Crash (4d)</text>
-                      </g>
-                    </g>
-
-                    <g class="chart-marker inactive" id="marker-with">
-                      <circle cx="260" cy="55" r="5" fill="var(--ok)" stroke="#ffffff" stroke-width="2" />
-                      <g transform="translate(260, 20)">
-                        <rect class="chart-tooltip-box" x="-50" y="0" width="100" height="20" />
-                        <text class="chart-tooltip-text" x="0" y="13" id="marker-with-text">Rebound (5d)</text>
-                      </g>
-                    </g>
-
-                    <!-- Axis Labels -->
-                    <text x="5" y="172" class="impact-axis-text">Mon</text>
-                    <text x="90" y="172" class="impact-axis-text">Wed</text>
-                    <text x="180" y="172" class="impact-axis-text">Fri</text>
-                    <text x="270" y="172" class="impact-axis-text">Sun</text>
-                    <text x="355" y="172" class="impact-axis-text" text-anchor="end">Next Mon</text>
-                  </svg>
-
-                  <!-- Dynamic Text Description below Graph -->
-                  <div class="impact-desc-container" id="impact-description">
-                    Continuing at current training volume is projected to trigger a <strong>severe exhaustion crash in 3 days</strong>, increasing injury risk by <strong>4.2x</strong> and stalling baseline adaptation for <strong>3+ weeks</strong>.
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bottom CTA Actions -->
-              <div class="rec-actions">
-                <button class="btn-primary" id="btn-approve">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Approve &amp; Send to Client
-                </button>
-                <button class="btn-secondary" id="btn-edit-ai">Edit with AI</button>
-                <button class="btn-ghost" id="btn-regenerate">Regenerate Draft</button>
-              </div>
-
-            </div>
-          </div>
-
         </div>
-
-        <!-- Right Sidebar Rail -->
-        <div class="s2-rail">
-          
-          <!-- Wearable Signals Details -->
-          <div class="data-card">
-            <div class="data-card-title">
-              Wearable Signals · 7d
-              <span class="live-dot" title="Live Sync Active"></span>
-            </div>
-            
-            <div class="metric">
-              <span class="metric-lbl">HRV Baseline</span>
-              <span class="metric-val" id="meta-hrv-base">38 ms</span>
-            </div>
-            <div class="metric">
-              <span class="metric-lbl">Sleep Consistency</span>
-              <div class="metric-right">
-                <div class="metric-bar"><div class="metric-bar-fill bad" id="fill-sleep-con" style="width: 45%;"></div></div>
-                <span class="metric-val" id="meta-sleep-con">45%</span>
-              </div>
-            </div>
-            <div class="metric">
-              <span class="metric-lbl">Sleep Deficit</span>
-              <span class="metric-val" id="meta-sleep-def">+4.2 hrs</span>
-            </div>
-            <div class="metric">
-              <span class="metric-lbl">Resting HR Avg</span>
-              <span class="metric-val" id="meta-rhr">62 bpm</span>
-            </div>
-            <div class="metric">
-              <span class="metric-lbl">Respiratory Rate</span>
-              <span class="metric-val">14.8 br/m</span>
-            </div>
+        <div class="strip-vitals">
+          <div class="strip-vital-item">
+            <span class="strip-vital-label">Recovery Score</span>
+            <span class="strip-vital-val" id="strip-recovery">58<span class="unit">%</span></span>
           </div>
-
-          <!-- Client Feedback quote snippet -->
-          <div class="data-card">
-            <div class="data-card-title">Client Feedback</div>
-            <div class="chat-snippet" id="client-feedback">
-              <b>Sarah K. (8:14 AM):</b> "My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall."
-            </div>
+          <div class="strip-vital-item">
+            <span class="strip-vital-label">Engagement Score</span>
+            <span class="strip-vital-val" id="strip-engagement">92<span class="unit">%</span></span>
           </div>
-
-          <!-- AI Confidence Metric -->
-          <div class="data-card">
-            <div class="data-card-title">Recommendation Confidence</div>
-            <div class="ai-confidence">
-              <div class="conf-bar"><div class="conf-fill" id="confidence-fill" style="width: 94%;"></div></div>
-              <span class="conf-val" id="confidence-val">94%</span>
-            </div>
-            <div style="font-size: 11px; color: var(--ink-4); margin-top: 10px; line-height: 1.4;">
-              Confidence score calculated based on model alignment with user history and structural biomarkers.
-            </div>
+          <div class="strip-vital-item">
+            <span class="strip-vital-label">Churn Risk</span>
+            <span class="client-card-risk-badge risk-low" id="strip-risk">Low Risk</span>
           </div>
-
+          <div class="strip-vital-item">
+            <span class="strip-vital-label">Last Active</span>
+            <span class="strip-vital-val" id="strip-active">2h ago</span>
+          </div>
         </div>
-
       </div>
+
+      <!-- Two Large Tabs Navigation -->
+      <div class="detail-tabs-nav">
+        <button class="detail-tab-btn active" id="tab-btn-plan">Plan &amp; Performance</button>
+        <button class="detail-tab-btn" id="tab-btn-risk">Engagement &amp; Risk</button>
+      </div>
+
+      <!-- 2-column layout underneath -->
+      <div class="detail-grid-container">
+        
+        <!-- Left: Active tab panel container -->
+        <div>
+          
+          <!-- Tab 1: Plan & Performance Panel -->
+          <div class="detail-tab-content-panel active" id="panel-plan">
+            <!-- Biometric Bento Insight Grid (Sleep & HRV Focused Highlights) -->
+            <div class="why-grid" style="margin-bottom: var(--space-md);">
+              <!-- Sleep Bento Card -->
+              <div class="why bento-focus" id="bento-sleep">
+                <div class="why-lbl">Focused Sleep Insight</div>
+                <div class="why-val" id="sleep-score-val">42<span class="unit">/100</span></div>
+                <div class="why-trend down" id="sleep-score-trend">▼ -45% vs baseline</div>
+                <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="sleep-score-sub">
+                  3.2 hrs · 12% REM · 8% Deep sleep
+                </div>
+              </div>
+
+              <!-- HRV Bento Card -->
+              <div class="why bento-focus" id="bento-hrv">
+                <div class="why-lbl">Autonomic Stress (HRV)</div>
+                <div class="why-val" id="hrv-val">18<span class="unit">ms</span></div>
+                <div class="why-trend down" id="hrv-trend">▼ -52% 7d change</div>
+                <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="hrv-sub">
+                  52% below rolling baseline
+                </div>
+              </div>
+
+              <!-- RHR Card -->
+              <div class="why" id="bento-rhr">
+                <div class="why-lbl">Resting Heart Rate</div>
+                <div class="why-val" id="rhr-val">68<span class="unit">bpm</span></div>
+                <div class="why-trend up" id="rhr-trend">▲ +8 bpm deviation</div>
+                <div style="font-size: 11px; color: var(--ink-3); margin-top: var(--space-xs); line-height: 1.3;" id="rhr-sub">
+                  Elevated (+12% above average)
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendation Card -->
+            <div class="rec-card">
+              <div class="rec-banner">
+                <div class="rec-banner-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                  </svg>
+                </div>
+                <div class="rec-banner-text"><b>Zora draft</b></div>
+                <div class="rec-banner-meta">Ready for Review</div>
+              </div>
+
+              <div class="rec-body">
+                <div class="rec-h1-row">
+                  <h3 class="rec-h1">Recommended Weekly Schedule Adjustment</h3>
+                  <button type="button" class="see-schedule-btn" id="btn-see-schedule" aria-haspopup="dialog">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="17" rx="2" />
+                      <line x1="3" y1="9" x2="21" y2="9" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                    </svg>
+                    <span>View updated schedule</span>
+                    <span class="see-schedule-count" id="see-schedule-count">3 changes</span>
+                  </button>
+                </div>
+
+                <!-- AI Narrative reasoning -->
+                <div class="rec-narrative" id="ai-narrative">
+                  Sarah's acute training load has increased by <span class="hl">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class="hl">42/100</span>. HRV has plunged <span class="hl">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.
+                </div>
+
+                <!-- Unique Feature 1: The "Impact Preview" Graph Toggle -->
+                <div class="impact-card">
+                  <div class="impact-header">
+                    <div class="impact-title">
+                      <span class="impact-title-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="20" x2="18" y2="10" />
+                          <line x1="12" y1="20" x2="12" y2="4" />
+                          <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                      </span>
+                      Projected Autonomic Recovery Curve
+                    </div>
+                    
+                    <div class="impact-toggle-group">
+                      <button class="impact-toggle-btn active" id="toggle-without">Without Action</button>
+                      <button class="impact-toggle-btn" id="toggle-with">With Adjustment</button>
+                    </div>
+                  </div>
+
+                  <!-- SVG Graph Wrapper -->
+                  <div class="impact-chart-wrapper">
+                    <svg class="impact-chart" viewBox="0 0 360 180">
+                      <!-- Horizontal Grid Lines -->
+                      <line class="impact-grid-line" x1="0" y1="30" x2="360" y2="30" />
+                      <line class="impact-grid-line" x1="0" y1="75" x2="360" y2="75" />
+                      <line class="impact-grid-line" x1="0" y1="120" x2="360" y2="120" />
+                      <line class="impact-grid-line" x1="0" y1="160" x2="360" y2="160" />
+
+                      <!-- Rolling Baseline Line -->
+                      <line class="impact-baseline-line" x1="0" y1="75" x2="360" y2="75" />
+                      <text x="355" y="70" class="impact-axis-text" text-anchor="end" fill="var(--ink-4)">HRV Baseline</text>
+
+                      <!-- Path A: Without Deload (Exhaustion crash curve) -->
+                      <path class="impact-path crash active" id="path-without" d="M 0 60 Q 100 70 180 150 T 360 160" />
+
+                      <!-- Path B: With Deload (Recovery curve) -->
+                      <path class="impact-path recovery inactive" id="path-with" d="M 0 60 Q 80 110 160 80 T 360 40" />
+
+                      <!-- Dynamic Annotations / Tooltips -->
+                      <g class="chart-marker active" id="marker-without">
+                        <circle cx="180" cy="150" r="5" fill="var(--bad)" stroke="#ffffff" stroke-width="2" />
+                        <g transform="translate(180, 115)">
+                          <rect class="chart-tooltip-box" x="-42" y="0" width="84" height="20" />
+                          <text class="chart-tooltip-text" x="0" y="13" id="marker-without-text">Crash (4d)</text>
+                        </g>
+                      </g>
+
+                      <g class="chart-marker inactive" id="marker-with">
+                        <circle cx="260" cy="55" r="5" fill="var(--ok)" stroke="#ffffff" stroke-width="2" />
+                        <g transform="translate(260, 20)">
+                          <rect class="chart-tooltip-box" x="-50" y="0" width="100" height="20" />
+                          <text class="chart-tooltip-text" x="0" y="13" id="marker-with-text">Rebound (5d)</text>
+                        </g>
+                      </g>
+
+                      <!-- Axis Labels -->
+                      <text x="5" y="172" class="impact-axis-text">Mon</text>
+                      <text x="90" y="172" class="impact-axis-text">Wed</text>
+                      <text x="180" y="172" class="impact-axis-text">Fri</text>
+                      <text x="270" y="172" class="impact-axis-text">Sun</text>
+                      <text x="355" y="172" class="impact-axis-text" text-anchor="end">Next Mon</text>
+                    </svg>
+
+                    <!-- Dynamic Text Description below Graph -->
+                    <div class="impact-desc-container" id="impact-description">
+                      Continuing at current training volume is projected to trigger a <strong>severe exhaustion crash in 3 days</strong>, increasing injury risk by <strong>4.2x</strong> and stalling baseline adaptation for <strong>3+ weeks</strong>.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom CTA Actions -->
+                <div class="rec-actions">
+                  <button class="btn-primary" id="btn-approve">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Approve &amp; Send to Client
+                  </button>
+                  <button class="btn-secondary" id="btn-edit-ai">Edit with AI</button>
+                  <button class="btn-ghost" id="btn-regenerate">Regenerate Draft</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Engagement & Risk Panel -->
+          <div class="detail-tab-content-panel" id="panel-risk">
+            <!-- Section 1: Hero AI Intervention Card / Healthy State -->
+            <div id="risk-hero-container"></div>
+
+            <!-- Section 2: Engagement Timeline Card -->
+            <div class="data-card" style="margin-bottom: var(--space-lg);">
+              <div class="data-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                30-Day Engagement Timeline
+                <span style="font-size: 11px; color: var(--ink-4); font-weight: normal;">drop-off region shaded red</span>
+              </div>
+              <div style="width: 100%; overflow-x: auto; padding-top: var(--space-xs);">
+                <svg id="timeline-svg" viewBox="0 0 720 180" width="100%" height="180" style="min-width: 600px; display: block; overflow: visible;"></svg>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: var(--ink-4);">
+                <div style="display: flex; gap: 16px;">
+                  <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #9b59b6; display: inline-block;"></span> App Opens</span>
+                  <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3498db; display: inline-block;"></span> Messages</span>
+                  <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; display: inline-block;"></span> Check-ins</span>
+                  <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #95a5a6; display: inline-block;"></span> Wearables</span>
+                </div>
+                <div>* Shaded area: Drop-off period</div>
+              </div>
+            </div>
+
+            <!-- Section 3: Behavioral Signals Card -->
+            <div class="data-card" style="margin-bottom: var(--space-lg);">
+              <div class="data-card-title">Behavioral Signals &amp; Biometric Trends</div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: var(--space-xs);">
+                <!-- Sentiment Mini-Chart -->
+                <div style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
+                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">Message Sentiment</div>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 18px; font-weight: 700; color: var(--ink);" id="sentiment-value">Neutral</span>
+                    <span style="font-size: 11px; color: var(--ink-4);" id="sentiment-delta">Stable (7d)</span>
+                  </div>
+                  <svg id="sentiment-chart-svg" viewBox="0 0 180 50" width="100%" height="50" style="display: block; overflow: visible;"></svg>
+                </div>
+                <!-- Motivation Mini-Chart -->
+                <div style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
+                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">Motivation (RPE)</div>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 18px; font-weight: 700; color: var(--ink);" id="motivation-value">4.2/10</span>
+                    <span style="font-size: 11px; color: var(--bad);" id="motivation-delta">▼ -18%</span>
+                  </div>
+                  <svg id="motivation-chart-svg" viewBox="0 0 180 50" width="100%" height="50" style="display: block; overflow: visible;"></svg>
+                </div>
+                <!-- Completion Mini-Chart -->
+                <div style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
+                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">Completion Drift</div>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 18px; font-weight: 700; color: var(--ink);" id="completion-value">52%</span>
+                    <span style="font-size: 11px; color: var(--bad);" id="completion-delta">▼ -20%</span>
+                  </div>
+                  <svg id="completion-chart-svg" viewBox="0 0 180 50" width="100%" height="50" style="display: block; overflow: visible;"></svg>
+                </div>
+              </div>
+              <div style="font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 12px; padding: 10px; border-left: 2px solid var(--accent); background: var(--paper-3); border-radius: 0 6px 6px 0;" id="behavior-narrative"></div>
+            </div>
+
+            <!-- Section 4: Plan-Fit Analysis Card -->
+            <div class="data-card" style="margin-bottom: var(--space-lg);">
+              <div class="data-card-title">Plan-Fit &amp; Fatigue Analysis</div>
+              
+              <!-- Plan Quality Score -->
+              <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-md);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Plan Quality Score</span>
+                  <span style="font-weight: 700; font-size: 20px; color: var(--accent-deep);" id="plan-quality-score">62<span style="font-size: 11px; color: var(--ink-4);">/100</span></span>
+                </div>
+                <div style="display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--line-soft);" id="plan-quality-bar"></div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-4); padding: 2px 4px;">
+                  <span>Complexity: 12%</span>
+                  <span>Progressivity: 15%</span>
+                  <span>Recovery: 10%</span>
+                  <span>Enjoyment: 15%</span>
+                  <span>Goal-fit: 10%</span>
+                </div>
+              </div>
+
+              <!-- Heatmap & Fatigue Chart Grid -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: var(--space-md); border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
+                <!-- Adherence Heatmap -->
+                <div>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px;">Adherence Heatmap (6 Weeks)</div>
+                  <div id="adherence-heatmap" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 280px; margin: 0 auto;"></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-4); margin-top: 8px; max-width: 280px; margin-left: auto; margin-right: auto;">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span style="color: var(--bad); font-weight: 600;">Thu*</span>
+                    <span>Fri</span>
+                    <span style="color: var(--bad); font-weight: 600;">Sat*</span>
+                    <span>Sun</span>
+                  </div>
+                  <div style="font-size: 10.5px; color: var(--ink-4); margin-top: 6px; text-align: center;">
+                    * Red column highlight indicates recurring Thursday &amp; Saturday workout skips.
+                  </div>
+                </div>
+
+                <!-- Fatigue Correlation Chart -->
+                <div>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px;">Fatigue Correlation Curve</div>
+                  <svg id="fatigue-chart-svg" viewBox="0 0 280 130" width="100%" height="130" style="display: block; overflow: visible;"></svg>
+                  <div style="display: flex; justify-content: center; gap: 16px; font-size: 10px; color: var(--ink-4); margin-top: 4px;">
+                    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 2px; background: var(--accent); display: inline-block;"></span> Workout Volume</span>
+                    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 2px; background: #e67e22; display: inline-block;"></span> Recovery Score</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diagnostic Block and Fix Suggestions -->
+              <div style="margin-top: 20px; border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
+                <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 12px;">Suggested Adjustments for Plan-Fit</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;" id="plan-fit-suggestions-list"></div>
+              </div>
+            </div>
+
+            <!-- Section 5: Intervention History Card -->
+            <div class="data-card" id="section-history" style="margin-bottom: var(--space-lg); scroll-margin-top: 24px;">
+              <div class="data-card-title">Intervention History &amp; Outcomes</div>
+              <div style="display: flex; flex-direction: column; gap: 12px; margin-top: var(--space-xs);" id="intervention-history-list"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Sidebar Action Rail -->
+        <div class="persistent-action-rail" style="position: sticky; top: 24px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+          <button class="action-rail-btn" id="rail-btn-chat" title="Chat with Client" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-2); cursor: pointer; gap: 4px; padding: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 600; color: var(--ink-3);">Chat</span>
+          </button>
+          <button class="action-rail-btn" id="rail-btn-plan" title="Adjust Plan" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-2); cursor: pointer; gap: 4px; padding: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 600; color: var(--ink-3);">Plan</span>
+          </button>
+          <button class="action-rail-btn" id="rail-btn-call" title="Schedule Call" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-2); cursor: pointer; gap: 4px; padding: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 600; color: var(--ink-3);">Call</span>
+          </button>
+          <button class="action-rail-btn" id="rail-btn-note" title="Log Coach Note" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-2); cursor: pointer; gap: 4px; padding: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 600; color: var(--ink-3);">Note</span>
+          </button>
+          <button class="action-rail-btn" id="rail-btn-history" title="View History" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-2); cursor: pointer; gap: 4px; padding: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 600; color: var(--ink-3);">History</span>
+          </button>
+        </div>
 
     </div>
 
@@ -314,483 +896,2045 @@
 
   <!-- ==================== CLIENT LOADING ENGINE ==================== -->
   <script>
+    // Define global variables so other scripts can access them
+    window.clientKey = '';
+    window.client = null;
+
+    // 1. Data ramp for athletes
+    const clientsData = {
+      'sarah-k': {
+        name: "Sarah K.",
+        first: "Sarah",
+        initials: "SK",
+        avatarClass: "av-1",
+        phase: "Week 8 · Half-Marathon",
+        program: "Half-Marathon · Week 8",
+        vitals: { recovery: 58, engagement: 92, riskText: "Low Risk", riskClass: "risk-low", active: "2h ago" },
+        metrics: {
+          sleep: "42",
+          sleepTrend: "▼ -45% vs baseline",
+          sleepSub: "3.2 hrs · 12% REM · 8% Deep sleep",
+          sleepTrendClass: "down",
+          hrv: "18",
+          hrvTrend: "▼ -52% 7d change",
+          hrvSub: "52% below rolling baseline",
+          hrvTrendClass: "down",
+          rhr: "68",
+          rhrTrend: "▲ +8 bpm deviation",
+          rhrSub: "Elevated (+12% above average)",
+          rhrTrendClass: "up"
+        },
+        aiNarrative: "Sarah's acute training load has increased by <span class=\"hl\">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class=\"hl\">42/100</span>. HRV has plunged <span class=\"hl\">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.",
+        weekPlan: [
+          { name: "Mon", type: "Threshold intervals", detail: "6 × 1 km at 4:10/km", originalType: "Threshold intervals", originalDetail: "6 × 1 km", edited: false },
+          { name: "Tue", type: "Strength", detail: "Full lower body focus", originalType: "Strength", originalDetail: "Full session", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Tempo", detail: "8 km at marathon pace", originalType: "Tempo", originalDetail: "8 km", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Long run", detail: "14 km progression", originalType: "Long run", originalDetail: "14 km", edited: false },
+          { name: "Sun", type: "Easy run", detail: "5 km recovery jog", originalType: "Easy run", originalDetail: "5 km", edited: false }
+        ],
+        churnRisk: 15,
+        churnRiskLabel: "Low Churn Risk",
+        churnRiskClass: "risk-low",
+        isAtRisk: false,
+        riskText: "Sarah is at risk of fatigue-induced disengagement",
+        reasoningChips: ["Sleep Deficit (3.2 hrs)", "HRV 18ms (-52%)", "Volume +35% WoW"],
+        draftMsg: "Hey Sarah, I saw your sleep has been rough this week and HRV is down. I've adjusted your training plan to a deload week to help you recover. Let's focus on mobility and recovery runs. How is your knee feeling?",
+        suggestions: [
+          { icon: "📋", text: "Plan tweak: Reduce weekly volume by 30%" },
+          { icon: "📞", text: "Accountability: Send travel-friendly recovery options" }
+        ],
+        predictedImpact: "+24% recovery acceleration",
+        whyContent: "Sarah's sleep has dropped to 3.2 hrs and HRV is 52% below her rolling baseline. Acute training load has increased by 35% WoW. Left unchanged, she faces a 4.2x higher injury risk and severe exhaustion crash within 3 days.",
+        timelineData: {
+          appOpens: [5,4,5,6,5,4,5,5,4,4,5,5,5,4,5,5,4,4,5,4,2,1,2,1,0,1,0,0,1,0],
+          messages: [2,0,1,0,2,0,1,1,0,0,2,0,1,0,1,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
+          checkins: [1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0],
+          wearables: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+          summary: "Wearable streams are fully synced, but app opens and check-ins have plummeted in the last 6 days as fatigue accumulated."
+        },
+        behavioralSignals: {
+          sentiment: [0.7, 0.75, 0.68, 0.5, 0.45],
+          motivation: [7, 6.5, 5, 4.5, 4.2],
+          completion: [90, 85, 80, 75, 65, 52],
+          sentimentValue: "Anxious",
+          sentimentDelta: "▼ -22% vs baseline",
+          motivationValue: "4.2/10",
+          motivationDelta: "▼ -35% 7d deviation",
+          completionValue: "52%",
+          completionDelta: "▼ -20% drift",
+          narrative: "Sarah's messages express frustration with knee tightness and heavy legs. Motivation (RPE) has dropped steadily over 3 weeks."
+        },
+        planFit: {
+          score: 62,
+          scores: { complexity: 12, progressivity: 15, recovery: 10, enjoyment: 15, goalFit: 10 },
+          heatmap: [
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,0,2,
+            2,2,1,-1,2,0,2,
+            2,2,2,-1,1,0,1,
+            1,2,0,-1,1,0,2,
+            1,1,0,-1,0,0,1
+          ],
+          fatigueChart: {
+            volume: [60, 65, 75, 80, 85, 90, 95],
+            recovery: [78, 75, 68, 62, 55, 48, 42]
+          },
+          adjustments: [
+            { id: 1, title: "Cut Saturday Volume", desc: "Reduce Saturday's long run to 8km active recovery", applied: false, planChanges: [{ day: "Sat", type: "Active Recovery", detail: "8 km easy jog", originalType: "Long run", originalDetail: "14 km progression" }] },
+            { id: 2, title: "Introduce Midweek Rest", desc: "Swap Thursday tempo run for dynamic mobility work", applied: false, planChanges: [{ day: "Thu", type: "Mobility", detail: "30 min dynamic stretching", originalType: "Tempo", originalDetail: "8 km" }] },
+            { id: 3, title: "Lower Mon/Tue Intensity", desc: "Swap intervals for 5km recovery jog", applied: false, planChanges: [{ day: "Mon", type: "Easy run", detail: "5 km recovery jog", originalType: "Threshold intervals", originalDetail: "6 × 1 km at 4:10/km" }] }
+          ]
+        },
+        history: [
+          { date: "15 May 2026", title: "Knee soreness protocol", detail: "Prescribed 10 min warm-up drills and lower cadence targets. Client responded well, soreness reduced from 6 to 3.", outcome: "Resolved", outcomeClass: "ok" },
+          { date: "02 May 2026", title: "Sleep hygiene check-in", detail: "Nudged client on bedtime consistency due to consecutive <6h sleep logs.", outcome: "Neutral", outcomeClass: "neutral" }
+        ],
+        chatHistory: [
+          { sender: "system-zora", text: "Zora detected: Sleep score 42, HRV 18ms. Exhaustion threat high." },
+          { sender: "coach", text: "Hey Sarah, saw you got 3.2h sleep and your HRV is down. How's the knee feeling?" },
+          { sender: "client", text: "My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall." }
+        ]
+      },
+      'marcus-t': {
+        name: "Marcus T.",
+        first: "Marcus",
+        initials: "MT",
+        avatarClass: "av-2",
+        phase: "Week 6 · Strength",
+        program: "Strength · Week 6",
+        vitals: { recovery: 74, engagement: 40, riskText: "High Churn Risk", riskClass: "risk-high", active: "4d ago" },
+        metrics: {
+          sleep: "62",
+          sleepTrend: "▼ -10% vs baseline",
+          sleepSub: "5.8 hrs · 15% REM · 12% Deep sleep",
+          sleepTrendClass: "down",
+          hrv: "32",
+          hrvTrend: "▼ -22% 7d change",
+          hrvSub: "15% below rolling baseline",
+          hrvTrendClass: "down",
+          rhr: "58",
+          rhrTrend: "▲ +3 bpm deviation",
+          rhrSub: "Slightly elevated (+5%)",
+          rhrTrendClass: "up"
+        },
+        aiNarrative: "Marcus's app opens have dropped to zero for 6 consecutive days. Workouts completed have fallen to 40% and he did not respond to the last two automated check-ins. AI recommends scaling back work to 3 strength sessions to prevent disengagement.",
+        weekPlan: [
+          { name: "Mon", type: "Strength", detail: "Squat + Deadlift heavy focus", originalType: "Strength", originalDetail: "Squat + Deadlift heavy focus", edited: false },
+          { name: "Tue", type: "Strength", detail: "Bench + Row hypertrophy", originalType: "Strength", originalDetail: "Bench + Row hypertrophy", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Strength", detail: "Accessory lower body focus", originalType: "Strength", originalDetail: "Accessory lower body focus", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Strength", detail: "Accessory upper body focus", originalType: "Strength", originalDetail: "Accessory upper body focus", edited: false },
+          { name: "Sun", type: "Conditioning", detail: "20 min HIIT rowing session", originalType: "Conditioning", originalDetail: "20 min HIIT rowing session", edited: false }
+        ],
+        churnRisk: 74,
+        churnRiskLabel: "High Churn Risk",
+        churnRiskClass: "risk-high",
+        isAtRisk: true,
+        riskText: "Marcus may disengage in the next 14 days",
+        reasoningChips: ["No app opens in 6 days", "40% workout completion", "Skipped last 2 check-ins"],
+        draftMsg: "Hey Marcus, I noticed things have been tough this week. I've lightened your plan — these tweaks will help you bounce back stronger. Let's get you back on track.",
+        suggestions: [
+          { icon: "📋", text: "Plan tweak: Simplify this week to 3 sessions" },
+          { icon: "📞", text: "Accountability: Schedule a 15-min check-in call" }
+        ],
+        predictedImpact: "+32% re-engagement probability",
+        whyContent: "Marcus's app opens have dropped to 0 for 6 consecutive days. Adherence has fallen to 40% and he did not respond to the last two automated check-ins. Historically, this signature precedes churn in 88% of cases.",
+        timelineData: {
+          appOpens: [4,3,4,4,3,2,3,2,3,1,2,2,1,2,2,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0],
+          messages: [1,0,1,0,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          checkins: [1,0,1,1,1,0,1,1,1,0,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          wearables: [1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0],
+          summary: "Critical drop-off across all touchpoints. Marcus has stopped logging workouts and syncing his Apple Watch."
+        },
+        behavioralSignals: {
+          sentiment: [0.6, 0.5, 0.4, 0.4, 0.3],
+          motivation: [5, 5, 4.5, 4.2, 4.0],
+          completion: [80, 75, 60, 50, 45, 40],
+          sentimentValue: "Withdrawn",
+          sentimentDelta: "▼ -40% 14d change",
+          motivationValue: "4.0/10",
+          motivationDelta: "▼ -22% vs baseline",
+          completionValue: "40%",
+          completionDelta: "▼ -30% drift",
+          narrative: "Marcus has gone silent since May 18. Workouts completed have slipped from 5/week to 2/week."
+        },
+        planFit: {
+          score: 54,
+          scores: { complexity: 10, progressivity: 12, recovery: 8, enjoyment: 12, goalFit: 12 },
+          heatmap: [
+            2,2,0,-1,2,0,2,
+            2,0,0,-1,2,0,2,
+            1,2,0,-1,1,0,1,
+            1,0,0,-1,1,0,1,
+            0,0,0,-1,0,0,0,
+            0,0,0,-1,0,0,0
+          ],
+          fatigueChart: {
+            volume: [80, 85, 90, 85, 80, 75, 70],
+            recovery: [45, 48, 50, 52, 50, 48, 46]
+          },
+          adjustments: [
+            { id: 1, title: "Reduce Workouts to 3/wk", desc: "Cut midweek strength sessions to reduce scheduling friction", applied: false, planChanges: [{ day: "Tue", type: "Rest", detail: "Rest day", originalType: "Strength", originalDetail: "Bench + Row hypertrophy" }, { day: "Thu", type: "Rest", detail: "Rest day", originalType: "Strength", originalDetail: "Accessory lower body focus" }] },
+            { id: 2, title: "Schedule Reconnect Call", desc: "Book 15-min alignment check-in via scheduling assistant", applied: false, planChanges: [] }
+          ]
+        },
+        history: [
+          { date: "10 May 2026", title: "Plan volume update", detail: "Reduced volume by 20% due to busy work schedule. Client acknowledged with 'thanks'.", outcome: "Resolved", outcomeClass: "ok" }
+        ],
+        chatHistory: [
+          { sender: "coach", text: "Hey Marcus, haven't seen you log strength sessions this week. Everything going alright?" },
+          { sender: "client", text: "Yeah just super busy with work, hard to find time." }
+        ]
+      },
+      'aman-khanna': {
+        name: "Aman Khanna",
+        first: "Aman",
+        initials: "AK",
+        avatarClass: "av-3",
+        phase: "Week 14 · Hypertrophy",
+        program: "Hypertrophy · Week 14",
+        vitals: { recovery: 58, engagement: 68, riskText: "Medium Churn Risk", riskClass: "risk-medium", active: "12h ago" },
+        metrics: {
+          sleep: "58",
+          sleepTrend: "▼ -15% vs baseline",
+          sleepSub: "6.1 hrs · 10% REM · 15% Deep sleep",
+          sleepTrendClass: "down",
+          hrv: "42",
+          hrvTrend: "▼ -18% 7d change",
+          hrvSub: "12% below rolling baseline",
+          hrvTrendClass: "down",
+          rhr: "62",
+          rhrTrend: "▲ +4 bpm deviation",
+          rhrSub: "Elevated (+6%)",
+          rhrTrendClass: "up"
+        },
+        aiNarrative: "Aman's cumulative muscle soreness has reached 8/10. His HRV is down 18% from baseline. Adherence has begun to slip (2 workouts skipped this week) as physical strain exceeded his recovery capacity. AI recommends a recovery deload week.",
+        weekPlan: [
+          { name: "Mon", type: "Strength", detail: "Push A heavy focus", originalType: "Strength", originalDetail: "Push A heavy focus", edited: false },
+          { name: "Tue", type: "Strength", detail: "Pull A heavy focus", originalType: "Strength", originalDetail: "Pull A heavy focus", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Strength", detail: "Legs A heavy focus", originalType: "Strength", originalDetail: "Legs A heavy focus", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Strength", detail: "Arms + Shoulders hypertrophy", originalType: "Strength", originalDetail: "Arms + Shoulders hypertrophy", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+        ],
+        churnRisk: 55,
+        churnRiskLabel: "Medium Churn Risk",
+        churnRiskClass: "risk-medium",
+        isAtRisk: true,
+        riskText: "Aman is experiencing muscle fatigue & plan-fit strain",
+        reasoningChips: ["HRV -18% deviation", "Soreness 8/10 logs", "2 skips in 7 days"],
+        draftMsg: "Hey Aman, I noticed soreness has been running pretty high at 8/10 this week. I've scaled back our volume for the upcoming week to give your body a chance to absorb the work. Let's focus on recovery. How's that sounding?",
+        suggestions: [
+          { icon: "📋", text: "Plan tweak: Reduce intensity by 30%" },
+          { icon: "📞", text: "Accountability: Schedule 15-min recovery check-in" }
+        ],
+        predictedImpact: "+20% fatigue reduction",
+        whyContent: "Aman's cumulative muscle soreness has reached 8/10. His HRV is down 18% from baseline. Adherence has begun to slip (2 workouts skipped this week) as physical strain exceeded his recovery capacity.",
+        timelineData: {
+          appOpens: [4,4,5,5,4,3,4,4,3,2,3,4,4,3,4,3,2,2,3,2,2,1,2,1,0,1,1,0,1,0],
+          messages: [0,1,0,0,1,0,2,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+          checkins: [1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,0,0,0,0,0],
+          wearables: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+          summary: "Aman logs his symptoms regularly, but high soreness correlates with a drop in app opens."
+        },
+        behavioralSignals: {
+          sentiment: [0.7, 0.72, 0.65, 0.60, 0.58],
+          motivation: [6, 5.8, 5.5, 5.0, 5.5],
+          completion: [85, 80, 78, 75, 70, 68],
+          sentimentValue: "Frustrated",
+          sentimentDelta: "▼ -12% vs baseline",
+          motivationValue: "5.5/10",
+          motivationDelta: "▼ -18% 7d deviation",
+          completionValue: "68%",
+          completionDelta: "▼ -15% drift",
+          narrative: "Aman has reported significant soreness (8/10) in his daily logs. Adherence has started to suffer."
+        },
+        planFit: {
+          score: 65,
+          scores: { complexity: 15, progressivity: 15, recovery: 10, enjoyment: 15, goalFit: 10 },
+          heatmap: [
+            2,2,2,-1,2,2,2,
+            2,2,1,-1,2,2,2,
+            2,2,2,-1,1,0,2,
+            2,1,1,-1,1,0,1,
+            1,2,0,-1,0,0,1,
+            1,1,0,-1,0,0,0
+          ],
+          fatigueChart: {
+            volume: [75, 78, 82, 85, 88, 92, 90],
+            recovery: [65, 62, 58, 55, 50, 44, 42]
+          },
+          adjustments: [
+            { id: 1, title: "Cut intensity on Leg days", desc: "Reduce load by 15% and focus on concentric speed", applied: false, planChanges: [{ day: "Thu", type: "Strength (Deload)", detail: "Legs focus - light speed work", originalType: "Strength", originalDetail: "Legs A heavy focus" }] }
+          ]
+        },
+        history: [
+          { date: "18 May 2026", title: "Soreness check-in", detail: "Messaged client on foam rolling and stretching routines.", outcome: "Resolved", outcomeClass: "ok" }
+        ],
+        chatHistory: [
+          { sender: "coach", text: "Hey Aman, how are the legs feeling after yesterday's heavy squats?" },
+          { sender: "client", text: "To be honest, super sore. Hard to even sit down today." }
+        ]
+      },
+      'meera-joshi': {
+        name: "Meera Joshi",
+        first: "Meera",
+        initials: "MJ",
+        avatarClass: "av-4",
+        phase: "Week 4 · Nutrition focus",
+        program: "Nutrition focus · Week 4",
+        vitals: { recovery: 78, engagement: 82, riskText: "Medium Churn Risk", riskClass: "risk-medium", active: "1d ago" },
+        metrics: {
+          sleep: "78",
+          sleepTrend: "▲ +5% vs baseline",
+          sleepSub: "7.2 hrs · 18% REM · 15% Deep sleep",
+          sleepTrendClass: "up",
+          hrv: "68",
+          hrvTrend: "▲ +12% 7d change",
+          hrvSub: "Stable",
+          hrvTrendClass: "up",
+          rhr: "54",
+          rhrTrend: "▼ -2 bpm deviation",
+          rhrSub: "Ideal",
+          rhrTrendClass: "down"
+        },
+        aiNarrative: "Meera has logged consistent workouts but her logged protein intake is 38% below target (average 62g vs 100g target). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
+        weekPlan: [
+          { name: "Mon", type: "Easy run", detail: "6 km recovery pace", originalType: "Easy run", originalDetail: "6 km recovery pace", edited: false },
+          { name: "Tue", type: "Strength", detail: "Full body conditioning", originalType: "Strength", originalDetail: "Full body conditioning", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Easy run", detail: "6 km tempo work", originalType: "Easy run", originalDetail: "6 km tempo work", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Long run", detail: "10 km progression", originalType: "Long run", originalDetail: "10 km progression", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+        ],
+        churnRisk: 38,
+        churnRiskLabel: "Medium Churn Risk",
+        churnRiskClass: "risk-medium",
+        isAtRisk: true,
+        riskText: "Meera is experiencing nutrition drift & protein shortfall",
+        reasoningChips: ["Protein 62% of target", "Meal timing score 54", "App opens stable"],
+        draftMsg: "Hey Meera, looking at your logs, you're tracking close to 62% of your protein target. A quick addition of Greek yogurt or a protein shake after your Tuesday workouts would close the gap. Let's lock that in?",
+        suggestions: [
+          { icon: "📋", text: "Plan tweak: Add daily protein meal check-in" },
+          { icon: "📞", text: "Accountability: Send meal-prep guide" }
+        ],
+        predictedImpact: "+25% nutrition compliance",
+        whyContent: "Meera has logged consistent workouts but her logged protein intake is 38% below target (average 62g vs 100g target). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
+        timelineData: {
+          appOpens: [5,5,6,6,5,4,5,6,5,5,6,5,6,5,5,6,5,5,6,6,5,4,5,6,5,5,5,4,5,5],
+          messages: [2,0,1,1,2,0,1,1,0,0,1,0,0,0,1,0,0,1,1,0,2,0,1,1,0,0,1,0,0,0],
+          checkins: [1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1],
+          wearables: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+          summary: "Wearable and app engagement are fully stable, highlighting that the issue is nutritional compliance, not app drift."
+        },
+        behavioralSignals: {
+          sentiment: [0.8, 0.8, 0.78, 0.75, 0.75],
+          motivation: [7.5, 7.5, 7.2, 7.0, 7.2],
+          completion: [90, 88, 92, 85, 88, 85],
+          sentimentValue: "Stable",
+          sentimentDelta: "Stable (7d)",
+          motivationValue: "7.2/10",
+          motivationDelta: "▼ -4% 7d deviation",
+          completionValue: "85%",
+          completionDelta: "▼ -5% WoW",
+          narrative: "Meera's check-in metrics are solid, but nutritional logging reveals a recurring deficiency in protein intake."
+        },
+        planFit: {
+          score: 72,
+          scores: { complexity: 18, progressivity: 15, recovery: 15, enjoyment: 12, goalFit: 12 },
+          heatmap: [
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,1,-1,2,0,2,
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,0,-1,2,2,2
+          ],
+          fatigueChart: {
+            volume: [50, 52, 55, 54, 52, 50, 48],
+            recovery: [75, 76, 78, 77, 78, 78, 79]
+          },
+          adjustments: [
+            { id: 1, title: "Add protein logs nudge", desc: "Enable automated check-in reminder on workout days", applied: false, planChanges: [] }
+          ]
+        },
+        history: [
+          { date: "05 May 2026", title: "Nutrition guidelines sent", detail: "Shared standard recipe builder cards for high-protein breakfast.", outcome: "Resolved", outcomeClass: "ok" }
+        ],
+        chatHistory: [
+          { sender: "coach", text: "Hey Meera! How's the meal prep going this week?" },
+          { sender: "client", text: "Struggling a bit with meeting the protein target, but otherwise good!" }
+        ]
+      },
+      'priya-i': {
+        name: "Priya I.",
+        first: "Priya",
+        initials: "PI",
+        avatarClass: "av-1",
+        phase: "Week 4 · Base training",
+        program: "Base training · Week 4",
+        vitals: { recovery: 78, engagement: 94, riskText: "Low Churn Risk", riskClass: "risk-low", active: "10m ago" },
+        metrics: {
+          sleep: "78",
+          sleepTrend: "▲ +8% vs baseline",
+          sleepSub: "7.8 hrs · 20% REM · 18% Deep sleep",
+          sleepTrendClass: "up",
+          hrv: "71",
+          hrvTrend: "▲ +15% 7d change",
+          hrvSub: "Optimal status",
+          hrvTrendClass: "up",
+          rhr: "52",
+          rhrTrend: "▼ -4 bpm deviation",
+          rhrSub: "Excellent",
+          rhrTrendClass: "down"
+        },
+        aiNarrative: "Priya is in an optimal training adaptation window. HRV is elevated 15% above baseline, sleep is consistent, and adherence is near-perfect (94%). She is highly receptive to positive reinforcement.",
+        weekPlan: [
+          { name: "Mon", type: "Strength", detail: "Strength endurance session", originalType: "Strength", originalDetail: "Strength endurance session", edited: false },
+          { name: "Tue", type: "Easy run", detail: "8 km base pace", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Easy run", detail: "8 km base pace", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Long run", detail: "12 km base pace", originalType: "Long run", originalDetail: "12 km base pace", edited: false },
+          { name: "Sun", type: "Easy run", detail: "5 km base pace", originalType: "Easy run", originalDetail: "5 km base pace", edited: false }
+        ],
+        churnRisk: 8,
+        churnRiskLabel: "Low Churn Risk",
+        churnRiskClass: "risk-low",
+        isAtRisk: false,
+        riskText: "Priya's engagement is highly healthy",
+        reasoningChips: ["94% plan adherence", "HRV 71ms (+15%)", "Last active 10m ago"],
+        draftMsg: "Hey Priya, massive congrats on hitting 94% adherence this month! Your HRV trends look exceptional too. Let's keep this momentum going into the weekend!",
+        suggestions: [],
+        predictedImpact: "",
+        whyContent: "Priya is in an optimal training adaptation window. HRV is elevated 15% above baseline, sleep is consistent, and adherence is near-perfect. She is highly receptive to positive reinforcement.",
+        timelineData: {
+          appOpens: [5,6,5,7,6,6,5,7,6,6,5,6,7,6,5,6,7,6,6,5,6,7,6,6,5,6,7,6,6,7],
+          messages: [2,3,2,1,2,4,2,3,1,2,3,2,1,3,2,2,3,2,1,2,3,2,2,1,3,2,3,2,1,3],
+          checkins: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+          wearables: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+          summary: "Engagement is exceptionally high. Daily app opens and consistent wearable syncing reflect strong integration with her training routine."
+        },
+        behavioralSignals: {
+          sentiment: [0.85, 0.9, 0.88, 0.92, 0.95],
+          motivation: [8.0, 8.2, 8.5, 8.3, 8.5],
+          completion: [92, 94, 95, 93, 94, 94],
+          sentimentValue: "Positive",
+          sentimentDelta: "▲ +12% vs average",
+          motivationValue: "8.5/10",
+          motivationDelta: "▲ +15% 7d deviation",
+          completionValue: "94%",
+          completionDelta: "▲ +4% WoW",
+          narrative: "Priya expresses high energy levels and enthusiasm in her chat messages. Recovery indices are fully aligned with training load."
+        },
+        planFit: {
+          score: 94,
+          scores: { complexity: 20, progressivity: 20, recovery: 18, enjoyment: 18, goalFit: 18 },
+          heatmap: [
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2,
+            2,2,2,-1,2,2,2
+          ],
+          fatigueChart: {
+            volume: [70, 72, 75, 78, 80, 82, 85],
+            recovery: [68, 70, 71, 72, 70, 71, 71]
+          },
+          adjustments: []
+        },
+        history: [
+          { date: "20 May 2026", title: "Milestone message sent", detail: "Congratulated client on 94% adherence. Response was very positive.", outcome: "Resolved", outcomeClass: "ok" }
+        ],
+        chatHistory: [
+          { sender: "coach", text: "Hey Priya, massive congrats on hitting 94% adherence this month! Your HRV trends look exceptional too." },
+          { sender: "client", text: "Thank you so much! Feeling really good this week, energy levels are great." }
+        ]
+      }
+    };
+
+    // 2. Load client from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientParam = urlParams.get('client');
+    if (clientParam && clientsData[clientParam]) {
+      window.clientKey = clientParam;
+    } else {
+      window.clientKey = 'sarah-k';
+    }
+    window.client = clientsData[window.clientKey];
+
+    let currentTab = urlParams.get('tab') || 'plan';
+    if (currentTab !== 'plan' && currentTab !== 'risk') {
+      currentTab = 'plan';
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Data ramp for athletes
-      const clientsData = {
-        'sarah-k': {
-          name: "Sarah K.",
-          initials: "SK",
-          avatarClass: "av-1",
-          phase: "Week 8 · Half-Marathon",
-          statusText: "Exhaustion Risk",
-          statusClass: "alert",
-          metrics: {
-            sleep: "42",
-            sleepSub: "3.2 hrs · 12% REM · 8% Deep sleep",
-            sleepTrend: "▼ -45% vs baseline",
-            sleepTrendClass: "down",
-            hrv: "18",
-            hrvSub: "52% below rolling baseline",
-            hrvTrend: "▼ -52% 7d change",
-            hrvTrendClass: "down",
-            rhr: "68",
-            rhrSub: "Elevated (+12% above average)",
-            rhrTrend: "▲ +8 bpm deviation",
-            rhrTrendClass: "up"
-          },
-          reasoning: "Sarah's acute training load has increased by <span class='hl'>35% week-over-week</span>, while Sleep Score has dropped to a critical <span class='hl'>42/100</span>. HRV has plunged <span class='hl'>52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. AI recommends a mandatory active recovery shift to prevent injury.",
-          chatSnippet: "<b>Sarah K. (8:14 AM):</b> \"My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall.\"",
-          confidence: "94%",
-          meta: {
-            hrvBase: "38 ms",
-            sleepCon: "45%",
-            sleepConWidth: "45%",
-            sleepConClass: "bad",
-            sleepDef: "+4.2 hrs",
-            rhrBase: "62 bpm"
-          },
-          weekPlan: [
-            { name: "Mon", type: "Rec Walk",     detail: "30 min Zone 1",  edited: true,  remark: "AI Adjusted", originalType: "Threshold Run", originalDetail: "6 x 1 km @ 4:30" },
-            { name: "Tue", type: "Rest & Mob",   detail: "Stretch focus",  edited: true,  remark: "AI Adjusted", originalType: "Strength",      originalDetail: "Full session" },
-            { name: "Wed", type: "Aerobic Base", detail: "45 min Zone 2",  edited: false, remark: "" },
-            { name: "Thu", type: "Light Lift",   detail: "Core focus",     edited: false, remark: "" },
-            { name: "Fri", type: "Rest",         detail: "Sleep focus",    edited: false, remark: "" },
-            { name: "Sat", type: "Base Run",     detail: "30 min Zone 2",  edited: false, remark: "" },
-            { name: "Sun", type: "Long Run",     detail: "10 mi Zone 2",   edited: true,  remark: "Shifted from Sat", originalType: "Long Run", originalDetail: "12 mi Zone 2 (Sat)" }
-          ],
-          impact: {
-            without: {
-              desc: "Continuing at current training volume is projected to trigger a <strong>severe exhaustion crash in 3 days</strong>, increasing injury risk by <strong>4.2x</strong> and stalling baseline adaptation for <strong>3+ weeks</strong>.",
-              path: "M 0 60 Q 100 70 180 150 T 360 160",
-              markerX: 180,
-              markerY: 150,
-              markerText: "Crash (4d)"
-            },
-            with: {
-              desc: "Implementing the recommended active recovery and run shifting is projected to <strong>restore HRV to baseline within 4 days</strong>, leading to supercompensation and peak readiness by next week.",
-              path: "M 0 60 Q 80 110 160 80 T 360 40",
-              markerX: 260,
-              markerY: 55,
-              markerText: "Rebound (5d)"
-            }
-          }
-        },
-        'marcus-t': {
-          name: "Marcus T.",
-          initials: "MT",
-          avatarClass: "av-2",
-          phase: "Week 6 · Strength Plan",
-          statusText: "High Churn Risk",
-          statusClass: "alert",
-          metrics: {
-            sleep: "62",
-            sleepSub: "6.2 hrs · 15% REM · 10% Deep sleep",
-            sleepTrend: "▼ -15% vs baseline",
-            sleepTrendClass: "down",
-            hrv: "32",
-            hrvSub: "24% below rolling baseline",
-            hrvTrend: "▼ -24% 14d change",
-            hrvTrendClass: "down",
-            rhr: "64",
-            rhrSub: "Baseline within normal limits",
-            rhrTrend: "■ Unchanged",
-            rhrTrendClass: "flat"
-          },
-          reasoning: "Marcus's workout adherence has dropped to <span class='hl'>40% over the last 10 days</span>, accompanied by a <span class='hl'>24% decline in HRV</span>. Wearable sleep staging shows increased restlessness. He is entering a high churn risk window. AI suggests scaling back to joint mobility to maintain consistency.",
-          chatSnippet: "<b>Marcus T. (9:02 AM):</b> \"Just busy with work and feeling super stiff. Hard to get motivated for heavy lifting when I'm this tired.\"",
-          confidence: "88%",
-          meta: {
-            hrvBase: "42 ms",
-            sleepCon: "60%",
-            sleepConWidth: "60%",
-            sleepConClass: "warn",
-            sleepDef: "+1.8 hrs",
-            rhrBase: "64 bpm"
-          },
-          weekPlan: [
-            { name: "Mon", type: "Mobility Flow",  detail: "15 min gentle", edited: true,  remark: "AI Adjusted", originalType: "Strength A", originalDetail: "Full session, 60 min" },
-            { name: "Tue", type: "Rest",           detail: "Hydration focus", edited: false, remark: "" },
-            { name: "Wed", type: "Core & Stretch", detail: "20 min light",  edited: true,  remark: "AI Adjusted", originalType: "Conditioning", originalDetail: "30 min intervals" },
-            { name: "Thu", type: "Rest",           detail: "Recovery walk", edited: false, remark: "" },
-            { name: "Fri", type: "Light Lift",     detail: "50% load 30m",  edited: true,  remark: "AI Adjusted", originalType: "Strength B", originalDetail: "Full session, 60 min" },
-            { name: "Sat", type: "Rest",           detail: "Active recovery", edited: false, remark: "" },
-            { name: "Sun", type: "Active Walk",    detail: "30 min outdoor", edited: false, remark: "" }
-          ],
-          impact: {
-            without: {
-              desc: "Maintaining the heavy strength plan will likely lead to <strong>complete workout cessation (0% adherence)</strong> and eventual program drop-out within <strong>7-10 days</strong>.",
-              path: "M 0 70 Q 120 90 200 160 T 360 170",
-              markerX: 200,
-              markerY: 160,
-              markerText: "Drop-out"
-            },
-            with: {
-              desc: "Scaling back to low-friction mobility and light resistance is projected to <strong>restore weekly workout adherence to 80%+ within 5 days</strong>, maintaining positive habit loops.",
-              path: "M 0 70 Q 100 120 180 90 T 360 60",
-              markerX: 270,
-              markerY: 70,
-              markerText: "Habit Retained"
-            }
-          }
-        },
-        'aman-khanna': {
-          name: "Aman Khanna",
-          initials: "AK",
-          avatarClass: "av-2",
-          phase: "Week 14 · Hypertrophy Cycle",
-          statusText: "Deload Pending",
-          statusClass: "warning",
-          metrics: {
-            sleep: "58",
-            sleepSub: "5.4 hrs average sleep duration",
-            sleepTrend: "▼ -20% vs baseline",
-            sleepTrendClass: "down",
-            hrv: "42",
-            hrvSub: "18% below rolling baseline",
-            hrvTrend: "▼ -18% 7d change",
-            hrvTrendClass: "down",
-            rhr: "62",
-            rhrSub: "+2 bpm normal deviation",
-            rhrTrend: "▲ +2 bpm deviation",
-            rhrTrendClass: "flat"
-          },
-          reasoning: "Aman is in week 14 of an intense hypertrophy cycle. His sleep duration has declined (<span class='hl'>5.4h average</span>), while muscle soreness has peaked at <span class='hl'>8/10</span>. HRV shows an <span class='hl'>18% downward trend</span>. AI suggests a structured deload week to clear soreness and restore capacity.",
-          chatSnippet: "<b>Aman K. (Yesterday):</b> \"Muscles are super sore and sleep has been terrible this week. Hard to recover between sets.\"",
-          confidence: "91%",
-          meta: {
-            hrvBase: "51 ms",
-            sleepCon: "68%",
-            sleepConWidth: "68%",
-            sleepConClass: "warn",
-            sleepDef: "+3.1 hrs",
-            rhrBase: "60 bpm"
-          },
-          weekPlan: [
-            { name: "Mon", type: "Deload Chest",  detail: "3x8 @60% 1RM",  edited: true,  remark: "AI Adjusted", originalType: "Heavy Chest", originalDetail: "5x5 @85% 1RM" },
-            { name: "Tue", type: "Rest",          detail: "Sleep focus",    edited: false, remark: "" },
-            { name: "Wed", type: "Deload Legs",   detail: "3x10 @55% 1RM", edited: true,  remark: "AI Adjusted", originalType: "Heavy Squat", originalDetail: "5x5 @80% 1RM" },
-            { name: "Thu", type: "Rest",          detail: "Active stretch", edited: false, remark: "" },
-            { name: "Fri", type: "Deload Back",   detail: "3x8 @60% 1RM",  edited: true,  remark: "AI Adjusted", originalType: "Heavy Pulls", originalDetail: "5x5 @85% 1RM" },
-            { name: "Sat", type: "Mobility Flow", detail: "20 min stretch", edited: false, remark: "" },
-            { name: "Sun", type: "Rest",          detail: "Recovery walk",  edited: false, remark: "" }
-          ],
-          impact: {
-            without: {
-              desc: "Continuing heavy training is projected to cause an <strong>overtraining plateau</strong>, halting muscle growth progress and increasing the risk of joint strain by <strong>2.8x</strong>.",
-              path: "M 0 65 Q 120 75 190 120 T 360 135",
-              markerX: 190,
-              markerY: 120,
-              markerText: "Plateau"
-            },
-            with: {
-              desc: "A 1-week structured deload is projected to <strong>clear muscular soreness</strong>, restore nervous system readiness, and trigger a <strong>15% increase in hypertrophic adaptation</strong> next cycle.",
-              path: "M 0 65 Q 90 95 170 75 T 360 45",
-              markerX: 265,
-              markerY: 55,
-              markerText: "Supercompensation"
-            }
-          }
-        },
-        'meera-joshi': {
-          name: "Meera Joshi",
-          initials: "MJ",
-          avatarClass: "av-3",
-          phase: "Week 6 · Nutrition Focus",
-          statusText: "Nutrition Drift",
-          statusClass: "warning",
-          metrics: {
-            sleep: "78",
-            sleepSub: "7.2 hrs · 18% REM · 15% Deep",
-            sleepTrend: "■ Normal baseline",
-            sleepTrendClass: "flat",
-            hrv: "68",
-            hrvSub: "Within normal limits (+4ms)",
-            hrvTrend: "▲ Stable baseline",
-            hrvTrendClass: "up",
-            rhr: "58",
-            rhrSub: "Optimal range",
-            rhrTrend: "▼ Stable",
-            rhrTrendClass: "down"
-          },
-          reasoning: "Meera's average protein intake has dropped to <span class='hl'>62% of target across 5 days</span>, accompanied by a drop in meal consistency. Her recovery is currently stable but building logs show negative lean mass adaptation. AI recommends automated meal prep drafts and adjusting protein goal distribution.",
-          chatSnippet: "<b>Meera J. (Yesterday):</b> \"Struggling to hit my protein targets this week because of travel. Finding it hard to eat enough clean food on the go.\"",
-          confidence: "86%",
-          meta: {
-            hrvBase: "64 ms",
-            sleepCon: "80%",
-            sleepConWidth: "80%",
-            sleepConClass: "ok",
-            sleepDef: "-0.2 hrs",
-            rhrBase: "59 bpm"
-          },
-          weekPlan: [
-            { name: "Mon", type: "Prep Draft",  detail: "High protein meal prep",  edited: true,  remark: "AI Adjusted", originalType: "Free Day", originalDetail: "No nutrition target" },
-            { name: "Tue", type: "Strength",    detail: "45 min upper body",       edited: false, remark: "" },
-            { name: "Wed", type: "Prep Draft",  detail: "Protein shake target",    edited: true,  remark: "AI Adjusted", originalType: "Free Day", originalDetail: "No nutrition target" },
-            { name: "Thu", type: "Mobility",    detail: "Gentle stretch",          edited: false, remark: "" },
-            { name: "Fri", type: "Strength",    detail: "45 min lower body",       edited: false, remark: "" },
-            { name: "Sat", type: "Active Walk", detail: "30 min outdoors",         edited: false, remark: "" },
-            { name: "Sun", type: "Rest",        detail: "Meal prep focus",         edited: true,  remark: "AI Adjusted", originalType: "Rest", originalDetail: "Unstructured" }
-          ],
-          impact: {
-            without: {
-              desc: "Neglecting the protein targets is projected to **halt muscular recovery**, leading to increased fatigue and a **12% loss in training adaptations** over the next 2 weeks.",
-              path: "M 0 60 Q 100 80 180 130 T 360 145",
-              markerX: 180,
-              markerY: 130,
-              markerText: "Recovery Stalls"
-            },
-            with: {
-              desc: "Adopting the automated meal-prep suggestions is projected to **restore protein intake to 95% of target**, driving recovery adaptation and muscle mass retention.",
-              path: "M 0 60 Q 80 90 160 70 T 360 42",
-              markerX: 260,
-              markerY: 52,
-              markerText: "Muscle Retained"
-            }
-          }
-        },
-        'priya-i': {
-          name: "Priya I.",
-          initials: "PI",
-          avatarClass: "av-3",
-          phase: "Week 6 · Performance Focus",
-          statusText: "Optimized",
-          statusClass: "ok",
-          metrics: {
-            sleep: "78",
-            sleepSub: "7.8 hrs · 22% REM · 18% Deep",
-            sleepTrend: "■ Stable baseline",
-            sleepTrendClass: "flat",
-            hrv: "71",
-            hrvSub: "Within normal limits (+3ms)",
-            hrvTrend: "▲ Stable baseline",
-            hrvTrendClass: "up",
-            rhr: "56",
-            rhrSub: "Optimal range",
-            rhrTrend: "▼ Stable",
-            rhrTrendClass: "down"
-          },
-          reasoning: "Priya is performing exceptionally. Her sleep duration and consistency are stable at 7.8 hours, and HRV remains high at 71 ms. Adherence is at 94%. No weekly schedule adjustments are required; continue with her current training plan.",
-          chatSnippet: "<b>Priya I. (2 days ago):</b> \"Feeling great! Strength is increasing and recovery has been really fast this week. Ready for the next phase.\"",
-          confidence: "98%",
-          meta: {
-            hrvBase: "68 ms",
-            sleepCon: "92%",
-            sleepConWidth: "92%",
-            sleepConClass: "ok",
-            sleepDef: "-0.4 hrs",
-            rhrBase: "56 bpm"
-          },
-          weekPlan: [
-            { name: "Mon", type: "Active Lift", detail: "Strength 50 min", edited: false, remark: "" },
-            { name: "Tue", type: "Rest", detail: "Sleep focus", edited: false, remark: "" },
-            { name: "Wed", type: "Active Run", detail: "40 min Zone 2", edited: false, remark: "" },
-            { name: "Thu", type: "Rest", detail: "Recovery stretch", edited: false, remark: "" },
-            { name: "Fri", type: "Active Lift", detail: "Strength 50 min", edited: false, remark: "" },
-            { name: "Sat", type: "Base Run", detail: "30 min Zone 2", edited: false, remark: "" },
-            { name: "Sun", type: "Rest", detail: "Active recovery", edited: false, remark: "" }
-          ],
-          impact: {
-            without: {
-              desc: "Continuing with the current optimized volume is projected to maintain high performance readiness and baseline autonomic adaptations.",
-              path: "M 0 50 Q 120 45 240 40 T 360 38",
-              markerX: 200,
-              markerY: 42,
-              markerText: "Peak Ready"
-            },
-            with: {
-              desc: "Modifying the volume unnecessarily might disrupt her current positive recovery-performance adaptation cycle.",
-              path: "M 0 50 Q 100 65 190 75 T 360 80",
-              markerX: 260,
-              markerY: 70,
-              markerText: "Suboptimal"
-            }
-          }
-        }
-      };
 
-      // 2. Load active client config
-      const urlParams = new URLSearchParams(window.location.search);
-      const clientKey = urlParams.get('client') || 'sarah-k';
-      
-      const client = clientsData[clientKey] || clientsData['sarah-k']; // fallback to Sarah
 
-      // 3. Populate page items
-      document.title = `Zora Console — ${client.name} AI Optimization`;
-      document.getElementById('crumb-tail').textContent = client.name;
+    // 3. Inject custom markup & modals
+    function injectModalsAndStyles() {
+  // Styles injection
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Chat Slideover */
+    .chat-slideover {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 380px;
+      max-width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-left: 1px solid rgba(26, 26, 46, 0.08);
+      box-shadow: -4px 0 24px rgba(26, 26, 46, 0.08);
+      z-index: 120;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .chat-slideover.show {
+      transform: translateX(0);
+    }
+    
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-client-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-client-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      display: grid;
+      place-items: center;
+    }
+    .chat-client-name {
+      font-family: var(--font-geist);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .chat-client-status {
+      font-family: var(--font-dm-sans);
+      font-size: 11px;
+      color: var(--ok);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chat-client-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ok);
+      display: inline-block;
+    }
+    
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-family: var(--font-dm-sans);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .chat-bubble.coach {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      border: 1px solid rgba(122, 84, 135, 0.12);
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-bubble.client {
+      background: var(--paper-3);
+      color: var(--ink);
+      border: 1px solid var(--line-soft);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-bubble.system-zora {
+      background: rgba(26, 26, 46, 0.03);
+      color: var(--ink-3);
+      border: 1px dashed var(--line);
+      align-self: center;
+      font-style: italic;
+      font-size: 12px;
+      text-align: center;
+      max-width: 90%;
+    }
+    
+    .chat-input-area {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(26, 26, 46, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #ffffff;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input {
+      flex-grow: 1;
+      border: 1px solid rgba(26, 26, 46, 0.1);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: var(--font-dm-sans);
+      font-size: 13px;
+      outline: none;
+      resize: none;
+      height: 38px;
+      box-sizing: border-box;
+    }
+    .chat-input:focus {
+      border-color: var(--accent);
+    }
+    .chat-send-btn {
+      background: var(--ink);
+      color: #fff;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-family: var(--font-geist);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .chat-send-btn:hover {
+      background: var(--accent-deep);
+    }
+    .chat-smart-reply {
+      font-family: var(--font-dm-sans);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--accent-deep);
+      background: rgba(122, 84, 135, 0.06);
+      border: 1px solid rgba(122, 84, 135, 0.16);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.15s;
+    }
+    .chat-smart-reply:hover {
+      background: rgba(122, 84, 135, 0.12);
+    }
+    
+    /* Calendar & Call picker styles */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .calendar-day-header {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      text-align: center;
+    }
+    .calendar-day-btn {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: transparent;
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+    }
+    .calendar-day-btn:hover:not(.disabled) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .calendar-day-btn.selected {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .calendar-day-btn.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .time-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .time-slot-btn {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: transparent;
+      font-family: var(--font-dm-sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .time-slot-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .time-slot-btn.selected {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    
+    /* Tactile active state scaling */
+    .pm-btn-primary:active, .btn-primary:active, .btn-secondary:active, .action-rail-btn:active {
+      transform: scale(0.97);
+    }
+    .pm-btn-ghost:active, .btn-ghost:active {
+      transform: scale(0.985);
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Note Modal HTML
+  const noteModalHtml = `
+    <div class="prompt-overlay" id="note-modal-overlay" style="opacity:0; pointer-events:none;">
+      <div class="prompt-stack">
+        <div class="pm-modal">
+          <div class="pm-head">
+            <h2>Log Coach Note <em id="note-client-name">for client</em></h2>
+            <p>Add a note to timeline logs. Only coaches and Zora see this note.</p>
+            <button class="pm-close" id="note-modal-close" type="button" aria-label="Close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pm-body" style="display:block;">
+            <div style="margin: 6px 0 18px;">
+              <textarea class="pm-prompt" id="note-textarea" rows="4" placeholder="Enter private note details..." style="padding:14px 16px 14px 14px; width:100%; border:1px solid rgba(26,26,46,0.1); border-radius:8px;"></textarea>
+            </div>
+          </div>
+          <div class="pm-foot">
+            <div class="pm-foot-meta">Saved notes are logged in history.</div>
+            <div class="pm-foot-actions">
+              <button class="pm-btn-ghost" id="note-modal-cancel" type="button">Cancel</button>
+              <button class="pm-btn-primary" id="note-modal-save" type="button">Save Note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', noteModalHtml);
+
+  // Call Modal HTML
+  const callModalHtml = `
+    <div class="prompt-overlay" id="call-modal-overlay" style="opacity:0; pointer-events:none;">
+      <div class="prompt-stack">
+        <div class="pm-modal">
+          <div class="pm-head">
+            <h2>Schedule Call <em id="call-client-name">with client</em></h2>
+            <p>Select a slot for a 15-minute alignment check-in. Zora will send the invite.</p>
+            <button class="pm-close" id="call-modal-close" type="button" aria-label="Close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pm-body" style="display:block; padding-bottom: 20px;">
+            <div style="font-size:11px; font-weight:600; color:var(--ink-4); text-transform:uppercase; margin-bottom:6px;">Select Date</div>
+            <div class="calendar-grid" id="call-calendar-grid"></div>
+            
+            <div style="font-size:11px; font-weight:600; color:var(--ink-4); text-transform:uppercase; margin-top:16px; margin-bottom:6px;">Select Time (EST)</div>
+            <div class="time-slots-grid">
+              <button class="time-slot-btn selected" type="button">09:00 AM</button>
+              <button class="time-slot-btn" type="button">10:30 AM</button>
+              <button class="time-slot-btn" type="button">01:00 PM</button>
+              <button class="time-slot-btn" type="button">03:30 PM</button>
+              <button class="time-slot-btn" type="button">04:15 PM</button>
+              <button class="time-slot-btn" type="button">05:00 PM</button>
+            </div>
+          </div>
+          <div class="pm-foot">
+            <div class="pm-foot-meta">Calendar invite will be sent automatically.</div>
+            <div class="pm-foot-actions">
+              <button class="pm-btn-ghost" id="call-modal-cancel" type="button">Cancel</button>
+              <button class="pm-btn-primary" id="call-modal-schedule" type="button">Schedule Call</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', callModalHtml);
+
+  // Apply Plan Fix Modal HTML
+  const fixModalHtml = `
+    <div class="prompt-overlay" id="fix-modal-overlay" style="opacity:0; pointer-events:none;">
+      <div class="prompt-stack">
+        <div class="pm-modal">
+          <div class="pm-head">
+            <h2>Apply Suggested Plan Fix</h2>
+            <p>Confirm the proposed adjustments drafted by Zora.</p>
+            <button class="pm-close" id="fix-modal-close" type="button" aria-label="Close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pm-body" style="display:block;">
+            <div class="pm-result-eyebrow">proposed training diff</div>
+            <div class="pm-diff" id="fix-modal-diff-list" style="margin-bottom:16px;"></div>
+          </div>
+          <div class="pm-foot">
+            <div class="pm-foot-meta">This will update the active week schedule draft.</div>
+            <div class="pm-foot-actions">
+              <button class="pm-btn-ghost" id="fix-modal-cancel" type="button">Cancel</button>
+              <button class="pm-btn-primary" id="fix-modal-confirm" type="button">Confirm &amp; Apply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', fixModalHtml);
+
+  // Chat Slideover HTML
+  const chatSlideoverHtml = `
+    <div class="chat-slideover" id="chat-slideover">
+      <div class="chat-header">
+        <div class="chat-client-info">
+          <div class="chat-client-avatar" id="chat-avatar">SK</div>
+          <div>
+            <div class="chat-client-name" id="chat-name">Sarah K.</div>
+            <div class="chat-client-status">Active now</div>
+          </div>
+        </div>
+        <button class="pm-close" id="chat-close" type="button" aria-label="Close" style="position:static; width:28px; height:28px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="chat-messages" id="chat-messages-container"></div>
+      <div class="chat-input-area">
+        <button class="chat-smart-reply" id="chat-smart-reply-btn" type="button">Smart Reply: Apply deload walk</button>
+        <div class="chat-input-row">
+          <textarea class="chat-input" id="chat-input-textarea" placeholder="Type message to client..."></textarea>
+          <button class="chat-send-btn" id="chat-send-btn">Send</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', chatSlideoverHtml);
+}
+    injectModalsAndStyles();
+
+    // 4. Tab routing logic
+    const tabBtnPlan = document.getElementById('tab-btn-plan');
+    const tabBtnRisk = document.getElementById('tab-btn-risk');
+    const panelPlan = document.getElementById('panel-plan');
+    const panelRisk = document.getElementById('panel-risk');
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      if (tabName === 'plan') {
+        tabBtnPlan.classList.add('active');
+        tabBtnRisk.classList.remove('active');
+        panelPlan.classList.add('active');
+        panelPlan.style.display = 'block';
+        panelRisk.classList.remove('active');
+        panelRisk.style.display = 'none';
+      } else {
+        tabBtnPlan.classList.remove('active');
+        tabBtnRisk.classList.add('active');
+        panelPlan.classList.remove('active');
+        panelPlan.style.display = 'none';
+        panelRisk.classList.add('active');
+        panelRisk.style.display = 'block';
+        renderRiskTab(window.client);
+      }
+      // Update URL without reloading page
+      const newUrl = `${window.location.pathname}?client=${window.clientKey}&tab=${tabName}`;
+      window.history.replaceState({ path: newUrl }, '', newUrl);
+    }
+
+    tabBtnPlan.addEventListener('click', () => switchTab('plan'));
+    tabBtnRisk.addEventListener('click', () => switchTab('risk'));
+
+    // 5. Render active client
+    function renderClientCore(c) {
+      document.getElementById('crumb-tail').textContent = `${c.name} Optimization`;
       
-      // Avatar
-      const avEl = document.getElementById('client-avatar');
-      avEl.textContent = client.initials;
-      avEl.className = 's2-avatar ' + client.avatarClass;
+      // Header strip
+      const avatarEl = document.getElementById('strip-avatar');
+      avatarEl.textContent = c.initials;
+      avatarEl.className = `strip-avatar ${c.avatarClass}`;
       
-      // Header details
-      document.getElementById('client-name').textContent = client.name;
-      document.getElementById('client-phase').textContent = client.phase;
+      document.getElementById('strip-name').textContent = c.name;
+      document.getElementById('strip-program').textContent = c.phase;
+      document.getElementById('strip-recovery').innerHTML = `${c.vitals.recovery}<span class="unit">%</span>`;
+      document.getElementById('strip-engagement').innerHTML = `${c.vitals.engagement}<span class="unit">%</span>`;
       
-      // Tag
-      const tagEl = document.getElementById('client-tag');
-      tagEl.textContent = client.statusText;
-      tagEl.className = 's2-tag ' + client.statusClass;
+      const riskEl = document.getElementById('strip-risk');
+      riskEl.textContent = c.vitals.riskText;
+      riskEl.className = `client-card-risk-badge ${c.vitals.riskClass}`;
+      
+      document.getElementById('strip-active').textContent = c.vitals.active;
 
       // Bento cards
-      document.getElementById('sleep-score-val').innerHTML = `${client.metrics.sleep}<span class="unit">/100</span>`;
-      document.getElementById('sleep-score-trend').textContent = client.metrics.sleepTrend;
-      document.getElementById('sleep-score-trend').className = 'why-trend ' + client.metrics.sleepTrendClass;
-      document.getElementById('sleep-score-sub').textContent = client.metrics.sleepSub;
+      document.getElementById('sleep-score-val').innerHTML = `${c.metrics.sleep}<span class="unit">/100</span>`;
+      const sTrend = document.getElementById('sleep-score-trend');
+      sTrend.textContent = c.metrics.sleepTrend;
+      sTrend.className = `why-trend ${c.metrics.sleepTrendClass}`;
+      document.getElementById('sleep-score-sub').textContent = c.metrics.sleepSub;
 
-      document.getElementById('hrv-val').innerHTML = `${client.metrics.hrv}<span class="unit">ms</span>`;
-      document.getElementById('hrv-trend').textContent = client.metrics.hrvTrend;
-      document.getElementById('hrv-trend').className = 'why-trend ' + client.metrics.hrvTrendClass;
-      document.getElementById('hrv-sub').textContent = client.metrics.hrvSub;
+      document.getElementById('hrv-val').innerHTML = `${c.metrics.hrv}<span class="unit">ms</span>`;
+      const hTrend = document.getElementById('hrv-trend');
+      hTrend.textContent = c.metrics.hrvTrend;
+      hTrend.className = `why-trend ${c.metrics.hrvTrendClass}`;
+      document.getElementById('hrv-sub').textContent = c.metrics.hrvSub;
 
-      document.getElementById('rhr-val').innerHTML = `${client.metrics.rhr}<span class="unit">bpm</span>`;
-      document.getElementById('rhr-trend').textContent = client.metrics.rhrTrend;
-      document.getElementById('rhr-trend').className = 'why-trend ' + client.metrics.rhrTrendClass;
-      document.getElementById('rhr-sub').textContent = client.metrics.rhrSub;
+      document.getElementById('rhr-val').innerHTML = `${c.metrics.rhr}<span class="unit">bpm</span>`;
+      const rTrend = document.getElementById('rhr-trend');
+      rTrend.textContent = c.metrics.rhrTrend;
+      rTrend.className = `why-trend ${c.metrics.rhrTrendClass}`;
+      document.getElementById('rhr-sub').textContent = c.metrics.rhrSub;
 
-      // Narrative
-      document.getElementById('ai-narrative').innerHTML = client.reasoning;
+      document.getElementById('ai-narrative').innerHTML = c.aiNarrative;
 
-      // Dynamic Sidebar signals
-      document.getElementById('meta-hrv-base').textContent = client.meta.hrvBase;
-      document.getElementById('meta-sleep-con').textContent = client.meta.sleepCon;
-      const sleepConFill = document.getElementById('fill-sleep-con');
-      sleepConFill.style.width = client.meta.sleepConWidth;
-      sleepConFill.className = 'metric-bar-fill ' + client.meta.sleepConClass;
-      
-      document.getElementById('meta-sleep-def').textContent = client.meta.sleepDef;
-      document.getElementById('meta-rhr').textContent = client.meta.rhrBase;
-      
-      // Feedback Chat
-      document.getElementById('client-feedback').innerHTML = client.chatSnippet;
+      updateScheduleCount();
+    }
 
-      // Confidence
-      document.getElementById('confidence-val').textContent = client.confidence;
-      document.getElementById('confidence-fill').style.width = client.confidenceFill;
-
-      // (Schedule cards generator removed; weekly schedule lives in the
-      //  "View updated schedule" popup, populated from client.weekPlan.)
-
-      // ==================== IMPACT TOGGLE LOGIC ====================
-      const toggleWithout = document.getElementById('toggle-without');
-      const toggleWith = document.getElementById('toggle-with');
-      const pathWithout = document.getElementById('path-without');
-      const pathWith = document.getElementById('path-with');
-      const markerWithout = document.getElementById('marker-without');
-      const markerWith = document.getElementById('marker-with');
-      const descContainer = document.getElementById('impact-description');
-
-      // Populate SVG paths based on active client data
-      pathWithout.setAttribute('d', client.impact.without.path);
-      pathWith.setAttribute('d', client.impact.with.path);
-
-      // Populate markers
-      const circleWithout = markerWithout.querySelector('circle');
-      circleWithout.setAttribute('cx', client.impact.without.markerX);
-      circleWithout.setAttribute('cy', client.impact.without.markerY);
-      markerWithout.querySelector('g').setAttribute('transform', `translate(${client.impact.without.markerX}, ${client.impact.without.markerY - 35})`);
-      document.getElementById('marker-without-text').textContent = client.impact.without.markerText;
-
-      const circleWith = markerWith.querySelector('circle');
-      circleWith.setAttribute('cx', client.impact.with.markerX);
-      circleWith.setAttribute('cy', client.impact.with.markerY);
-      markerWith.querySelector('g').setAttribute('transform', `translate(${client.impact.with.markerX}, ${client.impact.with.markerY - 35})`);
-      document.getElementById('marker-with-text').textContent = client.impact.with.markerText;
-
-      // Init description text
-      descContainer.innerHTML = client.impact.without.desc;
-
-      // Event handlers for Toggle Buttons
-      function handleToggle(activeToggle) {
-        // Apply Emil Kowalski's blur masking transition to description
-        descContainer.classList.add('transitioning');
-
-        if (activeToggle === 'without') {
-          toggleWithout.classList.add('active');
-          toggleWith.classList.remove('active');
-
-          // SVG paths active state swap
-          pathWithout.className.baseVal = "impact-path crash active";
-          pathWith.className.baseVal = "impact-path recovery inactive";
-
-          // Markers active state swap
-          markerWithout.className.baseVal = "chart-marker active";
-          markerWith.className.baseVal = "chart-marker inactive";
-
-          // Delay slightly, swap text and remove blur to complete premium crossfade
-          setTimeout(() => {
-            descContainer.innerHTML = client.impact.without.desc;
-            descContainer.classList.remove('transitioning');
-          }, 150);
-        } else {
-          toggleWithout.classList.remove('active');
-          toggleWith.classList.add('active');
-
-          // SVG paths active state swap
-          pathWithout.className.baseVal = "impact-path crash inactive";
-          pathWith.className.baseVal = "impact-path recovery active";
-
-          // Markers active state swap
-          markerWithout.className.baseVal = "chart-marker inactive";
-          markerWith.className.baseVal = "chart-marker active";
-
-          // Delay slightly, swap text and remove blur to complete premium crossfade
-          setTimeout(() => {
-            descContainer.innerHTML = client.impact.with.desc;
-            descContainer.classList.remove('transitioning');
-          }, 150);
-        }
+    function updateScheduleCount() {
+      const edits = window.client.weekPlan.filter(d => d.edited).length;
+      const countEl = document.getElementById('see-schedule-count');
+      if (countEl) {
+        countEl.textContent = edits === 1 ? '1 change' : `${edits} changes`;
       }
+    }
 
-      toggleWithout.addEventListener('click', () => handleToggle('without'));
-      toggleWith.addEventListener('click', () => handleToggle('with'));
+    // 6. SVG and charts renderers
+    function drawTimeline(svgId, timelineData) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  
+  const width = 720;
+  const height = 180;
+  const paddingLeft = 110;
+  const paddingRight = 20;
+  const timelineWidth = width - paddingLeft - paddingRight;
+  const step = timelineWidth / 29; // 30 points
+  
+  // Rows: App Opens, Messages, Check-ins, Wearables
+  const rowLabels = ["App Opens", "Messages", "Check-ins", "Wearables"];
+  const rowY = [35, 75, 115, 155];
+  const colors = ["#9b59b6", "#3498db", "#2ecc71", "#95a5a6"];
+  
+  // Draw row labels
+  rowLabels.forEach((lbl, idx) => {
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", "10");
+    text.setAttribute("y", rowY[idx] + 4);
+    text.setAttribute("class", "timeline-row-lbl");
+    text.textContent = lbl;
+    svg.appendChild(text);
+    
+    // Draw row horizontal grid line
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", paddingLeft);
+    line.setAttribute("y1", rowY[idx]);
+    line.setAttribute("x2", width - paddingRight);
+    line.setAttribute("y2", rowY[idx]);
+    line.setAttribute("class", "timeline-gridline");
+    svg.appendChild(line);
+  });
+  
+  // Draw drop-off period background wash (last 1/3, e.g. day 20 to 29)
+  const dropOffStartDay = 20;
+  const washX = paddingLeft + dropOffStartDay * step;
+  const washW = (29 - dropOffStartDay) * step + 10;
+  
+  const washRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  washRect.setAttribute("x", washX);
+  washRect.setAttribute("y", "15");
+  washRect.setAttribute("width", washW);
+  washRect.setAttribute("height", height - 30);
+  washRect.setAttribute("fill", "rgba(231, 76, 60, 0.05)");
+  washRect.setAttribute("stroke", "rgba(231, 76, 60, 0.15)");
+  washRect.setAttribute("stroke-dasharray", "4 4");
+  washRect.setAttribute("rx", "4");
+  svg.appendChild(washRect);
 
-      // Approve Action feedback
-      document.getElementById('btn-approve').addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        btn.style.background = 'var(--ok)';
-        btn.innerHTML = `
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;">
-            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10" />
-          </svg>
-          Sending Plan...
+  const washText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  washText.setAttribute("x", washX + 8);
+  washText.setAttribute("y", "26");
+  washText.setAttribute("fill", "var(--bad)");
+  washText.setAttribute("font-family", "var(--font-geist)");
+  washText.setAttribute("font-size", "9px");
+  washText.setAttribute("font-weight", "600");
+  washText.textContent = "DROP-OFF PERIOD";
+  svg.appendChild(washText);
+
+  // Draw day markers / lines
+  for (let day = 0; day < 30; day++) {
+    const cx = paddingLeft + day * step;
+    
+    // Label for first and last days, and today
+    if (day === 0 || day === 14 || day === 29) {
+      const dayLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      dayLbl.setAttribute("x", cx);
+      dayLbl.setAttribute("y", "170");
+      dayLbl.setAttribute("text-anchor", "middle");
+      dayLbl.setAttribute("class", "timeline-date-text");
+      dayLbl.textContent = day === 0 ? "D-30" : (day === 14 ? "D-15" : "Today");
+      svg.appendChild(dayLbl);
+      
+      const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      vLine.setAttribute("x1", cx);
+      vLine.setAttribute("y1", "25");
+      vLine.setAttribute("x2", cx);
+      vLine.setAttribute("y2", "158");
+      vLine.setAttribute("stroke", "var(--line-soft)");
+      vLine.setAttribute("stroke-dasharray", "2 2");
+      svg.appendChild(vLine);
+    }
+    
+    // Plot dots
+    // App Opens (Row 0)
+    const appVal = timelineData.appOpens[day];
+    if (appVal > 0) {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", rowY[0]);
+      dot.setAttribute("r", 3 + Math.min(appVal, 3));
+      dot.setAttribute("fill", colors[0]);
+      dot.setAttribute("class", "timeline-dot");
+      
+      const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = "Day " + (day + 1) + ": " + appVal + " App Opens";
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    }
+    
+    // Messages (Row 1)
+    const msgVal = timelineData.messages[day];
+    if (msgVal > 0) {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", rowY[1]);
+      dot.setAttribute("r", 4);
+      dot.setAttribute("fill", colors[1]);
+      dot.setAttribute("class", "timeline-dot");
+      
+      const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = "Day " + (day + 1) + ": " + msgVal + " Messages";
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    }
+    
+    // Check-ins (Row 2)
+    const ciVal = timelineData.checkins[day];
+    if (ciVal === 1) { // completed
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", rowY[2]);
+      dot.setAttribute("r", 4.5);
+      dot.setAttribute("fill", colors[2]);
+      dot.setAttribute("class", "timeline-dot");
+      
+      const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = "Day " + (day + 1) + ": Check-in Completed";
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    } else if (ciVal === 0) { // skipped
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", rowY[2]);
+      dot.setAttribute("r", 4.5);
+      dot.setAttribute("fill", "#e74c3c"); // red
+      dot.setAttribute("class", "timeline-dot");
+      
+      const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = "Day " + (day + 1) + ": Check-in Skipped";
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    }
+    
+    // Wearables (Row 3)
+    const wearVal = timelineData.wearables[day];
+    if (wearVal > 0) {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", rowY[3]);
+      dot.setAttribute("r", 3.5);
+      dot.setAttribute("fill", wearVal === 1 ? colors[3] : "#2ecc71");
+      dot.setAttribute("class", "timeline-dot");
+      
+      const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = "Day " + (day + 1) + ": Wearables Synced";
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    }
+  }
+}
+    function drawSparkline(svgId, dataPoints, color) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  
+  const width = 180;
+  const height = 50;
+  const pad = 6;
+  
+  if (!dataPoints || dataPoints.length === 0) return;
+  
+  const min = Math.min(...dataPoints);
+  const max = Math.max(...dataPoints);
+  const range = max - min || 1;
+  
+  const points = dataPoints.map((val, idx) => {
+    const x = pad + (idx * (width - 2 * pad)) / (dataPoints.length - 1);
+    const y = height - pad - ((val - min) * (height - 2 * pad)) / range;
+    return { x, y, val };
+  });
+  
+  // Construct path
+  let d = "M " + points[0].x + " " + points[0].y;
+  for (let i = 1; i < points.length; i++) {
+    d += " L " + points[i].x + " " + points[i].y;
+  }
+  
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "sparkline-path");
+  path.setAttribute("stroke", color);
+  svg.appendChild(path);
+  
+  // Draw gradient area underneath
+  let dArea = d + " L " + points[points.length - 1].x + " " + height + " L " + points[0].x + " " + height + " Z";
+  const area = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  area.setAttribute("d", dArea);
+  area.setAttribute("fill", color.includes('accent') ? 'rgba(122, 84, 135, 0.08)' : 'rgba(46, 204, 113, 0.08)');
+  svg.appendChild(area);
+  
+  // Draw dots on hover, and highlight the last point
+  points.forEach((pt, idx) => {
+    const isLast = idx === points.length - 1;
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", pt.x);
+    dot.setAttribute("cy", pt.y);
+    dot.setAttribute("r", isLast ? 4 : 2);
+    dot.setAttribute("fill", isLast ? color : "transparent");
+    dot.setAttribute("stroke", isLast ? "#ffffff" : "transparent");
+    dot.setAttribute("stroke-width", isLast ? "1.5" : "0");
+    
+    // Add title tooltip
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = "Value: " + pt.val;
+    dot.appendChild(title);
+    
+    svg.appendChild(dot);
+  });
+}
+    function drawSparkbar(svgId, dataPoints, color) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  
+  const width = 180;
+  const height = 50;
+  const pad = 4;
+  const barCount = dataPoints.length;
+  const barWidth = (width - (barCount - 1) * pad) / barCount;
+  
+  const max = Math.max(...dataPoints, 100);
+  
+  dataPoints.forEach((val, idx) => {
+    const barHeight = (val / max) * (height - 8);
+    const x = idx * (barWidth + pad);
+    const y = height - barHeight - 4;
+    
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", x);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", barWidth);
+    rect.setAttribute("height", barHeight);
+    rect.setAttribute("rx", "2");
+    rect.setAttribute("fill", color);
+    rect.setAttribute("class", "sparkbar-rect");
+    
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = "Week " + (idx + 1) + ": " + val + "% completion";
+    rect.appendChild(title);
+    
+    svg.appendChild(rect);
+  });
+}
+    function drawFatigueChart(svgId, fatigueData) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  
+  const width = 280;
+  const height = 130;
+  const paddingLeft = 30;
+  const paddingRight = 10;
+  const paddingTop = 15;
+  const paddingBottom = 20;
+  
+  const chartW = width - paddingLeft - paddingRight;
+  const chartH = height - paddingTop - paddingBottom;
+  
+  const vol = fatigueData.volume; // load: e.g. 50 to 100
+  const rec = fatigueData.recovery; // recovery score: 0 to 100
+  
+  const len = vol.length;
+  const step = chartW / (len - 1);
+  
+  // Calculate min/max for volume to scale Y axis 1
+  const minVol = Math.min(...vol) - 5;
+  const maxVol = Math.max(...vol) + 5;
+  const volRange = maxVol - minVol || 1;
+  
+  // Recovery is always 0-100 on Y axis 2
+  const minRec = 0;
+  const maxRec = 100;
+  const recRange = 100;
+  
+  const volPoints = vol.map((v, idx) => {
+    const x = paddingLeft + idx * step;
+    const y = paddingTop + chartH - ((v - minVol) * chartH) / volRange;
+    return { x, y, val: v };
+  });
+  
+  const recPoints = rec.map((r, idx) => {
+    const x = paddingLeft + idx * step;
+    const y = paddingTop + chartH - ((r - minRec) * chartH) / recRange;
+    return { x, y, val: r };
+  });
+  
+  // Draw gridlines
+  for (let i = 0; i <= 3; i++) {
+    const yVal = paddingTop + (i * chartH) / 3;
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", paddingLeft);
+    line.setAttribute("y1", yVal);
+    line.setAttribute("x2", width - paddingRight);
+    line.setAttribute("y2", yVal);
+    line.setAttribute("stroke", "var(--line-soft)");
+    line.setAttribute("stroke-dasharray", "2 2");
+    svg.appendChild(line);
+  }
+  
+  // Draw volume path (purple)
+  let volD = "M " + volPoints[0].x + " " + volPoints[0].y;
+  for (let i = 1; i < len; i++) {
+    volD += " L " + volPoints[i].x + " " + volPoints[i].y;
+  }
+  const volPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  volPath.setAttribute("d", volD);
+  volPath.setAttribute("fill", "none");
+  volPath.setAttribute("stroke", "var(--accent)");
+  volPath.setAttribute("stroke-width", "2");
+  volPath.setAttribute("stroke-linecap", "round");
+  svg.appendChild(volPath);
+  
+  // Draw recovery path (orange)
+  let recD = "M " + recPoints[0].x + " " + recPoints[0].y;
+  for (let i = 1; i < len; i++) {
+    recD += " L " + recPoints[i].x + " " + recPoints[i].y;
+  }
+  const recPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  recPath.setAttribute("d", recD);
+  recPath.setAttribute("fill", "none");
+  recPath.setAttribute("stroke", "#e67e22");
+  recPath.setAttribute("stroke-width", "2");
+  recPath.setAttribute("stroke-linecap", "round");
+  svg.appendChild(recPath);
+  
+  // Draw data point dots & tooltips
+  volPoints.forEach((pt, idx) => {
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", pt.x);
+    dot.setAttribute("cy", pt.y);
+    dot.setAttribute("r", 3.5);
+    dot.setAttribute("fill", "var(--accent)");
+    dot.setAttribute("stroke", "#ffffff");
+    dot.setAttribute("stroke-width", "1");
+    
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = "Day " + (idx + 1) + " Volume: " + pt.val + " TSS";
+    dot.appendChild(title);
+    svg.appendChild(dot);
+  });
+  
+  recPoints.forEach((pt, idx) => {
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", pt.x);
+    dot.setAttribute("cy", pt.y);
+    dot.setAttribute("r", 3.5);
+    dot.setAttribute("fill", "#e67e22");
+    dot.setAttribute("stroke", "#ffffff");
+    dot.setAttribute("stroke-width", "1");
+    
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = "Day " + (idx + 1) + " Recovery: " + pt.val + "%";
+    dot.appendChild(title);
+    svg.appendChild(dot);
+  });
+  
+  // X axis labels
+  const days = ["M", "T", "W", "T", "F", "S", "S"];
+  days.forEach((day, idx) => {
+    const x = paddingLeft + idx * step;
+    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    txt.setAttribute("x", x);
+    txt.setAttribute("y", height - 4);
+    txt.setAttribute("text-anchor", "middle");
+    txt.setAttribute("font-family", "var(--font-geist)");
+    txt.setAttribute("font-size", "9px");
+    txt.setAttribute("fill", "var(--ink-4)");
+    txt.textContent = day;
+    svg.appendChild(txt);
+  });
+}
+
+    function renderHistory(c) {
+      const listEl = document.getElementById('intervention-history-list');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      
+      c.history.forEach((h, idx) => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        
+        // Active dot for first item
+        const dotClass = idx === 0 ? 'history-dot active-dot' : 'history-dot';
+        
+        item.innerHTML = `
+          <div class="${dotClass}"></div>
+          <div class="history-top">
+            <div class="history-title-group">
+              <span class="history-title">${h.title}</span>
+              <span class="history-outcome ${h.outcomeClass || 'neutral'}">${h.outcome}</span>
+            </div>
+            <span class="history-date">${h.date}</span>
+          </div>
+          <p class="history-desc">${h.detail}</p>
         `;
-        btn.style.pointerEvents = 'none';
-
-        setTimeout(() => {
-          btn.innerHTML = `
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            Plan Sent to ${client.name}!
-          `;
-          
-          // Toast or return feedback
-          setTimeout(() => {
-            window.location.href = `index.html?success=${encodeURIComponent(client.name)}`;
-          }, 800);
-        }, 1200);
+        listEl.appendChild(item);
       });
+    }
 
-      // Edit with AI handler — opens Screen 3 (prompt + regenerate modal, in-page popup)
-      document.getElementById('btn-edit-ai').addEventListener('click', () => {
-        if (typeof window.__openPromptModal === 'function') {
-          window.__openPromptModal();
+    function renderHeatmap(c) {
+      const grid = document.getElementById('adherence-heatmap');
+      if (!grid) return;
+      grid.innerHTML = '';
+      
+      c.planFit.heatmap.forEach((val, idx) => {
+        const cell = document.createElement('div');
+        let status = 'empty';
+        if (val === 2) status = 'good';
+        else if (val === 1) status = 'warn';
+        else if (val === 0) status = 'bad';
+        
+        cell.className = `heatmap-cell ${status}`;
+        
+        // Add tooltip
+        const col = idx % 7;
+        const week = Math.floor(idx / 7) + 1;
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        
+        let label = 'Rest Day';
+        if (val === 2) label = 'Completed Workout';
+        else if (val === 1) label = 'Modified/Partial Workout';
+        else if (val === 0) label = 'Skipped Workout';
+        
+        tooltip.textContent = `Week ${week}, ${days[col]}: ${label}`;
+        cell.appendChild(tooltip);
+        grid.appendChild(cell);
+      });
+    }
+
+    function renderSuggestions(c) {
+      const list = document.getElementById('plan-fit-suggestions-list');
+      if (!list) return;
+      list.innerHTML = '';
+      
+      if (!c.planFit.adjustments || c.planFit.adjustments.length === 0) {
+        list.innerHTML = '<div style="font-size:12.5px; color:var(--ink-4); font-style:italic;">No adjustments pending. Plan fit is optimal.</div>';
+        return;
+      }
+      
+      c.planFit.adjustments.forEach(adj => {
+        const row = document.createElement('div');
+        row.className = 'fix-row';
+        
+        const btnText = adj.applied ? 'Applied' : 'Apply';
+        const btnClass = adj.applied ? 'fix-btn applied' : 'fix-btn';
+        const disabledAttr = adj.applied ? 'disabled' : '';
+        
+        row.innerHTML = `
+          <div class="fix-info">
+            <span class="fix-title">${adj.title}</span>
+            <span class="fix-desc">${adj.desc}</span>
+          </div>
+          <button class="${btnClass}" ${disabledAttr} data-id="${adj.id}">${btnText}</button>
+        `;
+        
+        // Bind Apply button click
+        const btn = row.querySelector('.fix-btn');
+        if (!adj.applied) {
+          btn.addEventListener('click', () => {
+            openApplyFixModal(adj);
+          });
         }
+        
+        list.appendChild(row);
       });
+    }
 
-      // Regenerate draft handler
-      document.getElementById('btn-regenerate').addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        btn.textContent = "Regenerating...";
-        btn.style.pointerEvents = 'none';
-        setTimeout(() => {
-          btn.textContent = "Regenerate Draft";
-          btn.style.pointerEvents = 'auto';
-        }, 1000);
+    function renderRiskTab(c) {
+      renderRiskCard(c);
+      
+      // Draw SVGs
+      drawTimeline('timeline-svg', c.timelineData);
+      drawSparkline('sentiment-chart-svg', c.behavioralSignals.sentiment, 'var(--accent)');
+      drawSparkline('motivation-chart-svg', c.behavioralSignals.motivation, '#e67e22');
+      drawSparkbar('completion-chart-svg', c.behavioralSignals.completion, 'var(--accent)');
+      
+      // Update values
+      document.getElementById('sentiment-value').textContent = c.behavioralSignals.sentimentValue;
+      document.getElementById('sentiment-delta').textContent = c.behavioralSignals.sentimentDelta;
+      
+      document.getElementById('motivation-value').textContent = c.behavioralSignals.motivationValue;
+      const motDelta = document.getElementById('motivation-delta');
+      motDelta.textContent = c.behavioralSignals.motivationDelta;
+      motDelta.className = c.behavioralSignals.motivationDelta.includes('▼') ? 'bad' : 'ok';
+      
+      document.getElementById('completion-value').textContent = c.behavioralSignals.completionValue;
+      const compDelta = document.getElementById('completion-delta');
+      compDelta.textContent = c.behavioralSignals.completionDelta;
+      compDelta.className = c.behavioralSignals.completionDelta.includes('▼') ? 'bad' : 'ok';
+      
+      document.getElementById('behavior-narrative').textContent = c.behavioralSignals.narrative;
+      
+      // Plan fit score and bar
+      document.getElementById('plan-quality-score').innerHTML = `${c.planFit.score}<span style="font-size: 11px; color: var(--ink-4);">/100</span>`;
+      const qBar = document.getElementById('plan-quality-bar');
+      qBar.innerHTML = '';
+      const sc = c.planFit.scores;
+      const total = sc.complexity + sc.progressivity + sc.recovery + sc.enjoyment + sc.goalFit;
+      const segments = [
+        { val: sc.complexity, cls: 'c1' },
+        { val: sc.progressivity, cls: 'c2' },
+        { val: sc.recovery, cls: 'c3' },
+        { val: sc.enjoyment, cls: 'c4' },
+        { val: sc.goalFit, cls: 'c5' }
+      ];
+      segments.forEach(seg => {
+        const segEl = document.createElement('div');
+        segEl.className = `qbar-seg ${seg.cls}`;
+        segEl.style.width = `${(seg.val / total) * 100}%`;
+        qBar.appendChild(segEl);
+      });
+      
+      renderHeatmap(c);
+      drawFatigueChart('fatigue-chart-svg', c.planFit.fatigueChart);
+      renderSuggestions(c);
+      renderHistory(c);
+    }
+
+    function renderRiskCard(client) {
+  const container = document.getElementById('risk-hero-container');
+  if (!container) return;
+
+  const isHealthy = !client.isAtRisk;
+  
+  if (isHealthy) {
+    // Green border card
+    container.innerHTML = '       <div class="risk-hero-card healthy">         <div class="risk-hero-top">           <div>             <h2 class="risk-headline">' + client.name + '\'s engagement is highly healthy</h2>           </div>           <div class="risk-value-group">             <div class="risk-value-num healthy-val">' + client.churnRisk + '%</div>             <div class="risk-value-lbl">churn risk</div>           </div>         </div>                  <div class="reasoning-chips">           ' + client.reasoningChips.map(function(chip) { return '<div class="reasoning-chip"><span style="color: var(--ok);">●</span> ' + chip + '</div>'; }).join('') + '         </div>                  <div class="intervention-block healthy-block">           <div class="intervention-lbl healthy-lbl">AI-suggested milestone nudge</div>           <textarea class="intervention-textarea healthy-textarea" id="intervention-msg">' + client.draftMsg + '</textarea>         </div>                  <div style="display: flex; gap: 12px; align-items: center;">           <button class="btn-primary" id="btn-send-intervention" style="background: var(--ok); border-color: var(--ok);">             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px; vertical-align:middle; display:inline-block;">               <line x1="22" y1="2" x2="11" y2="13"></line>               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>             </svg>             Send milestone message           </button>           <button class="btn-ghost" id="btn-why-collapsible-trigger" style="font-size: 12.5px; font-weight: 600; color: var(--ink-3); border:0; background:transparent; cursor:pointer;">             Why this suggestion?           </button>         </div>                  <div class="accordion-content" id="why-collapsible-content">           <div class="accordion-inner">             ' + client.whyContent + '           </div>         </div>       </div>     ';
+  } else {
+    // Red border card
+    container.innerHTML = '       <div class="risk-hero-card">         <div class="risk-hero-top">           <div>             <h2 class="risk-headline">' + (client.riskText || client.name + ' may disengage in the next 14 days') + '</h2>           </div>           <div class="risk-value-group">             <div class="risk-value-num">' + client.churnRisk + '%</div>             <div class="risk-value-lbl">churn risk</div>           </div>         </div>                  <div class="reasoning-chips">           ' + client.reasoningChips.map(function(chip) { return '<div class="reasoning-chip"><span style="color: var(--bad);">●</span> ' + chip + '</div>'; }).join('') + '         </div>                  <div class="intervention-block">           <div class="intervention-lbl">AI-suggested intervention</div>           <textarea class="intervention-textarea" id="intervention-msg">' + client.draftMsg + '</textarea>                      <div class="suggestion-rows">             ' + client.suggestions.map(function(s) { return '<div class="suggestion-row"><span>' + s.icon + '</span><span>' + s.text + '</span></div>'; }).join('') + '           </div>                      <div class="predicted-impact-text">             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;">               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>               <polyline points="17 6 23 6 23 12"></polyline>             </svg>             <span>Projected impact: ' + client.predictedImpact + '</span>           </div>         </div>                  <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">           <button class="btn-primary" id="btn-send-intervention">             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px; vertical-align:middle; display:inline-block;">               <line x1="22" y1="2" x2="11" y2="13"></line>               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>             </svg>             Send Check-In           </button>           <button class="btn-secondary" id="btn-adjust-plan-action">Adjust Plan</button>           <button class="btn-secondary" id="btn-schedule-call-action">Schedule Call</button>           <button class="btn-ghost" id="btn-mark-resolved">Mark Resolved</button>           <button class="btn-ghost" id="btn-why-collapsible-trigger" style="margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--ink-3); border:0; background:transparent; cursor:pointer;">             Why this recommendation?           </button>         </div>                  <div class="accordion-content" id="why-collapsible-content">           <div class="accordion-inner">             ' + client.whyContent + '           </div>         </div>       </div>     ';
+  }
+
+  // Bind Collapsible drawer events
+  const whyTrigger = document.getElementById('btn-why-collapsible-trigger');
+  const whyContent = document.getElementById('why-collapsible-content');
+  if (whyTrigger && whyContent) {
+    whyTrigger.addEventListener('click', function() {
+      whyContent.classList.toggle('expanded');
+      if (whyContent.classList.contains('expanded')) {
+        whyContent.style.maxHeight = whyContent.scrollHeight + "px";
+        whyTrigger.textContent = "Hide explanation";
+      } else {
+        whyContent.style.maxHeight = "0";
+        whyTrigger.textContent = "Why this recommendation?";
+      }
+    });
+  }
+
+  // Bind Check-In button click with a visual loading and success state
+  const sendBtn = document.getElementById('btn-send-intervention');
+  if (sendBtn) {
+    sendBtn.addEventListener('click', function() {
+      const originalText = sendBtn.innerHTML;
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = "0.7";
+      sendBtn.innerHTML = "Sending...";
+      setTimeout(function() {
+        sendBtn.innerHTML = "✓ Sent to " + client.first;
+        sendBtn.style.background = "var(--ok)";
+        sendBtn.style.borderColor = "var(--ok)";
+        // Log into history timeline
+        const msgText = document.getElementById('intervention-msg').value;
+        const newHistoryItem = {
+          date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+          title: isHealthy ? "Milestone Nudge Delivered" : "AI Intervention Check-in Sent",
+          detail: "Message sent by coach: \"" + msgText + "\"",
+          outcome: "Delivered",
+          outcomeClass: "ok"
+        };
+        client.history.unshift(newHistoryItem);
+        renderHistory(client);
+        
+        setTimeout(function() {
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = "1";
+          sendBtn.innerHTML = originalText;
+          if (isHealthy) {
+            sendBtn.style.background = "var(--ok)";
+            sendBtn.style.borderColor = "var(--ok)";
+          } else {
+            sendBtn.style.background = "var(--ink)";
+            sendBtn.style.borderColor = "var(--ink)";
+          }
+        }, 2000);
+      }, 1500);
+    });
+  }
+
+  // Bind actions
+  const adjustPlanBtn = document.getElementById('btn-adjust-plan-action');
+  if (adjustPlanBtn) {
+    adjustPlanBtn.addEventListener('click', function() {
+      switchTab('plan');
+    });
+  }
+
+  const scheduleCallBtn = document.getElementById('btn-schedule-call-action');
+  if (scheduleCallBtn) {
+    scheduleCallBtn.addEventListener('click', function() {
+      openScheduleCallModal();
+    });
+  }
+
+  const markResolvedBtn = document.getElementById('btn-mark-resolved');
+  if (markResolvedBtn) {
+    markResolvedBtn.addEventListener('click', function() {
+      markResolvedBtn.style.color = "var(--ok)";
+      markResolvedBtn.textContent = "✓ Resolved";
+      client.churnRisk = Math.round(client.churnRisk * 0.4);
+      client.vitals.riskText = "Low Risk";
+      client.isAtRisk = false;
+      setTimeout(function() {
+        renderRiskTab(client);
+        // Update header strip too
+        const stripRisk = document.getElementById('strip-risk');
+        if (stripRisk) {
+          stripRisk.textContent = "Low Risk";
+          stripRisk.className = "client-card-risk-badge risk-low";
+        }
+      }, 800);
+    });
+  }
+}
+
+    // 7. Modals implementation
+    const overlays = {
+      note: document.getElementById('note-modal-overlay'),
+      call: document.getElementById('call-modal-overlay'),
+      fix: document.getElementById('fix-modal-overlay'),
+      chat: document.getElementById('chat-slideover')
+    };
+
+    function openModal(overlay) {
+      overlay.style.display = 'grid';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
+      }, 50);
+    }
+
+    function closeModal(overlay) {
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 250);
+    }
+
+    // Note Modal
+    function openCoachNoteModal() {
+      document.getElementById('note-client-name').textContent = `for ${window.client.name}`;
+      document.getElementById('note-textarea').value = '';
+      openModal(overlays.note);
+      setTimeout(() => document.getElementById('note-textarea').focus(), 200);
+    }
+    
+    document.getElementById('note-modal-close').addEventListener('click', () => closeModal(overlays.note));
+    document.getElementById('note-modal-cancel').addEventListener('click', () => closeModal(overlays.note));
+    document.getElementById('note-modal-save').addEventListener('click', () => {
+      const val = document.getElementById('note-textarea').value.trim();
+      if (!val) return;
+      
+      const item = {
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        title: "Coach Note Logged",
+        detail: val,
+        outcome: "Note",
+        outcomeClass: "neutral"
+      };
+      window.client.history.unshift(item);
+      renderHistory(window.client);
+      closeModal(overlays.note);
+    });
+
+    // Call Modal
+    let selectedDate = '';
+    let selectedTime = '09:00 AM';
+    
+    function openScheduleCallModal() {
+      document.getElementById('call-client-name').textContent = `with ${window.client.name}`;
+      openModal(overlays.call);
+      
+      // Build dynamic mini-calendar starting today
+      const grid = document.getElementById('call-calendar-grid');
+      grid.innerHTML = '';
+      
+      const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      dayNames.forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'calendar-day-header';
+        h.textContent = d;
+        grid.appendChild(h);
+      });
+      
+      const today = new Date();
+      // Start of current week (Monday)
+      const currentDay = today.getDay();
+      const distanceToMon = currentDay === 0 ? -6 : 1 - currentDay;
+      const monday = new Date(today);
+      monday.setDate(today.getDate() + distanceToMon);
+      
+      for (let i = 0; i < 14; i++) {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
+        
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'calendar-day-btn';
+        
+        const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        btn.textContent = date.getDate();
+        
+        const isPast = date.toDateString() !== today.toDateString() && date < today;
+        if (isPast) {
+          btn.classList.add('disabled');
+        } else {
+          btn.dataset.fullDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+          btn.addEventListener('click', () => {
+            grid.querySelectorAll('.calendar-day-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedDate = btn.dataset.fullDate;
+          });
+          
+          if (date.toDateString() === today.toDateString()) {
+            btn.classList.add('selected');
+            selectedDate = btn.dataset.fullDate;
+          }
+        }
+        
+        // Add tooltip
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+        btn.appendChild(title);
+        grid.appendChild(btn);
+      }
+    }
+    
+    document.getElementById('call-modal-close').addEventListener('click', () => closeModal(overlays.call));
+    document.getElementById('call-modal-cancel').addEventListener('click', () => closeModal(overlays.call));
+    
+    // Time slot toggle
+    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedTime = btn.textContent;
       });
     });
+    
+    document.getElementById('call-modal-schedule').addEventListener('click', () => {
+      const item = {
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        title: "Accountability Call Booked",
+        detail: `15-min reconnect scheduled with ${window.client.first} for ${selectedDate} at ${selectedTime} (EST).`,
+        outcome: "Scheduled",
+        outcomeClass: "ok"
+      };
+      window.client.history.unshift(item);
+      renderHistory(window.client);
+      closeModal(overlays.call);
+    });
+
+    // Apply Plan Fix Modal
+    let activeAdjustment = null;
+    
+    function openApplyFixModal(adj) {
+      activeAdjustment = adj;
+      const list = document.getElementById('fix-modal-diff-list');
+      list.innerHTML = '';
+      
+      if (!adj.planChanges || adj.planChanges.length === 0) {
+        list.innerHTML = '<div style="font-size: 13px; color: var(--ink-3); text-align:center; padding:12px 0;">This adjustment logs a call invite only and has no direct training schedule overrides.</div>';
+      } else {
+        adj.planChanges.forEach(chg => {
+          const row = document.createElement('div');
+          row.className = 'pm-diff-row';
+          row.innerHTML = `
+            <div class="pm-diff-day">${chg.day}</div>
+            <div class="pm-diff-before">${chg.originalType}: ${chg.originalDetail || ''}</div>
+            <div class="pm-diff-after">${chg.type}: ${chg.detail || ''}</div>
+          `;
+          list.appendChild(row);
+        });
+      }
+      
+      openModal(overlays.fix);
+    }
+    
+    document.getElementById('fix-modal-close').addEventListener('click', () => closeModal(overlays.fix));
+    document.getElementById('fix-modal-cancel').addEventListener('click', () => closeModal(overlays.fix));
+    document.getElementById('fix-modal-confirm').addEventListener('click', () => {
+      if (!activeAdjustment) return;
+      
+      // Update plan changes
+      if (activeAdjustment.planChanges) {
+        activeAdjustment.planChanges.forEach(chg => {
+          const match = window.client.weekPlan.find(d => d.name === chg.day);
+          if (match) {
+            if (!match.originalType) match.originalType = match.type;
+            if (!match.originalDetail) match.originalDetail = match.detail;
+            match.type = chg.type;
+            match.detail = chg.detail;
+            match.edited = true;
+            match.remark = "AI Suggestion";
+          }
+        });
+      }
+      
+      activeAdjustment.applied = true;
+      
+      // Log to history
+      const histItem = {
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        title: `Plan Fix: ${activeAdjustment.title}`,
+        detail: activeAdjustment.desc,
+        outcome: "Applied",
+        outcomeClass: "ok"
+      };
+      window.client.history.unshift(histItem);
+      
+      renderRiskTab(window.client);
+      closeModal(overlays.fix);
+    });
+
+    // Chat Slideover and auto-reply loop
+    function openChatSlideover() {
+      // Setup avatar and title
+      document.getElementById('chat-avatar').textContent = window.client.initials;
+      document.getElementById('chat-avatar').className = `chat-client-avatar ${window.client.avatarClass}`;
+      document.getElementById('chat-name').textContent = window.client.name;
+      
+      // Render message list
+      const container = document.getElementById('chat-messages-container');
+      container.innerHTML = '';
+      
+      window.client.chatHistory.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble \${msg.sender}`;
+        bubble.innerHTML = msg.text;
+        container.appendChild(bubble);
+      });
+      
+      // Set smart reply
+      const replyBtn = document.getElementById('chat-smart-reply-btn');
+      if (window.clientKey === 'sarah-k') {
+        replyBtn.style.display = 'block';
+        replyBtn.textContent = "Smart Reply: Apply deload walk";
+      } else if (window.clientKey === 'marcus-t') {
+        replyBtn.style.display = 'block';
+        replyBtn.textContent = "Smart Reply: 3 strength sessions sounds good";
+      } else if (window.clientKey === 'priya-i') {
+        replyBtn.style.display = 'block';
+        replyBtn.textContent = "Smart Reply: Sticking to the plan!";
+      } else {
+        replyBtn.style.display = 'none';
+      }
+      
+      // Open
+      overlays.chat.classList.add('show');
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function closeChatSlideover() {
+      overlays.chat.classList.remove('show');
+    }
+    
+    document.getElementById('chat-close').addEventListener('click', closeChatSlideover);
+    
+    // Smart Reply click
+    document.getElementById('chat-smart-reply-btn').addEventListener('click', () => {
+      const text = document.getElementById('chat-smart-reply-btn').textContent.replace('Smart Reply: ', '');
+      sendCoachMessage(text);
+    });
+    
+    function sendCoachMessage(text) {
+      if (!text.trim()) return;
+      
+      const container = document.getElementById('chat-messages-container');
+      
+      // Add coach bubble
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble coach';
+      bubble.textContent = text;
+      container.appendChild(bubble);
+      
+      // Save to data
+      window.client.chatHistory.push({ sender: 'coach', text });
+      
+      document.getElementById('chat-input-textarea').value = '';
+      container.scrollTop = container.scrollHeight;
+      
+      // Auto-reply loop
+      setTimeout(() => {
+        let reply = "Thanks for checking in, Coach! I'll take a look.";
+        if (window.clientKey === 'sarah-k') {
+          reply = "Yeah, a recovery walk sounds way better than intervals today. My knee is quite sore. Thanks for making the swap!";
+        } else if (window.clientKey === 'marcus-t') {
+          reply = "Thanks Riya, 3 sessions this week is way more manageable. I'll make sure to get them done.";
+        } else if (window.clientKey === 'priya-i') {
+          reply = "Sticking to the plan! Feeling solid. Enjoy your weekend coach!";
+        }
+        
+        const clientBubble = document.createElement('div');
+        clientBubble.className = 'chat-bubble client';
+        clientBubble.textContent = reply;
+        container.appendChild(clientBubble);
+        
+        window.client.chatHistory.push({ sender: 'client', text: reply });
+        container.scrollTop = container.scrollHeight;
+      }, 1500);
+    }
+    
+    document.getElementById('chat-send-btn').addEventListener('click', () => {
+      const val = document.getElementById('chat-input-textarea').value;
+      sendCoachMessage(val);
+    });
+    
+    document.getElementById('chat-input-textarea').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chat-send-btn').click();
+      }
+    });
+
+    // 8. Bind action rail buttons
+    document.getElementById('rail-btn-chat').addEventListener('click', openChatSlideover);
+    document.getElementById('rail-btn-plan').addEventListener('click', () => switchTab('plan'));
+    document.getElementById('rail-btn-call').addEventListener('click', openScheduleCallModal);
+    document.getElementById('rail-btn-note').addEventListener('click', openCoachNoteModal);
+    document.getElementById('rail-btn-history').addEventListener('click', () => {
+      switchTab('risk');
+      setTimeout(() => {
+        const el = document.getElementById('section-history');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+          // Highlight card briefly
+          el.style.borderColor = 'var(--accent)';
+          el.style.boxShadow = '0 0 16px rgba(122, 84, 135, 0.2)';
+          setTimeout(() => {
+            el.style.borderColor = '';
+            el.style.boxShadow = '';
+          }, 1500);
+        }
+      }, 100);
+    });
+
+    // Theme Toggle Logic
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const doc = document.documentElement;
+        const current = doc.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        doc.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+      
+      // Load current theme
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    // 9. Initial rendering
+    renderClientCore(window.client);
+    switchTab(currentTab);
+
+    // Hook Steer Zora approved rewrite back to weekPlan
+    const pmRegenBtn = document.getElementById('pm-regen');
+    if (pmRegenBtn) {
+      pmRegenBtn.addEventListener('click', () => {
+        const modal = document.getElementById('pm-modal');
+        if (modal && modal.dataset.state === 'result') {
+          // Merge prompt modal rewrites
+          window.client.weekPlan.forEach(day => {
+            if (day.name === 'Mon') {
+              day.type = 'Easy run';
+              day.detail = '5 km recovery jog';
+              day.edited = true;
+              day.remark = 'AI steer';
+            } else if (day.name === 'Tue') {
+              day.type = 'Mobility';
+              day.detail = '25 min · plus check-in nudge';
+              day.edited = true;
+              day.remark = 'AI steer';
+            } else if (day.name === 'Thu') {
+              day.type = 'Easy run';
+              day.detail = '5 km easy pace';
+              day.edited = true;
+              day.remark = 'AI steer';
+            } else if (day.name === 'Fri') {
+              day.type = 'Long run';
+              day.detail = '14 km · coach requested';
+              day.edited = true;
+              day.remark = 'AI steer';
+            } else if (day.name === 'Sat') {
+              day.type = 'Rest';
+              day.detail = 'Rest day';
+              day.edited = true;
+              day.remark = 'AI steer';
+            } else if (day.name === 'Sun') {
+              day.type = 'Mobility';
+              day.detail = '30 min dynamic focus';
+              day.edited = true;
+              day.remark = 'AI steer';
+            }
+          });
+          
+          // Re-render components after delay
+          setTimeout(() => {
+            updateScheduleCount();
+            if (currentTab === 'risk') {
+              renderRiskTab(window.client);
+            }
+          }, 1200);
+        }
+      });
+    }
+
+    // Hook Screen 2 Plan tab action buttons
+    const btnApprove = document.getElementById('btn-approve');
+    if (btnApprove) {
+      btnApprove.addEventListener('click', () => {
+        btnApprove.disabled = true;
+        btnApprove.style.opacity = '0.7';
+        btnApprove.innerHTML = `
+          <span class="pm-pulse-core" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#fff; animation:spin 1s linear infinite; margin-right:6px;"></span>
+          Approving...
+        `;
+        setTimeout(() => {
+          btnApprove.style.background = 'var(--ok)';
+          btnApprove.style.borderColor = 'var(--ok)';
+          btnApprove.innerHTML = '✓ Approved & Sent';
+          
+          // Log into history
+          const histItem = {
+            date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            title: "Plan Approved & Delivered",
+            detail: "Draft weekly schedule adjustments were confirmed and sent to client.",
+            outcome: "Delivered",
+            outcomeClass: "ok"
+          };
+          window.client.history.unshift(histItem);
+          
+          setTimeout(() => {
+            btnApprove.disabled = false;
+            btnApprove.style.opacity = '1';
+            btnApprove.style.background = 'var(--ink)';
+            btnApprove.style.borderColor = 'var(--ink)';
+            btnApprove.innerHTML = `
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Approve &amp; Send to Client
+            `;
+          }, 3000);
+        }, 1500);
+      });
+    }
+
+    const btnEditAi = document.getElementById('btn-edit-ai');
+    if (btnEditAi && window.__openPromptModal) {
+      btnEditAi.addEventListener('click', window.__openPromptModal);
+    }
+  });
   </script>
 
   <style>

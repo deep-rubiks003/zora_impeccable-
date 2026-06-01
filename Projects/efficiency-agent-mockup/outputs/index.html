@@ -11,6 +11,19 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="design-tokens.css">
+  <script>
+    // Pre-paint theme boot — avoids flash of incorrect theme
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 </head>
 
 <body>
@@ -66,7 +79,7 @@
         <span id="crumb-tail">Overview</span>
       </div>
 
-      <input class="search" placeholder="Search members, plans, signals…" />
+      <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly style="cursor:pointer;" />
 
       <button class="icon-btn" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -74,485 +87,422 @@
           <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </svg>
       </button>
+
+      <button
+        type="button"
+        id="theme-toggle"
+        class="theme-toggle"
+        role="switch"
+        aria-checked="false"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+      >
+        <span class="theme-toggle__thumb" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </span>
+      </button>
     </div>
 
     <!-- ============== SCREEN 1 ============== -->
     <div class="page active animated-entrance" id="screen-1">
 
       <div class="page-head page-head--hero">
-        <div>
-          <h1 class="page-title page-title--hero">Good morning, Riya — <em>36 plans</em> optimized overnight.</h1>
-          <p class="page-sub">2 athletes require urgent attention. All drafts are editable. Nothing sends without your
-            approval.</p>
+        <div class="hero-distilled">
+          <h1 class="page-title page-title--hero">Good morning, Riya: <em>Command Center</em></h1>
         </div>
-        <div class="page-meta">
-          <div class="live">Live · synced 2 min ago</div>
-          <div class="page-meta-date">MON · 28 MAY 2026 · 08:14</div>
-        </div>
-      </div>
-
-      <!-- Roster Stats Banner (PRD 3.1) -->
-      <div class="stats-banner animated-entrance stagger-1">
-        <div class="stats-card">
-          <div class="stats-card-num">142</div>
-          <div>
-            <div class="stats-card-label">Active Members</div>
-            <div class="stats-card-desc">98% training adherence</div>
-          </div>
-        </div>
-
-        <div class="stats-card stats-card--ok">
-          <div class="stats-card-num stats-card-num--ok">36<span class="stats-card-num-denom">/38</span></div>
-          <div>
-            <div class="stats-card-label">Plans Optimized</div>
-            <div class="stats-card-desc">Overnight sync completed</div>
-          </div>
-        </div>
-
-        <div class="stats-card stats-card--urgent">
-          <div class="stats-card-num stats-card-num--bad">2</div>
-          <div>
-            <div class="stats-card-label">Urgent Alerts</div>
-            <div class="stats-card-desc stats-card-desc--urgent">Intervention required</div>
-          </div>
+        <div class="page-meta-inline">
+          <span class="live">Live · synced 2 min ago</span>
+          <span class="meta-dot">·</span>
+          <span class="page-meta-date">MON · 28 MAY 2026 · 08:14</span>
         </div>
       </div>
 
       <!-- AI Action Center -->
       <div class="action-center">
         <div class="ac-head">
-          <div class="ac-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path
-                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
-          </div>
           <div>
-            <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 alerts</span> waiting for
-              review</div>
-            <div class="ac-sub">Overnight data streams analyzed. Select an athlete below to review adjustments.</div>
-          </div>
-          <div style="margin-left:auto;display:flex;gap:var(--space-sm);align-items:center;">
-            <div class="sort-container">
-              <button class="btn-skip" id="sort-trigger">Sort: Priority ▾</button>
-              <div class="sort-dropdown" id="sort-dropdown">
-                <button class="sort-item active" data-sort="priority">
-                  <span>Priority</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </button>
-                <button class="sort-item" data-sort="recency">
-                  <span>Recency</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    style="display:none;">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </button>
-                <button class="sort-item" data-sort="name">
-                  <span>Athlete Name</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    style="display:none;">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <button class="btn-edit" id="open-queue-btn">Open Queue →</button>
+            <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span> prepared for today</div>
           </div>
         </div>
 
         <div class="draft-row" id="drafts-container">
           <!-- Draft 1: Sarah K -->
-          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0" data-priority="1" data-recency="2"
-            data-name="Sarah K.">
+          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0" onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
             <div class="draft-inner">
               <div class="draft-head">
-                <div class="draft-avatar av-1">SK</div>
                 <div>
                   <div class="draft-name">Sarah K.</div>
-                  <div class="draft-meta">Week 8 · Half-Marathon</div>
+                  <div class="draft-meta">Half-Marathon · Week 8</div>
                 </div>
-                <span class="draft-tag tag-crit">Exhaustion</span>
+                <span class="draft-tag tag-crit">Exhaustion Risk</span>
               </div>
-              <div class="draft-summary">HRV down <strong>52%</strong>, sleep <strong>42/100</strong>. AI suggests
-                <strong>recovery walk</strong> &amp; long run shift.
-              </div>
+              <p class="draft-summary">HRV dropped to 18ms and sleep is 4.2h. AI drafted a <strong>volume deload week</strong>.</p>
               <div class="draft-actions">
-                <button class="btn-edit">Review Plan</button>
-                <button class="btn-skip">Skip</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'">Review Deload Plan</button>
               </div>
-            </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <div class="skipped-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </div>
-                <span class="skipped-msg">Sarah K. skipped</span>
-              </div>
-              <button class="btn-undo">Undo</button>
             </div>
           </div>
 
           <!-- Draft 2: Marcus T -->
-          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0" data-priority="2" data-recency="3"
-            data-name="Marcus T.">
+          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0" onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
             <div class="draft-inner">
               <div class="draft-head">
-                <div class="draft-avatar av-2">MT</div>
                 <div>
                   <div class="draft-name">Marcus T.</div>
-                  <div class="draft-meta">Week 6 · Strength</div>
+                  <div class="draft-meta">Strength · Week 6</div>
                 </div>
-                <span class="draft-tag tag-crit">Churn Alert</span>
+                <span class="draft-tag tag-crit">Churn Risk</span>
               </div>
-              <div class="draft-summary">Workout Adherence <strong>40%</strong>, HRV ↓ <strong>24%</strong>. AI suggests
-                scaling back to <strong>joint mobility</strong>.</div>
+              <p class="draft-summary">Drifting with 40% workout completion and no replies. Mobility shift drafted.</p>
               <div class="draft-actions">
-                <button class="btn-edit">Review Plan</button>
-                <button class="btn-skip">Skip</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'">Review Intervention</button>
               </div>
-            </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <div class="skipped-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </div>
-                <span class="skipped-msg">Marcus T. skipped</span>
-              </div>
-              <button class="btn-undo">Undo</button>
             </div>
           </div>
 
           <!-- Draft 3: Aman Khanna -->
-          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0" data-priority="3" data-recency="1"
-            data-name="Aman Khanna">
+          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0" onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
             <div class="draft-inner">
               <div class="draft-head">
-                <div class="draft-avatar av-2">AK</div>
                 <div>
                   <div class="draft-name">Aman Khanna</div>
-                  <div class="draft-meta">Week 14 · Hypertrophy</div>
+                  <div class="draft-meta">Hypertrophy · Week 14</div>
                 </div>
-                <span class="draft-tag tag-deload">Deload</span>
+                <span class="draft-tag tag-deload">Deload Pending</span>
               </div>
-              <div class="draft-summary">HRV down <strong>18%</strong>, sleep <strong>5.4h avg</strong>. Plan suggests
-                <strong>deload week</strong> (reduced volume).
-              </div>
+              <p class="draft-summary">Muscles are 8/10 sore after 4 hard weeks. AI drafted a <strong>recovery deload week</strong>.</p>
               <div class="draft-actions">
-                <button class="btn-edit">Review Plan</button>
-                <button class="btn-skip">Skip</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'">Review Deload Plan</button>
               </div>
-            </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <div class="skipped-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </div>
-                <span class="skipped-msg">Aman Khanna skipped</span>
-              </div>
-              <button class="btn-undo">Undo</button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Pulse Metrics Row -->
+      <div class="pulse-metrics-row">
+        <div class="pulse-metric-card">
+          <span class="metric-val">142</span>
+          <span class="metric-label">Total Clients</span>
+          <span class="metric-sub">98% training adherence</span>
+        </div>
+        <div class="pulse-metric-card">
+          <span class="metric-val">88%</span>
+          <span class="metric-label">Avg Engagement</span>
+          <span class="metric-sub">Synced from wearable streams</span>
+        </div>
+        <div class="pulse-metric-card interactive" id="metric-at-risk">
+          <span class="metric-val" style="color: var(--bad);">3</span>
+          <span class="metric-label">Count at Risk</span>
+          <span class="metric-sub" style="color: var(--bad); font-weight: 600;">Click to filter roster →</span>
+        </div>
+        <div class="pulse-metric-card">
+          <span class="metric-val">6</span>
+          <span class="metric-label">Plans Pending</span>
+          <span class="metric-sub">36 auto-approved overnight</span>
         </div>
       </div>
 
       <!-- 2-col layout -->
       <div class="grid-2col">
 
-        <div>
-          <!-- Threads -->
-          <div class="section section--threads">
-            <div class="section-head">
-              <div>
-                <h2 class="section-title">Threads</h2>
-                <div class="section-sub">the stories Zora has been watching</div>
-              </div>
-              <a href="#" class="section-link">Open all threads →</a>
+        <!-- Left Column: Roster Grid -->
+        <div class="roster-grid-container">
+          <div class="controls-bar">
+            <div class="filter-group">
+              <button class="filter-btn active" id="filter-all">All</button>
+              <button class="filter-btn" id="filter-risk">At-Risk</button>
+              <button class="filter-btn" id="filter-optimized">Optimized</button>
+              <button class="filter-btn" id="filter-drifting">Drifting</button>
             </div>
-
-            <div class="threads">
-              <article class="thread thread--alert animated-entrance stagger-1" data-client="sarah-k"
-                tabindex="0" role="link" aria-label="Open thread for Sarah K.">
-                <div class="thread-anchor">
-                  <div class="thread-avatar">SK</div>
-                  <span class="thread-name">Sarah</span>
-                </div>
-                <p class="thread-sentence">Nine days ago her HRV started leaning. We pulled Saturday's long run before it tipped into a crash. Sleep is still catching up; HRV is following.</p>
-                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline points="0,10 22,12 44,17 66,23 88,27 110,26 132,22 154,18 178,15" />
-                  <circle cx="178" cy="15" r="2.4" />
-                </svg>
-                <div class="thread-status">
-                  <span class="thread-dot"></span>
-                  <span class="thread-state">recovering</span>
-                </div>
-              </article>
-
-              <article class="thread thread--watch animated-entrance stagger-2" data-client="marcus-t"
-                tabindex="0" role="link" aria-label="Open thread for Marcus T.">
-                <div class="thread-anchor">
-                  <div class="thread-avatar">MT</div>
-                  <span class="thread-name">Marcus</span>
-                </div>
-                <p class="thread-sentence">Four quiet days. No app opens, no replies, two sessions skipped. His biometrics are fine; he is just drifting away.</p>
-                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline points="0,12 22,14 44,15 66,17 88,20 110,22 132,24 154,25 178,26" />
-                  <circle cx="178" cy="26" r="2.4" />
-                </svg>
-                <div class="thread-status">
-                  <span class="thread-dot"></span>
-                  <span class="thread-state">watching</span>
-                </div>
-              </article>
-
-              <article class="thread thread--note animated-entrance stagger-3" data-client="meera-joshi"
-                tabindex="0" role="link" aria-label="Open thread for Meera Joshi">
-                <div class="thread-anchor">
-                  <div class="thread-avatar">MJ</div>
-                  <span class="thread-name">Meera</span>
-                </div>
-                <p class="thread-sentence">Protein has drifted four days in a row. Workouts are still landing, which is why this hasn't surfaced as a risk yet, but the curve is bending.</p>
-                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline points="0,8 22,9 44,10 66,12 88,15 110,18 132,20 154,22 178,23" />
-                  <circle cx="178" cy="23" r="2.4" />
-                </svg>
-                <div class="thread-status">
-                  <span class="thread-dot"></span>
-                  <span class="thread-state">drifting</span>
-                </div>
-              </article>
-
-              <article class="thread thread--stable animated-entrance stagger-4" data-client="priya-i"
-                tabindex="0" role="link" aria-label="Open thread for Priya I.">
-                <div class="thread-anchor">
-                  <div class="thread-avatar">PI</div>
-                  <span class="thread-name">Priya</span>
-                </div>
-                <p class="thread-sentence">Six weeks in and nothing notable moved this week. The plan is doing its job; Zora is not.</p>
-                <svg class="thread-trace" viewBox="0 0 180 32" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline points="0,15 22,14 44,15 66,13 88,14 110,12 132,13 154,11 178,12" />
-                  <circle cx="178" cy="12" r="2.4" />
-                </svg>
-                <div class="thread-status">
-                  <span class="thread-dot"></span>
-                  <span class="thread-state">steady</span>
-                </div>
-              </article>
+            
+            <div class="sort-container">
+              <button class="sort-trigger-btn" id="roster-sort-trigger">Sort: Risk ▾</button>
+              <div class="sort-dropdown" id="roster-sort-dropdown" style="right: 0;">
+                <button class="sort-item active" data-sort="risk">Risk Level</button>
+                <button class="sort-item" data-sort="recency">Recency</button>
+                <button class="sort-item" data-sort="type">Coaching Type</button>
+              </div>
             </div>
           </div>
 
-          <!-- Roster Grid -->
-          <div class="section">
-            <div class="section-head">
-              <div>
-                <h2 class="section-title">Roster pulse</h2>
-                <div class="section-sub">42 members · last 7 days · sorted by status</div>
+          <div class="roster-grid" id="roster-grid">
+            <!-- Sarah K -->
+            <div class="client-card" data-client="sarah-k" data-risk="high" data-recency="2" data-type="endurance" onclick="window.location.href='reco-card.html?client=sarah-k'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-1">SK</div>
+                <div>
+                  <div class="client-card-name">Sarah K.</div>
+                  <div class="client-card-program">Half-Marathon · Week 8</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">High Risk</span>
               </div>
-              <a href="#" class="section-link">Filter &amp; sort →</a>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>92%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 98%;"></div>
+                    </div>
+                    <span>98%</span>
+                  </div>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>18 ms HRV · 4.2h Sleep</span>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 2h ago</span>
+                <span style="color: var(--bad); font-weight: 600;">Exhaustion</span>
+              </div>
             </div>
 
-            <div class="roster-list">
-              <!-- Header Row -->
-              <div class="roster-list-header">
-                <div class="col-athlete">Athlete</div>
-                <div class="col-status">Status</div>
-                <div class="col-hrv">HRV</div>
-                <div class="col-sleep">Sleep</div>
-                <div class="col-adh">Adherence</div>
-                <div class="col-trend">7d Recovery Trend</div>
+            <!-- Marcus T -->
+            <div class="client-card" data-client="marcus-t" data-risk="high" data-recency="96" data-type="strength" onclick="window.location.href='reco-card.html?client=marcus-t'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">MT</div>
+                <div>
+                  <div class="client-card-name">Marcus T.</div>
+                  <div class="client-card-program">Strength · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">High Risk</span>
               </div>
-
-              <!-- Sarah K -->
-              <div class="roster-row animated-entrance stagger-1" tabindex="0">
-                <div class="col-athlete">
-                  <div class="tile-avatar av-1">SK</div>
-                  <div>
-                    <div class="tile-name">Sarah K.</div>
-                    <div class="tile-streak">Week 8 · Half-Marathon</div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>35%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill bad" style="width: 40%;"></div>
+                    </div>
+                    <span>40%</span>
                   </div>
                 </div>
-                <div class="col-status">
-                  <span class="status-indicator status-red"></span>
-                  <span class="status-text text-red">Exhaustion Risk</span>
-                </div>
-                <div class="col-hrv"><span class="val-num low">18 ms</span></div>
-                <div class="col-sleep"><span class="val-num low">4.2h</span></div>
-                <div class="col-adh"><span class="val-num">98%</span></div>
-                <div class="col-trend">
-                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
-                    <polyline fill="none" stroke="#c0392b" stroke-width="1.5"
-                      points="0,5 14,8 28,12 42,16 56,18 70,20 84,21 100,22" />
-                  </svg>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>32 ms HRV · 6.2h Sleep</span>
                 </div>
               </div>
+              <div class="client-card-footer">
+                <span>Active 4d ago</span>
+                <span style="color: var(--bad); font-weight: 600;">Drifting</span>
+              </div>
+            </div>
 
-              <!-- Marcus T -->
-              <div class="roster-row animated-entrance stagger-2" tabindex="0">
-                <div class="col-athlete">
-                  <div class="tile-avatar av-2">MT</div>
-                  <div>
-                    <div class="tile-name">Marcus T.</div>
-                    <div class="tile-streak">Week 6 · Strength Plan</div>
+            <!-- Aman Khanna -->
+            <div class="client-card" data-client="aman-khanna" data-risk="med" data-recency="24" data-type="strength" onclick="window.location.href='reco-card.html?client=aman-khanna'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">AK</div>
+                <div>
+                  <div class="client-card-name">Aman Khanna</div>
+                  <div class="client-card-program">Hypertrophy · Week 14</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Medium Risk</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>75%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill warn" style="width: 71%;"></div>
+                    </div>
+                    <span>71%</span>
                   </div>
                 </div>
-                <div class="col-status">
-                  <span class="status-indicator status-red"></span>
-                  <span class="status-text text-red">High Churn Risk</span>
-                </div>
-                <div class="col-hrv"><span class="val-num low">32 ms</span></div>
-                <div class="col-sleep"><span class="val-num">6.2h</span></div>
-                <div class="col-adh"><span class="val-num low">40%</span></div>
-                <div class="col-trend">
-                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
-                    <polyline fill="none" stroke="#c0392b" stroke-width="1.5"
-                      points="0,6 14,8 28,11 42,15 56,19 70,20 84,21 100,21" />
-                  </svg>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>42 ms HRV · 5.4h Sleep</span>
                 </div>
               </div>
+              <div class="client-card-footer">
+                <span>Active 1d ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Soreness peak</span>
+              </div>
+            </div>
 
-              <!-- Aman Khanna -->
-              <div class="roster-row animated-entrance stagger-3" tabindex="0">
-                <div class="col-athlete">
-                  <div class="tile-avatar av-2">AK</div>
-                  <div>
-                    <div class="tile-name">Aman Khanna</div>
-                    <div class="tile-streak">Week 14 · Hypertrophy</div>
+            <!-- Meera Joshi -->
+            <div class="client-card" data-client="meera-joshi" data-risk="med" data-recency="5" data-type="nutrition" onclick="window.location.href='reco-card.html?client=meera-joshi'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">MJ</div>
+                <div>
+                  <div class="client-card-name">Meera Joshi</div>
+                  <div class="client-card-program">Nutrition · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Medium Risk</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>82%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 91%;"></div>
+                    </div>
+                    <span>91%</span>
                   </div>
                 </div>
-                <div class="col-status">
-                  <span class="status-indicator status-amber"></span>
-                  <span class="status-text text-amber">Deload Pending</span>
-                </div>
-                <div class="col-hrv"><span class="val-num low">42 ms</span></div>
-                <div class="col-sleep"><span class="val-num low">5.4h</span></div>
-                <div class="col-adh"><span class="val-num">71%</span></div>
-                <div class="col-trend">
-                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
-                    <polyline fill="none" stroke="#e67e22" stroke-width="1.5"
-                      points="0,8 14,10 28,11 42,14 56,16 70,18 84,20 100,21" />
-                  </svg>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>68 ms HRV · 7.8h Sleep</span>
                 </div>
               </div>
+              <div class="client-card-footer">
+                <span>Active 5h ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Protein drift</span>
+              </div>
+            </div>
 
-              <!-- Priya I -->
-              <div class="roster-row animated-entrance stagger-4" tabindex="0">
-                <div class="col-athlete">
-                  <div class="tile-avatar av-3">PI</div>
-                  <div>
-                    <div class="tile-name">Priya I.</div>
-                    <div class="tile-streak">Week 6 · Performance Focus</div>
+            <!-- Priya I -->
+            <div class="client-card" data-client="priya-i" data-risk="low" data-recency="0.1" data-type="performance" onclick="window.location.href='reco-card.html?client=priya-i'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">PI</div>
+                <div>
+                  <div class="client-card-name">Priya I.</div>
+                  <div class="client-card-program">Performance · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>95%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 94%;"></div>
+                    </div>
+                    <span>94%</span>
                   </div>
                 </div>
-                <div class="col-status">
-                  <span class="status-indicator status-green"></span>
-                  <span class="status-text text-green">Optimized</span>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>71 ms HRV · 7.8h Sleep</span>
                 </div>
-                <div class="col-hrv"><span class="val-num">71 ms</span></div>
-                <div class="col-sleep"><span class="val-num">7.8h</span></div>
-                <div class="col-adh"><span class="val-num">94%</span></div>
-                <div class="col-trend">
-                  <svg class="tile-spark" viewBox="0 0 100 24" preserveAspectRatio="none">
-                    <polyline fill="none" stroke="#2d9e6b" stroke-width="1.5"
-                      points="0,18 14,15 28,12 42,11 56,9 70,7 84,6 100,5" />
-                  </svg>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 10m ago</span>
+                <span style="color: var(--ok); font-weight: 600;">Steady</span>
+              </div>
+            </div>
+
+            <!-- David L -->
+            <div class="client-card" data-client="david-l" data-risk="low" data-recency="6" data-type="endurance" onclick="window.location.href='reco-card.html?client=david-l'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-1">DL</div>
+                <div>
+                  <div class="client-card-name">David L.</div>
+                  <div class="client-card-program">Base Phase · Week 4</div>
                 </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Engagement</span>
+                  <span>88%</span>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 90%;"></div>
+                    </div>
+                    <span>90%</span>
+                  </div>
+                </div>
+                <div class="client-card-vital-row">
+                  <span>Wearables</span>
+                  <span>65 ms HRV · 7.2h Sleep</span>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 6h ago</span>
+                <span style="color: var(--ok); font-weight: 600;">Steady</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Side Rail -->
-        <div class="rail">
-          <div class="rail-card animated-entrance stagger-2">
-            <div class="rail-title">Roster adherence · 7d <span class="delta up">↑ 4.2%</span></div>
-            <div class="ring-row">
-              <div class="ring">
-                <svg width="56" height="56" viewBox="0 0 56 56">
-                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
-                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--ok)" stroke-width="6"
-                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="20" stroke-linecap="round" />
-                </svg>
-                <div class="ring-val" id="ring-val-1" data-percent="86">0%</div>
-              </div>
-              <div class="ring-body">
-                <div class="ring-name">Workout completion</div>
-                <div class="ring-meta">36 of 42 hitting target</div>
-              </div>
+        <!-- Slim Right Rail (Ambient Context) -->
+        <div class="ambient-rail">
+          <!-- Today's Sessions -->
+          <div class="ambient-card">
+            <div class="ambient-card-title">Today's Sessions</div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">09:00 AM</span>
+              <span class="ambient-item-name">Sarah K.</span>
+              <span class="ambient-item-desc">Virtual Call</span>
             </div>
-            <div class="ring-row">
-              <div class="ring">
-                <svg width="56" height="56" viewBox="0 0 56 56">
-                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
-                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--warn)" stroke-width="6"
-                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="55" stroke-linecap="round" />
-                </svg>
-                <div class="ring-val" id="ring-val-2" data-percent="71">0%</div>
-              </div>
-              <div class="ring-body">
-                <div class="ring-name">Nutrition target</div>
-                <div class="ring-meta">Protein lagging on 9 members</div>
-              </div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">11:30 AM</span>
+              <span class="ambient-item-name">Priya I.</span>
+              <span class="ambient-item-desc">Coaching Chat</span>
             </div>
-            <div class="ring-row">
-              <div class="ring">
-                <svg width="56" height="56" viewBox="0 0 56 56">
-                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="6" />
-                  <circle class="ring-fg" cx="28" cy="28" r="22" fill="none" stroke="var(--accent)" stroke-width="6"
-                    stroke-dasharray="138.2" stroke-dashoffset="138.2" data-offset="38" stroke-linecap="round" />
-                </svg>
-                <div class="ring-val" id="ring-val-3" data-percent="78">0%</div>
-              </div>
-              <div class="ring-body">
-                <div class="ring-name">Sleep &ge; 7h</div>
-                <div class="ring-meta">5 members chronically under</div>
-              </div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">02:00 PM</span>
+              <span class="ambient-item-name">Aman Khanna</span>
+              <span class="ambient-item-desc">Form Review</span>
             </div>
           </div>
 
-          <div class="rail-card animated-entrance stagger-3">
-            <div class="rail-title">Recovery trend · 14d</div>
-            <svg class="trend-chart" viewBox="0 0 280 120" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="trendG" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#7a5487" stop-opacity=".15" />
-                  <stop offset="100%" stop-color="#7a5487" stop-opacity="0" />
-                </linearGradient>
-              </defs>
-              <line x1="0" x2="280" y1="40" y2="40" stroke="rgba(26,26,46,0.06)" stroke-dasharray="2,3" />
-              <line x1="0" x2="280" y1="80" y2="80" stroke="rgba(26,26,46,0.06)" stroke-dasharray="2,3" />
-              <path
-                d="M0,70 L20,65 L40,68 L60,55 L80,58 L100,50 L120,45 L140,52 L160,40 L180,48 L200,42 L220,35 L240,38 L260,30 L280,32"
-                fill="none" stroke="#7a5487" stroke-width="2" />
-              <path
-                d="M0,70 L20,65 L40,68 L60,55 L80,58 L100,50 L120,45 L140,52 L160,40 L180,48 L200,42 L220,35 L240,38 L260,30 L280,32 L280,120 L0,120 Z"
-                fill="url(#trendG)" />
-              <text x="0" y="115" class="trend-axis">14d ago</text>
-              <text x="240" y="115" class="trend-axis">Today</text>
-            </svg>
-            <div style="font-size:12px;color:var(--ink-4);margin-top:6px;line-height:1.45">Roster HRV recovering after
-              Mon–Wed dip. <b style="color:var(--ok)">+6.4% week-over-week.</b></div>
+          <!-- Messages Awaiting Reply -->
+          <div class="ambient-card">
+            <div class="ambient-card-title">Messages Awaiting Reply</div>
+            <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="ambient-item-name">Meera Joshi</span>
+                <span class="ambient-item-desc">5h ago</span>
+              </div>
+              <div style="font-size:12px; color:var(--ink-3); line-height:1.3;">"Struggling to hit protein on the road. Any quick travel snack ideas?"</div>
+            </div>
+            <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="ambient-item-name">Marcus T.</span>
+                <span class="ambient-item-desc">4d ago</span>
+              </div>
+              <div style="font-size:12px; color:var(--ink-4); line-height:1.3; font-style:italic;">No response received after deload draft sent.</div>
+            </div>
           </div>
 
-          <div class="rail-card animated-entrance stagger-4">
-            <div class="rail-title">This week, AI saved</div>
-            <div
-              style="font-family:var(--font-geist);font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--ink)">
-              <span id="hours-saved-val" data-target="18.4">0.0</span> <span
-                style="font-size:18px;color:var(--ink-4);font-weight:500">hours</span>
+          <!-- Recent Client Wins -->
+          <div class="ambient-card">
+            <div class="ambient-card-title">Recent Client Wins</div>
+            <div class="ambient-item" style="gap: 8px;">
+              <span style="font-size: 16px;">🏆</span>
+              <div>
+                <div class="ambient-item-name" style="font-size:13px;">Priya I.</div>
+                <div style="font-size:11.5px; color:var(--ink-3);">Set a 5km Personal Best on Saturday!</div>
+              </div>
             </div>
-            <div style="font-size:12px;color:var(--ink-4);margin-top:6px;line-height:1.5">Across 36 plan drafts, 14
-              check-ins, and 9 deload recommendations. <a href="#" style="color:var(--accent);font-weight:600">See
-                breakdown</a></div>
+            <div class="ambient-item" style="gap: 8px;">
+              <span style="font-size: 16px;">🔥</span>
+              <div>
+                <div class="ambient-item-name" style="font-size:13px;">David L.</div>
+                <div style="font-size:11.5px; color:var(--ink-3);">100% training adherence for 3 weeks straight!</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -699,7 +649,36 @@
             countSpan.textContent = `${activeAlertsCount} alert${activeAlertsCount > 1 ? 's' : ''} waiting for review`;
           }
         }
+
+        // Update hero alert badge dynamically
+        const heroBadgeText = document.getElementById('hero-badge-text');
+        const heroBadge = document.getElementById('hero-alert-btn');
+        if (heroBadgeText && heroBadge) {
+          const activeCritCount = Array.from(drafts).filter(d => d.classList.contains('draft-crit') && !d.classList.contains('is-skipped')).length;
+          if (activeCritCount === 0) {
+            heroBadge.style.display = 'none';
+          } else {
+            heroBadge.style.display = 'inline-flex';
+            heroBadgeText.textContent = `${activeCritCount} urgent alert${activeCritCount > 1 ? 's' : ''}`;
+          }
+        }
       };
+
+      // Hero alert button interaction: smooth scroll to Action Center + flash highlight
+      const heroAlertBtn = document.getElementById('hero-alert-btn');
+      if (heroAlertBtn) {
+        heroAlertBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const ac = document.querySelector('.action-center');
+          if (ac) {
+            ac.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            ac.classList.add('highlight-pulse');
+            setTimeout(() => {
+              ac.classList.remove('highlight-pulse');
+            }, 2400);
+          }
+        });
+      }
 
       drafts.forEach((draft) => {
         // Card-level click
@@ -1028,6 +1007,275 @@
     </div>
   </div>
 
-</body>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
 
+      function sync() {
+        var isDark = root.getAttribute('data-theme') === 'dark';
+        btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        btn.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+
+      sync();
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync();
+      });
+
+      // Follow OS changes only when user hasn't explicitly chosen
+      var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq && mq.addEventListener) {
+        mq.addEventListener('change', function (e) {
+          if (localStorage.getItem('theme')) return;
+          root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          sync();
+        });
+      }
+    })();
+  </script>
+
+  <!-- Command Palette Overlay -->
+  <div class="palette-overlay" id="command-palette-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="palette-container">
+      <div class="palette-search-wrapper">
+        <span class="palette-search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input type="text" class="palette-input" id="palette-search-input" placeholder="Search clients, actions, tabs..." />
+      </div>
+      <div class="palette-results" id="palette-results">
+        <!-- populated dynamically -->
+      </div>
+      <div class="palette-shortcuts-footer">
+        <span>Select with <kbd>↑</kbd><kbd>↓</kbd> and <kbd>Enter</kbd></span>
+        <span>Press <kbd>Esc</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Command Palette Logic
+      const paletteOverlay = document.getElementById('command-palette-overlay');
+      const paletteInput = document.getElementById('palette-search-input');
+      const paletteResults = document.getElementById('palette-results');
+      const searchTrigger = document.getElementById('topbar-search-trigger');
+      
+      const paletteItems = [
+        { name: 'Sarah K.', desc: 'Half-Marathon · Exhaustion Risk (Plan & Performance)', url: 'reco-card.html?client=sarah-k&tab=plan' },
+        { name: 'Marcus T.', desc: 'Strength · Churn Risk (Engagement & Risk)', url: 'reco-card.html?client=marcus-t&tab=risk' },
+        { name: 'Aman Khanna', desc: 'Hypertrophy · Deload Pending (Plan & Performance)', url: 'reco-card.html?client=aman-khanna&tab=plan' },
+        { name: 'Meera Joshi', desc: 'Nutrition · Nutrition Drift (Engagement & Risk)', url: 'reco-card.html?client=meera-joshi&tab=risk' },
+        { name: 'Priya I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
+        { name: 'David L.', desc: 'Base Phase · Optimized (Plan & Performance)', url: 'reco-card.html?client=david-l&tab=plan' },
+        { name: 'Filter: At-Risk', desc: 'Filter client roster by At-Risk status', action: 'filter-risk' },
+        { name: 'Filter: Optimized', desc: 'Filter client roster by Optimized status', action: 'filter-optimized' },
+        { name: 'Sort: Risk', desc: 'Sort client roster by churn/exhaustion risk', action: 'sort-risk' },
+        { name: 'Sort: Recency', desc: 'Sort client roster by last active time', action: 'sort-recency' }
+      ];
+
+      let selectedIndex = 0;
+
+      function renderPalette(query = '') {
+        paletteResults.innerHTML = '';
+        const filtered = paletteItems.filter(item => 
+          item.name.toLowerCase().includes(query.toLowerCase()) || 
+          item.desc.toLowerCase().includes(query.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          paletteResults.innerHTML = '<div style="padding: 12px; font-size:13px; color:var(--ink-4); text-align:center;">No results found</div>';
+          return;
+        }
+
+        filtered.forEach((item, index) => {
+          const opt = document.createElement('div');
+          opt.className = 'palette-option' + (index === selectedIndex ? ' selected' : '');
+          opt.innerHTML = `
+            <div>
+              <div class="palette-option-name">${item.name}</div>
+              <div style="font-size: 11px; color: var(--ink-4); margin-top:2px;">${item.desc}</div>
+            </div>
+            <span class="palette-option-type">${item.url ? 'Detail Page' : 'Command'}</span>
+          `;
+          opt.addEventListener('click', () => triggerOption(item));
+          paletteResults.appendChild(opt);
+        });
+      }
+
+      function triggerOption(item) {
+        if (item.url) {
+          window.location.href = item.url;
+        } else if (item.action) {
+          if (item.action.startsWith('filter-')) {
+            applyFilter(item.action);
+          } else if (item.action.startsWith('sort-')) {
+            const sortType = item.action.split('-')[1];
+            const sortBtn = document.querySelector(`.sort-item[data-sort="${sortType}"]`);
+            if (sortBtn) sortBtn.click();
+          }
+          closePalette();
+        }
+      }
+
+      function openPalette() {
+        paletteOverlay.classList.add('show');
+        paletteOverlay.setAttribute('aria-hidden', 'false');
+        paletteInput.value = '';
+        selectedIndex = 0;
+        renderPalette();
+        setTimeout(() => paletteInput.focus(), 100);
+      }
+
+      function closePalette() {
+        paletteOverlay.classList.remove('show');
+        paletteOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      if (searchTrigger) {
+        searchTrigger.addEventListener('click', openPalette);
+      }
+
+      paletteOverlay.addEventListener('click', (e) => {
+        if (e.target === paletteOverlay) closePalette();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/') {
+          const activeEl = document.activeElement;
+          if (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            openPalette();
+          }
+        }
+        if (e.key === 'Escape' && paletteOverlay.classList.contains('show')) {
+          closePalette();
+        }
+        
+        if (paletteOverlay.classList.contains('show')) {
+          const options = paletteResults.querySelectorAll('.palette-option');
+          if (options.length === 0) return;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex + 1) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex - 1 + options.length) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const filtered = paletteItems.filter(item => 
+              item.name.toLowerCase().includes(paletteInput.value.toLowerCase()) || 
+              item.desc.toLowerCase().includes(paletteInput.value.toLowerCase())
+            );
+            if (filtered[selectedIndex]) {
+              triggerOption(filtered[selectedIndex]);
+            }
+          }
+        }
+      });
+
+      paletteInput.addEventListener('input', (e) => {
+        selectedIndex = 0;
+        renderPalette(e.target.value);
+      });
+
+      // 2. Filter & Sort Logic for Client Cards
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const sortDropdownTrigger = document.getElementById('roster-sort-trigger');
+      const sortDropdown = document.getElementById('roster-sort-dropdown');
+      const sortItems = sortDropdown.querySelectorAll('.sort-item');
+      const rosterGrid = document.getElementById('roster-grid');
+      const clientCards = Array.from(document.querySelectorAll('.client-card'));
+      const atRiskMetric = document.getElementById('metric-at-risk');
+
+      // Filter function
+      function applyFilter(filterId) {
+        filterBtns.forEach(btn => btn.classList.remove('active'));
+        const btn = document.getElementById(filterId);
+        if (btn) btn.classList.add('active');
+
+        rosterGrid.classList.add('transitioning');
+        setTimeout(() => {
+          clientCards.forEach(card => {
+            const risk = card.getAttribute('data-risk');
+            const footerSpanText = card.querySelector('.client-card-footer span:last-child').textContent.toLowerCase();
+            const badgeText = card.querySelector('.client-card-risk-badge').textContent.toLowerCase();
+
+            if (filterId === 'filter-all' || filterId === 'filter-all') {
+              card.style.display = 'flex';
+            } else if (filterId === 'filter-risk' || filterId === 'filter-risk') {
+              card.style.display = (risk === 'high' || risk === 'med') ? 'flex' : 'none';
+            } else if (filterId === 'filter-optimized' || filterId === 'filter-optimized') {
+              card.style.display = (badgeText.includes('optimized')) ? 'flex' : 'none';
+            } else if (filterId === 'filter-drifting' || filterId === 'filter-drifting') {
+              card.style.display = (footerSpanText.includes('drifting') || badgeText.includes('drifting')) ? 'flex' : 'none';
+            }
+          });
+          rosterGrid.classList.remove('transitioning');
+        }, 150);
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => applyFilter(btn.id));
+      });
+
+      if (atRiskMetric) {
+        atRiskMetric.addEventListener('click', () => {
+          applyFilter('filter-risk');
+          rosterGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+
+      // Sort function
+      if (sortDropdownTrigger) {
+        sortDropdownTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sortDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => sortDropdown.classList.remove('show'));
+
+        sortItems.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sortItems.forEach(si => si.classList.remove('active'));
+            item.classList.add('active');
+            sortDropdownTrigger.textContent = `Sort: ${item.textContent} ▾`;
+            sortDropdown.classList.remove('show');
+
+            const sortType = item.getAttribute('data-sort');
+            rosterGrid.classList.add('transitioning');
+
+            setTimeout(() => {
+              const sorted = [...clientCards].sort((a, b) => {
+                if (sortType === 'risk') {
+                  const riskMap = { 'high': 3, 'med': 2, 'low': 1 };
+                  return riskMap[b.getAttribute('data-risk')] - riskMap[a.getAttribute('data-risk')];
+                } else if (sortType === 'recency') {
+                  return parseFloat(a.getAttribute('data-recency')) - parseFloat(b.getAttribute('data-recency'));
+                } else if (sortType === 'type') {
+                  return a.getAttribute('data-type').localeCompare(b.getAttribute('data-type'));
+                }
+                return 0;
+              });
+
+              sorted.forEach(el => rosterGrid.appendChild(el));
+              rosterGrid.classList.remove('transitioning');
+            }, 150);
+          });
+        });
+      }
+    });
+  </script>
+</body>
 </html>
