@@ -30,12 +30,22 @@
 
   <!-- =================== SIDEBAR =================== -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">Z</div>
-      <div>
-        <div class="brand-name">ZORA</div>
-        <div class="brand-sub">Coach Console</div>
+    <div class="brand"
+      style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 0;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-mark">Z</div>
+        <div class="brand-text">
+          <div class="brand-name">ZORA</div>
+          <div class="brand-sub">Coach Console</div>
+        </div>
       </div>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle"
+        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;"
+        title="Collapse Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
     </div>
 
     <div class="nav-section">
@@ -47,9 +57,9 @@
 
     <div class="nav-section">
       <div class="nav-label">Roster</div>
-      <div class="nav-item"><span class="dot"></span> All Members</div>
-      <div class="nav-item"><span class="dot"></span> At-Risk</div>
-      <div class="nav-item"><span class="dot"></span> Plans Due</div>
+      <div class="nav-item" id="nav-all-members" style="cursor: pointer;"><span class="dot"></span> All Members</div>
+      <div class="nav-item" id="nav-at-risk" style="cursor: pointer;"><span class="dot"></span> At-Risk</div>
+      <div class="nav-item" id="nav-plans-due" style="cursor: pointer;"><span class="dot"></span> Plans Due</div>
     </div>
 
     <div class="nav-section">
@@ -79,7 +89,8 @@
         <span id="crumb-tail">Overview</span>
       </div>
 
-      <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly style="cursor:pointer;" />
+      <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly
+        style="cursor:pointer;" />
 
       <button class="icon-btn" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -88,21 +99,17 @@
         </svg>
       </button>
 
-      <button
-        type="button"
-        id="theme-toggle"
-        class="theme-toggle"
-        role="switch"
-        aria-checked="false"
-        aria-label="Toggle dark mode"
-        title="Toggle dark mode"
-      >
+      <button type="button" id="theme-toggle" class="theme-toggle" role="switch" aria-checked="false"
+        aria-label="Toggle dark mode" title="Toggle dark mode">
         <span class="theme-toggle__thumb" aria-hidden="true">
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
           </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </span>
@@ -112,7 +119,19 @@
     <!-- ============== SCREEN 1 ============== -->
     <div class="page active animated-entrance" id="screen-1">
 
-      <div class="page-head page-head--hero">
+      <div class="page-head page-head--hero" id="hero-head">
+        <!-- Living aurora field: layered blooms + breathing contour lines + cursor glow -->
+        <div class="hero-aurora" aria-hidden="true">
+          <span class="hero-bloom hero-bloom--1"></span>
+          <span class="hero-bloom hero-bloom--2"></span>
+          <span class="hero-bloom hero-bloom--3"></span>
+          <span class="hero-glow" id="hero-glow"></span>
+        </div>
+        <svg class="hero-waves" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M-20 150 C 220 90, 420 200, 660 140 S 1080 80, 1240 150" />
+          <path d="M-20 178 C 260 130, 480 220, 720 168 S 1120 118, 1240 182" />
+          <path d="M-20 116 C 300 70, 520 158, 780 104 S 1100 52, 1240 120" />
+        </svg>
         <div class="hero-distilled">
           <h1 class="page-title page-title--hero">Good morning, Riya: <em>Command Center</em></h1>
         </div>
@@ -124,16 +143,27 @@
       </div>
 
       <!-- AI Action Center -->
-      <div class="action-center">
+      <div class="action-center" id="action-center-section">
         <div class="ac-head">
-          <div>
-            <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span> prepared for today</div>
-          </div>
+          <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span> prepared for today</div>
+          <button class="ac-toggle-btn" id="ac-toggle-btn" type="button" aria-expanded="true" aria-label="Toggle AI Action Center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
         </div>
 
-        <div class="draft-row" id="drafts-container">
+        <!-- Completed Placeholder Banner -->
+        <div class="ac-completed-placeholder" id="ac-completed-placeholder" style="display: none;">
+          <span class="placeholder-icon">✓</span>
+          <span class="placeholder-text">All prioritized recommendations completed. <button class="placeholder-link-btn" id="ac-recover-link" type="button">Show Action Center</button></span>
+        </div>
+
+        <div class="ac-content-wrapper" id="ac-content-wrapper">
+          <div class="draft-row" id="drafts-container">
           <!-- Draft 1: Sarah K -->
-          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0" onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
+          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0"
+            onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
             <div class="draft-inner">
               <div class="draft-head">
                 <div>
@@ -142,15 +172,42 @@
                 </div>
                 <span class="draft-tag tag-crit">Exhaustion Risk</span>
               </div>
-              <p class="draft-summary">HRV dropped to 18ms and sleep is 4.2h. AI drafted a <strong>volume deload week</strong>.</p>
-              <div class="draft-actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'">Review Deload Plan</button>
+              <div class="draft-signals">
+                <div class="signal signal-bad">
+                  <span class="signal-val">18<span class="signal-unit">ms</span><span class="signal-arrow"
+                      aria-label="dropping">↓</span></span>
+                  <span class="signal-lbl">HRV</span>
+                </div>
+                <div class="signal signal-bad">
+                  <span class="signal-val">4.2<span class="signal-unit">h</span></span>
+                  <span class="signal-lbl">Sleep</span>
+                </div>
               </div>
+              <div class="draft-actions">
+                <div class="draft-fix">
+                  <span class="draft-fix-lbl">AI drafted</span>
+                  <span class="draft-fix-val">Volume deload</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
+                    aria-label="Review deload plan for Sarah K.">Review</button>
+                </div>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <span class="skipped-icon">✕</span>
+                <span class="skipped-msg">Recommendation skipped</span>
+              </div>
+              <button class="btn-undo" type="button">Undo</button>
             </div>
           </div>
 
           <!-- Draft 2: Marcus T -->
-          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0" onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
+          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0"
+            onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
             <div class="draft-inner">
               <div class="draft-head">
                 <div>
@@ -159,15 +216,42 @@
                 </div>
                 <span class="draft-tag tag-crit">Churn Risk</span>
               </div>
-              <p class="draft-summary">Drifting with 40% workout completion and no replies. Mobility shift drafted.</p>
-              <div class="draft-actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'">Review Intervention</button>
+              <div class="draft-signals">
+                <div class="signal signal-bad">
+                  <span class="signal-val">40<span class="signal-unit">%</span><span class="signal-arrow"
+                      aria-label="dropping">↓</span></span>
+                  <span class="signal-lbl">Completion</span>
+                </div>
+                <div class="signal signal-bad">
+                  <span class="signal-val">4<span class="signal-unit">d</span></span>
+                  <span class="signal-lbl">No reply</span>
+                </div>
               </div>
+              <div class="draft-actions">
+                <div class="draft-fix">
+                  <span class="draft-fix-lbl">AI drafted</span>
+                  <span class="draft-fix-val">Re-engage nudge</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+                  <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
+                    aria-label="Review intervention for Marcus T.">Review</button>
+                </div>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <span class="skipped-icon">✕</span>
+                <span class="skipped-msg">Recommendation skipped</span>
+              </div>
+              <button class="btn-undo" type="button">Undo</button>
             </div>
           </div>
 
           <!-- Draft 3: Aman Khanna -->
-          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0" onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
+          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0"
+            onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
             <div class="draft-inner">
               <div class="draft-head">
                 <div>
@@ -176,36 +260,65 @@
                 </div>
                 <span class="draft-tag tag-deload">Deload Pending</span>
               </div>
-              <p class="draft-summary">Muscles are 8/10 sore after 4 hard weeks. AI drafted a <strong>recovery deload week</strong>.</p>
-              <div class="draft-actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'">Review Deload Plan</button>
+              <div class="draft-signals">
+                <div class="signal signal-warn">
+                  <span class="signal-val">8<span class="signal-unit">/10</span></span>
+                  <span class="signal-lbl">Soreness</span>
+                </div>
+                <div class="signal signal-warn">
+                  <span class="signal-val">4<span class="signal-unit">wk</span></span>
+                  <span class="signal-lbl">Hard block</span>
+                </div>
               </div>
+              <div class="draft-actions">
+                <div class="draft-fix">
+                  <span class="draft-fix-lbl">AI drafted</span>
+                  <span class="draft-fix-val">Recovery deload</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Aman Khanna">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
+                    aria-label="Review deload plan for Aman Khanna">Review</button>
+                </div>
+              </div>
+            </div>
+            <div class="draft-skipped-state">
+              <div class="skipped-content">
+                <span class="skipped-icon">✕</span>
+                <span class="skipped-msg">Recommendation skipped</span>
+              </div>
+              <button class="btn-undo" type="button">Undo</button>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Pulse Metrics Row -->
-      <div class="pulse-metrics-row">
-        <div class="pulse-metric-card">
-          <span class="metric-val">142</span>
-          <span class="metric-label">Total Clients</span>
-          <span class="metric-sub">98% training adherence</span>
+      <!-- Pulse Metrics Ribbon -->
+      <div class="pulse-metrics-ribbon">
+        <div class="ribbon-item">
+          <span class="ribbon-label">Total Clients</span>
+          <span class="ribbon-val">142</span>
+          <span class="ribbon-sub">98% adherence</span>
         </div>
-        <div class="pulse-metric-card">
-          <span class="metric-val">88%</span>
-          <span class="metric-label">Avg Engagement</span>
-          <span class="metric-sub">Synced from wearable streams</span>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item">
+          <span class="ribbon-label">Avg Engagement</span>
+          <span class="ribbon-val">88%</span>
+          <span class="ribbon-sub">Wearables synced</span>
         </div>
-        <div class="pulse-metric-card interactive" id="metric-at-risk">
-          <span class="metric-val" style="color: var(--bad);">3</span>
-          <span class="metric-label">Count at Risk</span>
-          <span class="metric-sub" style="color: var(--bad); font-weight: 600;">Click to filter roster →</span>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item interactive" id="metric-at-risk" role="button" tabindex="0" title="Click to filter roster">
+          <span class="ribbon-label">Count at Risk</span>
+          <span class="ribbon-val text-bad">3</span>
+          <span class="ribbon-sub text-bad">Click to filter</span>
         </div>
-        <div class="pulse-metric-card">
-          <span class="metric-val">6</span>
-          <span class="metric-label">Plans Pending</span>
-          <span class="metric-sub">36 auto-approved overnight</span>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item">
+          <span class="ribbon-label">Plans Pending</span>
+          <span class="ribbon-val">6</span>
+          <span class="ribbon-sub">36 auto-approved</span>
         </div>
       </div>
 
@@ -214,27 +327,58 @@
 
         <!-- Left Column: Roster Grid -->
         <div class="roster-grid-container">
+          <div class="roster-section-head">
+            <div class="roster-section-titles">
+              <h2 class="roster-section-title">Client Roster</h2>
+              <p class="roster-section-sub"><span id="roster-count-shown">6</span> shown of <span
+                  class="roster-count-total">142</span> active</p>
+            </div>
+            <button class="view-roster-btn" id="open-full-roster-btn" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+                <rect x="3" y="10" width="18" height="4" rx="1"></rect>
+                <rect x="3" y="16" width="18" height="4" rx="1"></rect>
+              </svg>
+              View full roster
+              <span class="view-roster-btn-count">142</span>
+            </button>
+          </div>
           <div class="controls-bar">
             <div class="filter-group">
-              <button class="filter-btn active" id="filter-all">All</button>
-              <button class="filter-btn" id="filter-risk">At-Risk</button>
-              <button class="filter-btn" id="filter-optimized">Optimized</button>
+              <button class="filter-btn active" id="filter-risk">At-Risk</button>
               <button class="filter-btn" id="filter-drifting">Drifting</button>
+              <button class="filter-btn" id="filter-payment">Payment Due</button>
+              <button class="filter-btn-clear" id="filter-clear" style="display: none;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  style="vertical-align:middle;">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Clear
+              </button>
             </div>
-            
-            <div class="sort-container">
-              <button class="sort-trigger-btn" id="roster-sort-trigger">Sort: Risk ▾</button>
-              <div class="sort-dropdown" id="roster-sort-dropdown" style="right: 0;">
-                <button class="sort-item active" data-sort="risk">Risk Level</button>
-                <button class="sort-item" data-sort="recency">Recency</button>
-                <button class="sort-item" data-sort="type">Coaching Type</button>
+
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <!-- Client Type Dropdown Selector -->
+              <div class="sort-container">
+                <button class="sort-trigger-btn" id="roster-type-trigger">Type: All ▾</button>
+                <div class="sort-dropdown" id="roster-type-dropdown" style="right: 0;">
+                  <button class="sort-item type-item active" data-type="all">All Types</button>
+                  <button class="sort-item type-item" data-type="strength">Strength</button>
+                  <button class="sort-item type-item" data-type="endurance">Endurance</button>
+                  <button class="sort-item type-item" data-type="weight-loss">Weight Loss</button>
+                  <button class="sort-item type-item" data-type="performance">Performance</button>
+                  <button class="sort-item type-item" data-type="nutrition">Nutrition</button>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="roster-grid" id="roster-grid">
             <!-- Sarah K -->
-            <div class="client-card" data-client="sarah-k" data-risk="high" data-recency="2" data-type="endurance" onclick="window.location.href='reco-card.html?client=sarah-k'">
+            <div class="client-card" data-client="sarah-k" data-risk="high" data-recency="2" data-type="endurance"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=sarah-k'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-1">SK</div>
                 <div>
@@ -245,10 +389,6 @@
               </div>
               <div class="client-card-vitals">
                 <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>92%</span>
-                </div>
-                <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <div class="progress-bar-container">
@@ -257,9 +397,15 @@
                     <span>98%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>18 ms HRV · 4.2h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>92%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>18 ms HRV · 4.2h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -269,7 +415,8 @@
             </div>
 
             <!-- Marcus T -->
-            <div class="client-card" data-client="marcus-t" data-risk="high" data-recency="96" data-type="strength" onclick="window.location.href='reco-card.html?client=marcus-t'">
+            <div class="client-card" data-client="marcus-t" data-risk="high" data-recency="96" data-type="strength"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=marcus-t'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-2">MT</div>
                 <div>
@@ -280,10 +427,6 @@
               </div>
               <div class="client-card-vitals">
                 <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>35%</span>
-                </div>
-                <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <div class="progress-bar-container">
@@ -292,9 +435,15 @@
                     <span>40%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>32 ms HRV · 6.2h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>35%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>32 ms HRV · 6.2h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -304,7 +453,8 @@
             </div>
 
             <!-- Aman Khanna -->
-            <div class="client-card" data-client="aman-khanna" data-risk="med" data-recency="24" data-type="strength" onclick="window.location.href='reco-card.html?client=aman-khanna'">
+            <div class="client-card" data-client="aman-khanna" data-risk="med" data-recency="24" data-type="strength"
+              data-payment-due="true" onclick="window.location.href='reco-card.html?client=aman-khanna'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-2">AK</div>
                 <div>
@@ -312,12 +462,9 @@
                   <div class="client-card-program">Hypertrophy · Week 14</div>
                 </div>
                 <span class="client-card-risk-badge risk-med">Medium Risk</span>
+                <span class="payment-due-badge">$ Due</span>
               </div>
               <div class="client-card-vitals">
-                <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>75%</span>
-                </div>
                 <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
@@ -327,9 +474,15 @@
                     <span>71%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>42 ms HRV · 5.4h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>75%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>42 ms HRV · 5.4h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -339,7 +492,8 @@
             </div>
 
             <!-- Meera Joshi -->
-            <div class="client-card" data-client="meera-joshi" data-risk="med" data-recency="5" data-type="nutrition" onclick="window.location.href='reco-card.html?client=meera-joshi'">
+            <div class="client-card" data-client="meera-joshi" data-risk="med" data-recency="5" data-type="weight-loss"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=meera-joshi'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-3">MJ</div>
                 <div>
@@ -350,10 +504,6 @@
               </div>
               <div class="client-card-vitals">
                 <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>82%</span>
-                </div>
-                <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <div class="progress-bar-container">
@@ -362,9 +512,15 @@
                     <span>91%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>68 ms HRV · 7.8h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>82%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>68 ms HRV · 7.8h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -374,7 +530,8 @@
             </div>
 
             <!-- Priya I -->
-            <div class="client-card" data-client="priya-i" data-risk="low" data-recency="0.1" data-type="performance" onclick="window.location.href='reco-card.html?client=priya-i'">
+            <div class="client-card" data-client="priya-i" data-risk="low" data-recency="0.1" data-type="performance"
+              data-payment-due="true" onclick="window.location.href='reco-card.html?client=priya-i'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-3">PI</div>
                 <div>
@@ -382,12 +539,9 @@
                   <div class="client-card-program">Performance · Week 6</div>
                 </div>
                 <span class="client-card-risk-badge risk-low">Optimized</span>
+                <span class="payment-due-badge">$ Due</span>
               </div>
               <div class="client-card-vitals">
-                <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>95%</span>
-                </div>
                 <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
@@ -397,9 +551,15 @@
                     <span>94%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>71 ms HRV · 7.8h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>95%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>71 ms HRV · 7.8h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -409,7 +569,8 @@
             </div>
 
             <!-- David L -->
-            <div class="client-card" data-client="david-l" data-risk="low" data-recency="6" data-type="endurance" onclick="window.location.href='reco-card.html?client=david-l'">
+            <div class="client-card" data-client="david-l" data-risk="low" data-recency="6" data-type="nutrition"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=david-l'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-1">DL</div>
                 <div>
@@ -420,10 +581,6 @@
               </div>
               <div class="client-card-vitals">
                 <div class="client-card-vital-row">
-                  <span>Engagement</span>
-                  <span>88%</span>
-                </div>
-                <div class="client-card-vital-row">
                   <span>Adherence</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <div class="progress-bar-container">
@@ -432,9 +589,15 @@
                     <span>90%</span>
                   </div>
                 </div>
-                <div class="client-card-vital-row">
-                  <span>Wearables</span>
-                  <span>65 ms HRV · 7.2h Sleep</span>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>88%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>65 ms HRV · 7.2h Sleep</span>
+                  </div>
                 </div>
               </div>
               <div class="client-card-footer">
@@ -475,14 +638,16 @@
                 <span class="ambient-item-name">Meera Joshi</span>
                 <span class="ambient-item-desc">5h ago</span>
               </div>
-              <div style="font-size:12px; color:var(--ink-3); line-height:1.3;">"Struggling to hit protein on the road. Any quick travel snack ideas?"</div>
+              <div style="font-size:12px; color:var(--ink-3); line-height:1.3;">"Struggling to hit protein on the road.
+                Any quick travel snack ideas?"</div>
             </div>
             <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
               <div style="display:flex; justify-content:space-between; width:100%;">
                 <span class="ambient-item-name">Marcus T.</span>
                 <span class="ambient-item-desc">4d ago</span>
               </div>
-              <div style="font-size:12px; color:var(--ink-4); line-height:1.3; font-style:italic;">No response received after deload draft sent.</div>
+              <div style="font-size:12px; color:var(--ink-4); line-height:1.3; font-style:italic;">No response received
+                after deload draft sent.</div>
             </div>
           </div>
 
@@ -638,6 +803,31 @@
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Bind click listeners on Draft Recommendation Cards (Action Center)
       const drafts = document.querySelectorAll('.draft');
+      const actionCenterSection = document.getElementById('action-center-section');
+      const acContentWrapper = document.getElementById('ac-content-wrapper');
+      const acCompletedPlaceholder = document.getElementById('ac-completed-placeholder');
+      const acToggleBtn = document.getElementById('ac-toggle-btn');
+      const acRecoverLink = document.getElementById('ac-recover-link');
+
+      // Expand action center
+      const expandActionCenter = () => {
+        if (actionCenterSection) {
+          actionCenterSection.classList.remove('collapsed');
+        }
+        if (acToggleBtn) {
+          acToggleBtn.setAttribute('aria-expanded', 'true');
+        }
+      };
+
+      // Collapse action center
+      const collapseActionCenter = () => {
+        if (actionCenterSection) {
+          actionCenterSection.classList.add('collapsed');
+        }
+        if (acToggleBtn) {
+          acToggleBtn.setAttribute('aria-expanded', 'false');
+        }
+      };
 
       const updateAlertCount = () => {
         const activeAlertsCount = Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length;
@@ -648,6 +838,25 @@
           } else {
             countSpan.textContent = `${activeAlertsCount} alert${activeAlertsCount > 1 ? 's' : ''} waiting for review`;
           }
+        }
+
+        // Auto-collapse and show completed banner when active drafts reach 0
+        if (activeAlertsCount === 0) {
+          setTimeout(() => {
+            // Auto collapse after skip/review animation settles
+            if (Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length === 0) {
+              collapseActionCenter();
+              if (acCompletedPlaceholder) {
+                acCompletedPlaceholder.style.display = 'flex';
+              }
+            }
+          }, 400);
+        } else {
+          // If items recovered/undone, hide placeholder and open content
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'none';
+          }
+          expandActionCenter();
         }
 
         // Update hero alert badge dynamically
@@ -664,6 +873,26 @@
         }
       };
 
+      // Toggle button event listener
+      if (acToggleBtn) {
+        acToggleBtn.addEventListener('click', () => {
+          const isExpanded = acToggleBtn.getAttribute('aria-expanded') === 'true';
+          if (isExpanded) {
+            collapseActionCenter();
+          } else {
+            expandActionCenter();
+          }
+        });
+      }
+
+      // Recover link event listener
+      if (acRecoverLink) {
+        acRecoverLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          expandActionCenter();
+        });
+      }
+
       // Hero alert button interaction: smooth scroll to Action Center + flash highlight
       const heroAlertBtn = document.getElementById('hero-alert-btn');
       if (heroAlertBtn) {
@@ -672,6 +901,7 @@
           const ac = document.querySelector('.action-center');
           if (ac) {
             ac.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            expandActionCenter(); // Make sure it's open
             ac.classList.add('highlight-pulse');
             setTimeout(() => {
               ac.classList.remove('highlight-pulse');
@@ -683,9 +913,12 @@
       drafts.forEach((draft) => {
         // Card-level click
         draft.addEventListener('click', (e) => {
+          const undoBtn = e.target.closest('.btn-undo');
+          const skipBtn = e.target.closest('.btn-skip');
+
           // If clicked while skipped, ignore unless it is the Undo button
           if (draft.classList.contains('is-skipped')) {
-            if (e.target.classList.contains('btn-undo')) {
+            if (undoBtn) {
               e.stopPropagation();
               draft.classList.remove('is-skipped');
               updateAlertCount();
@@ -694,19 +927,20 @@
           }
 
           // If clicking "Skip" button, trigger skip state
-          if (e.target.classList.contains('btn-skip')) {
+          if (skipBtn) {
             e.stopPropagation();
             draft.classList.add('is-skipped');
             updateAlertCount();
             return;
           }
 
-          // Navigate for click on body or "Review Plan"
-          const name = draft.getAttribute('data-name');
+          // Navigate for click on body or "Review" button
+          const name = draft.getAttribute('data-name') || '';
+          const tab = draft.getAttribute('data-tab') || 'plan';
           let clientKey = 'sarah-k';
           if (name.includes('Marcus')) clientKey = 'marcus-t';
           if (name.includes('Aman')) clientKey = 'aman-khanna';
-          window.location.href = `reco-card.html?client=${clientKey}`;
+          window.location.href = `reco-card.html?client=${clientKey}&tab=${tab}`;
         });
 
         // Keydown handler for accessibility Focus Routing
@@ -722,6 +956,23 @@
           }
         });
       });
+
+      // Initial state parsing on load
+      const checkInitialState = () => {
+        const activeAlertsCount = Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length;
+        if (activeAlertsCount === 0) {
+          collapseActionCenter();
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'flex';
+          }
+        } else {
+          expandActionCenter();
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'none';
+          }
+        }
+      };
+      checkInitialState();
 
       // Sort Dropdown interaction
       const sortTrigger = document.getElementById('sort-trigger');
@@ -999,8 +1250,8 @@
       </svg>
     </div>
     <div>
-      <span style="font-weight: 600; display: block; line-height: 1.2;">Plan adjustment sent!</span>
-      <span style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
+      <span id="toast-title" style="font-weight: 600; display: block; line-height: 1.2;">Plan adjustment sent!</span>
+      <span id="toast-sub" style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
         <span id="toast-client-name" style="font-weight: 600; color: #ffffff;">Sarah K.</span> was notified via their
         mobile feed.
       </span>
@@ -1024,7 +1275,7 @@
       btn.addEventListener('click', function () {
         var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         root.setAttribute('data-theme', next);
-        try { localStorage.setItem('theme', next); } catch (e) {}
+        try { localStorage.setItem('theme', next); } catch (e) { }
         sync();
       });
 
@@ -1040,6 +1291,159 @@
     })();
   </script>
 
+  <!-- Payments Due: floating pill -->
+  <button class="pay-fab" id="pay-fab" type="button" aria-label="Payments due" aria-haspopup="dialog">
+    <svg class="pay-fab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+      <line x1="2" y1="10" x2="22" y2="10"></line>
+    </svg>
+    <span class="pay-fab-label">payments due</span>
+    <span class="pay-fab-count" id="pay-fab-count">2</span>
+  </button>
+
+  <!-- Payments Due: slide-in panel -->
+  <div class="pay-drawer-overlay" id="pay-drawer-overlay"></div>
+  <aside class="pay-drawer" id="pay-drawer" role="dialog" aria-modal="true" aria-labelledby="pay-drawer-title"
+    aria-hidden="true">
+    <div class="pay-drawer-head">
+      <div>
+        <h2 class="pay-drawer-title" id="pay-drawer-title">Payments due</h2>
+        <p class="pay-drawer-sub"><span id="pay-drawer-count">2</span> need collecting this week</p>
+      </div>
+      <button class="icon-btn close-pay-btn" id="close-pay-drawer" type="button" title="Close"
+        aria-label="Close payments panel">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="pay-drawer-body" id="pay-drawer-body">
+      <!-- Overdue first -->
+      <div class="pay-item is-overdue" data-name="Priya I." data-amount="$99">
+        <div class="pay-item-avatar av-3">PI</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Priya I.</span>
+            <span class="pay-item-amount">$99</span>
+          </div>
+          <span class="pay-chip pay-chip-overdue">5 days overdue</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-item" data-name="Aman Khanna" data-amount="$149">
+        <div class="pay-item-avatar av-2">AK</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Aman Khanna</span>
+            <span class="pay-item-amount">$149</span>
+          </div>
+          <span class="pay-chip pay-chip-soon">due in 3 days</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-item" data-name="Tariq K." data-amount="$120">
+        <div class="pay-item-avatar av-1">TK</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Tariq K.</span>
+            <span class="pay-item-amount">$120</span>
+          </div>
+          <span class="pay-chip pay-chip-soon">due in 4 days</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-drawer-empty" id="pay-drawer-empty" hidden>
+      <div class="pay-empty-check" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <p class="pay-empty-title">All payments collected</p>
+      <p class="pay-empty-sub">Nothing due in the next few days.</p>
+    </div>
+  </aside>
+
+  <!-- Full Roster Modal -->
+  <div class="roster-modal-overlay" id="full-roster-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="full-roster-title" aria-hidden="true">
+    <div class="roster-modal">
+      <div class="roster-modal-head">
+        <div class="roster-modal-titles">
+          <h2 class="roster-modal-title" id="full-roster-title">Client Roster</h2>
+          <p class="roster-modal-sub"><span id="roster-modal-visible-count">142</span> of <span
+              class="roster-count-total">142</span> active members</p>
+        </div>
+        <button class="icon-btn close-roster-btn" id="close-full-roster-btn" type="button" title="Close roster"
+          aria-label="Close roster">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="roster-modal-toolbar">
+        <div class="roster-search-wrapper">
+          <svg class="roster-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" class="roster-modal-search" id="roster-modal-search"
+            placeholder="Search by name or program..." autocomplete="off" />
+        </div>
+        <div class="roster-modal-filters" id="roster-modal-filters" role="group" aria-label="Filter roster by status">
+          <button class="roster-chip active" data-status="all" type="button">All</button>
+          <button class="roster-chip" data-status="high" type="button">At-Risk</button>
+          <button class="roster-chip" data-status="med" type="button">Watch</button>
+          <button class="roster-chip" data-status="low" type="button">Steady</button>
+        </div>
+      </div>
+
+      <div class="roster-modal-table" role="table" aria-label="Full client roster">
+        <div class="roster-modal-table-head" role="row">
+          <span role="columnheader">Member</span>
+          <span role="columnheader">Program</span>
+          <span role="columnheader" class="rmt-vitals">Vitals</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader" class="rmt-last">Last active</span>
+        </div>
+        <div class="roster-modal-table-body" id="roster-modal-table-body" role="rowgroup">
+          <!-- rows injected by JS -->
+        </div>
+        <div class="roster-modal-empty" id="roster-modal-empty" hidden>
+          <p>No members match this filter.</p>
+        </div>
+      </div>
+
+      <div class="roster-modal-foot">
+        <span class="roster-modal-foot-hint">Select a member to open their plan. Press <kbd>Esc</kbd> to close.</span>
+        <span class="roster-modal-foot-legend">
+          <span class="rml-item"><span class="status-indicator status-red"></span> At-Risk</span>
+          <span class="rml-item"><span class="status-indicator status-amber"></span> Watch</span>
+          <span class="rml-item"><span class="status-indicator status-green"></span> Steady</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
   <!-- Command Palette Overlay -->
   <div class="palette-overlay" id="command-palette-overlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="palette-container">
@@ -1050,7 +1454,8 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </span>
-        <input type="text" class="palette-input" id="palette-search-input" placeholder="Search clients, actions, tabs..." />
+        <input type="text" class="palette-input" id="palette-search-input"
+          placeholder="Search clients, actions, tabs..." />
       </div>
       <div class="palette-results" id="palette-results">
         <!-- populated dynamically -->
@@ -1069,7 +1474,7 @@
       const paletteInput = document.getElementById('palette-search-input');
       const paletteResults = document.getElementById('palette-results');
       const searchTrigger = document.getElementById('topbar-search-trigger');
-      
+
       const paletteItems = [
         { name: 'Sarah K.', desc: 'Half-Marathon · Exhaustion Risk (Plan & Performance)', url: 'reco-card.html?client=sarah-k&tab=plan' },
         { name: 'Marcus T.', desc: 'Strength · Churn Risk (Engagement & Risk)', url: 'reco-card.html?client=marcus-t&tab=risk' },
@@ -1078,17 +1483,15 @@
         { name: 'Priya I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
         { name: 'David L.', desc: 'Base Phase · Optimized (Plan & Performance)', url: 'reco-card.html?client=david-l&tab=plan' },
         { name: 'Filter: At-Risk', desc: 'Filter client roster by At-Risk status', action: 'filter-risk' },
-        { name: 'Filter: Optimized', desc: 'Filter client roster by Optimized status', action: 'filter-optimized' },
-        { name: 'Sort: Risk', desc: 'Sort client roster by churn/exhaustion risk', action: 'sort-risk' },
-        { name: 'Sort: Recency', desc: 'Sort client roster by last active time', action: 'sort-recency' }
+        { name: 'Filter: Payment Due', desc: 'Filter client roster by Payment Due status', action: 'filter-payment' }
       ];
 
       let selectedIndex = 0;
 
       function renderPalette(query = '') {
         paletteResults.innerHTML = '';
-        const filtered = paletteItems.filter(item => 
-          item.name.toLowerCase().includes(query.toLowerCase()) || 
+        const filtered = paletteItems.filter(item =>
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
           item.desc.toLowerCase().includes(query.toLowerCase())
         );
 
@@ -1117,11 +1520,9 @@
           window.location.href = item.url;
         } else if (item.action) {
           if (item.action.startsWith('filter-')) {
-            applyFilter(item.action);
-          } else if (item.action.startsWith('sort-')) {
-            const sortType = item.action.split('-')[1];
-            const sortBtn = document.querySelector(`.sort-item[data-sort="${sortType}"]`);
-            if (sortBtn) sortBtn.click();
+            if (window.__applyFilter) {
+              window.__applyFilter(item.action);
+            }
           }
           closePalette();
         }
@@ -1160,7 +1561,7 @@
         if (e.key === 'Escape' && paletteOverlay.classList.contains('show')) {
           closePalette();
         }
-        
+
         if (paletteOverlay.classList.contains('show')) {
           const options = paletteResults.querySelectorAll('.palette-option');
           if (options.length === 0) return;
@@ -1174,8 +1575,8 @@
             renderPalette(paletteInput.value);
           } else if (e.key === 'Enter') {
             e.preventDefault();
-            const filtered = paletteItems.filter(item => 
-              item.name.toLowerCase().includes(paletteInput.value.toLowerCase()) || 
+            const filtered = paletteItems.filter(item =>
+              item.name.toLowerCase().includes(paletteInput.value.toLowerCase()) ||
               item.desc.toLowerCase().includes(paletteInput.value.toLowerCase())
             );
             if (filtered[selectedIndex]) {
@@ -1192,90 +1593,539 @@
 
       // 2. Filter & Sort Logic for Client Cards
       const filterBtns = document.querySelectorAll('.filter-btn');
-      const sortDropdownTrigger = document.getElementById('roster-sort-trigger');
-      const sortDropdown = document.getElementById('roster-sort-dropdown');
-      const sortItems = sortDropdown.querySelectorAll('.sort-item');
       const rosterGrid = document.getElementById('roster-grid');
       const clientCards = Array.from(document.querySelectorAll('.client-card'));
       const atRiskMetric = document.getElementById('metric-at-risk');
 
-      // Filter function
-      function applyFilter(filterId) {
-        filterBtns.forEach(btn => btn.classList.remove('active'));
-        const btn = document.getElementById(filterId);
-        if (btn) btn.classList.add('active');
+      // Client Type Dropdown Selector
+      const typeDropdownTrigger = document.getElementById('roster-type-trigger');
+      const typeDropdown = document.getElementById('roster-type-dropdown');
+      const typeItems = typeDropdown.querySelectorAll('.type-item');
 
+      // Parse initial filter from URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialFilter = urlParams.get('filter');
+
+      let activeStatusFilter = 'filter-risk'; // Default active filter on load
+      if (initialFilter === 'all') activeStatusFilter = 'all';
+      else if (initialFilter === 'risk') activeStatusFilter = 'filter-risk';
+      else if (initialFilter === 'payment') activeStatusFilter = 'filter-payment';
+      else if (initialFilter === 'drifting') activeStatusFilter = 'filter-drifting';
+
+      let activeTypeFilter = 'all';
+
+      const clearBtn = document.getElementById('filter-clear');
+
+      function updateFilters() {
         rosterGrid.classList.add('transitioning');
         setTimeout(() => {
           clientCards.forEach(card => {
             const risk = card.getAttribute('data-risk');
             const footerSpanText = card.querySelector('.client-card-footer span:last-child').textContent.toLowerCase();
             const badgeText = card.querySelector('.client-card-risk-badge').textContent.toLowerCase();
+            const clientType = card.getAttribute('data-type');
+            const isPaymentDue = card.getAttribute('data-payment-due') === 'true';
 
-            if (filterId === 'filter-all' || filterId === 'filter-all') {
+            // 1. Check Status Filter
+            let matchesStatus = false;
+            if (activeStatusFilter === 'all') {
+              matchesStatus = true;
+            } else if (activeStatusFilter === 'filter-risk') {
+              matchesStatus = (risk === 'high' || risk === 'med');
+            } else if (activeStatusFilter === 'filter-drifting') {
+              matchesStatus = (footerSpanText.includes('drifting') || badgeText.includes('drifting'));
+            } else if (activeStatusFilter === 'filter-payment') {
+              matchesStatus = isPaymentDue;
+            }
+
+            // 2. Check Type Filter
+            let matchesType = false;
+            if (activeTypeFilter === 'all') {
+              matchesType = true;
+            } else {
+              matchesType = (clientType === activeTypeFilter);
+            }
+
+            // 3. Combine
+            if (matchesStatus && matchesType) {
               card.style.display = 'flex';
-            } else if (filterId === 'filter-risk' || filterId === 'filter-risk') {
-              card.style.display = (risk === 'high' || risk === 'med') ? 'flex' : 'none';
-            } else if (filterId === 'filter-optimized' || filterId === 'filter-optimized') {
-              card.style.display = (badgeText.includes('optimized')) ? 'flex' : 'none';
-            } else if (filterId === 'filter-drifting' || filterId === 'filter-drifting') {
-              card.style.display = (footerSpanText.includes('drifting') || badgeText.includes('drifting')) ? 'flex' : 'none';
+            } else {
+              card.style.display = 'none';
             }
           });
           rosterGrid.classList.remove('transitioning');
+
+          // Show or hide clear button
+          const isFiltered = (activeStatusFilter !== 'all' || activeTypeFilter !== 'all');
+          if (clearBtn) {
+            clearBtn.style.display = isFiltered ? 'inline-flex' : 'none';
+          }
+
+          // Sync sidebar active classes visually
+          document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+          if (activeStatusFilter === 'all' && activeTypeFilter === 'all') {
+            const navAll = document.getElementById('nav-all-members');
+            if (navAll) navAll.classList.add('active');
+          } else if (activeStatusFilter === 'filter-risk') {
+            const navRisk = document.getElementById('nav-at-risk');
+            if (navRisk) navRisk.classList.add('active');
+          } else if (activeStatusFilter === 'filter-payment') {
+            const navPlans = document.getElementById('nav-plans-due');
+            if (navPlans) navPlans.classList.add('active');
+          } else {
+            // Keep default workspace active if none matched
+            const defaultActive = document.querySelector('.sidebar .nav-section:first-child .nav-item:first-child');
+            if (defaultActive) defaultActive.classList.add('active');
+          }
+
         }, 150);
       }
 
+      // Globally accessible filter function for search palette
+      window.__applyFilter = function (filterId) {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById(filterId);
+        if (btn) btn.classList.add('active');
+        activeStatusFilter = filterId;
+        updateFilters();
+      };
+
+      function clearAllFilters() {
+        activeStatusFilter = 'all';
+        activeTypeFilter = 'all';
+        filterBtns.forEach(b => b.classList.remove('active'));
+        if (typeDropdownTrigger) {
+          typeDropdownTrigger.textContent = 'Type: All ▾';
+        }
+        typeItems.forEach(ti => ti.classList.remove('active'));
+        const typeAllBtn = typeDropdown.querySelector('[data-type="all"]');
+        if (typeAllBtn) typeAllBtn.classList.add('active');
+        updateFilters();
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllFilters);
+      }
+
+      // Wire up sidebar elements click handler
+      const navAll = document.getElementById('nav-all-members');
+      if (navAll) {
+        navAll.addEventListener('click', () => {
+          window.location.href = 'members.html';
+        });
+      }
+
+      const navRisk = document.getElementById('nav-at-risk');
+      if (navRisk) navRisk.addEventListener('click', () => window.__applyFilter('filter-risk'));
+
+      const navPlans = document.getElementById('nav-plans-due');
+      if (navPlans) navPlans.addEventListener('click', () => window.__applyFilter('filter-payment'));
+
       filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => applyFilter(btn.id));
+        btn.addEventListener('click', () => {
+          window.__applyFilter(btn.id);
+        });
       });
 
       if (atRiskMetric) {
         atRiskMetric.addEventListener('click', () => {
-          applyFilter('filter-risk');
+          window.__applyFilter('filter-risk');
           rosterGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       }
 
-      // Sort function
-      if (sortDropdownTrigger) {
-        sortDropdownTrigger.addEventListener('click', (e) => {
+      if (typeDropdownTrigger) {
+        typeDropdownTrigger.addEventListener('click', (e) => {
           e.stopPropagation();
-          sortDropdown.classList.toggle('show');
+          typeDropdown.classList.toggle('show');
         });
-        document.addEventListener('click', () => sortDropdown.classList.remove('show'));
+        document.addEventListener('click', () => typeDropdown.classList.remove('show'));
 
-        sortItems.forEach(item => {
+        typeItems.forEach(item => {
           item.addEventListener('click', (e) => {
             e.stopPropagation();
-            sortItems.forEach(si => si.classList.remove('active'));
+            typeItems.forEach(ti => ti.classList.remove('active'));
             item.classList.add('active');
-            sortDropdownTrigger.textContent = `Sort: ${item.textContent} ▾`;
-            sortDropdown.classList.remove('show');
 
-            const sortType = item.getAttribute('data-sort');
-            rosterGrid.classList.add('transitioning');
+            const selectedText = item.textContent;
+            typeDropdownTrigger.textContent = `Type: ${selectedText.replace('All Types', 'All')} ▾`;
+            typeDropdown.classList.remove('show');
 
-            setTimeout(() => {
-              const sorted = [...clientCards].sort((a, b) => {
-                if (sortType === 'risk') {
-                  const riskMap = { 'high': 3, 'med': 2, 'low': 1 };
-                  return riskMap[b.getAttribute('data-risk')] - riskMap[a.getAttribute('data-risk')];
-                } else if (sortType === 'recency') {
-                  return parseFloat(a.getAttribute('data-recency')) - parseFloat(b.getAttribute('data-recency'));
-                } else if (sortType === 'type') {
-                  return a.getAttribute('data-type').localeCompare(b.getAttribute('data-type'));
-                }
-                return 0;
-              });
-
-              sorted.forEach(el => rosterGrid.appendChild(el));
-              rosterGrid.classList.remove('transitioning');
-            }, 150);
+            activeTypeFilter = item.getAttribute('data-type');
+            updateFilters();
           });
         });
       }
+
+      // Initial filter on load
+      updateFilters();
+
+      // Sidebar Collapsible Logic
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+
+      if (sidebarToggle && sidebar) {
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        if (isCollapsed) {
+          sidebar.classList.add('collapsed');
+          sidebarToggle.setAttribute('title', 'Expand Sidebar');
+        }
+
+        sidebarToggle.addEventListener('click', () => {
+          const collapsed = sidebar.classList.toggle('collapsed');
+          localStorage.setItem('sidebar-collapsed', collapsed);
+          sidebarToggle.setAttribute('title', collapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+        });
+      }
+
+
     });
   </script>
+
+  <!-- Full Roster Modal Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('full-roster-overlay');
+      const openBtn = document.getElementById('open-full-roster-btn');
+      const closeBtn = document.getElementById('close-full-roster-btn');
+      const searchInput = document.getElementById('roster-modal-search');
+      const tableBody = document.getElementById('roster-modal-table-body');
+      const emptyState = document.getElementById('roster-modal-empty');
+      const visibleCountEl = document.getElementById('roster-modal-visible-count');
+      const filterGroup = document.getElementById('roster-modal-filters');
+      if (!overlay || !openBtn) return;
+
+      // The six clients with real detail-page keys, plus the wider roster so the
+      // modal reflects the 142-member book the dashboard reports.
+      const roster = [
+        { name: 'Sarah K.', program: 'Half-Marathon · Wk 8', type: 'endurance', hrv: 18, sleep: 4.2, rhr: 74, steps: 3420, risk: 'high', last: '2h ago', key: 'sarah-k' },
+        { name: 'Marcus T.', program: 'Strength · Wk 6', type: 'strength', hrv: 32, sleep: 6.2, rhr: 68, steps: 5100, risk: 'high', last: '4d ago', key: 'marcus-t' },
+        { name: 'Aman Khanna', program: 'Hypertrophy · Wk 14', type: 'strength', hrv: 42, sleep: 5.4, rhr: 71, steps: 4800, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Meera Joshi', program: 'Nutrition · Wk 6', type: 'weight-loss', hrv: 68, sleep: 7.8, rhr: 56, steps: 11200, risk: 'med', last: '5h ago', key: 'meera-joshi' },
+        { name: 'Priya I.', program: 'Performance · Wk 6', type: 'performance', hrv: 71, sleep: 7.8, rhr: 52, steps: 13400, risk: 'low', last: '10m ago', key: 'priya-i' },
+        { name: 'David L.', program: 'Base Phase · Wk 4', type: 'nutrition', hrv: 65, sleep: 7.2, rhr: 58, steps: 10500, risk: 'low', last: '6h ago', key: 'david-l' },
+        { name: 'Elena R.', program: 'Peak Volume · Wk 12', type: 'strength', hrv: 74, sleep: 8.0, rhr: 54, steps: 12800, risk: 'low', last: '3h ago', key: 'priya-i' },
+        { name: 'Jordan M.', program: 'Recovery · Wk 2', type: 'performance', hrv: 48, sleep: 5.8, rhr: 65, steps: 8200, risk: 'med', last: '2d ago', key: 'david-l' },
+        { name: 'Tariq K.', program: 'Conditioning · Wk 9', type: 'endurance', hrv: 80, sleep: 7.5, rhr: 50, steps: 14100, risk: 'low', last: '8h ago', key: 'priya-i' },
+        { name: 'Sonia V.', program: 'Strength · Wk 5', type: 'strength', hrv: 55, sleep: 6.5, rhr: 62, steps: 9300, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Liam P.', program: 'Marathon · Wk 18', type: 'endurance', hrv: 28, sleep: 4.8, rhr: 72, steps: 4100, risk: 'high', last: '6d ago', key: 'marcus-t' },
+        { name: 'Nina F.', program: 'Fat Loss · Wk 7', type: 'weight-loss', hrv: 82, sleep: 8.2, rhr: 53, steps: 11900, risk: 'low', last: '4h ago', key: 'meera-joshi' },
+        { name: 'Omar B.', program: 'Hypertrophy · Wk 11', type: 'strength', hrv: 58, sleep: 6.0, rhr: 63, steps: 9500, risk: 'med', last: '2d ago', key: 'aman-khanna' },
+        { name: 'Grace W.', program: 'Performance · Wk 3', type: 'performance', hrv: 88, sleep: 8.4, rhr: 48, steps: 15200, risk: 'low', last: '25m ago', key: 'priya-i' },
+        { name: 'Hassan R.', program: 'Base Phase · Wk 1', type: 'nutrition', hrv: 50, sleep: 5.5, rhr: 66, steps: 7800, risk: 'med', last: '3d ago', key: 'david-l' },
+        { name: 'Chloe N.', program: 'Half-Marathon · Wk 10', type: 'endurance', hrv: 22, sleep: 4.0, rhr: 75, steps: 3100, risk: 'high', last: '5d ago', key: 'sarah-k' },
+        { name: 'Devon A.', program: 'Strength · Wk 8', type: 'strength', hrv: 78, sleep: 7.6, rhr: 55, steps: 12100, risk: 'low', last: '7h ago', key: 'aman-khanna' },
+        { name: 'Ria S.', program: 'Fat Loss · Wk 4', type: 'weight-loss', hrv: 60, sleep: 6.8, rhr: 61, steps: 10200, risk: 'med', last: '1d ago', key: 'meera-joshi' },
+        { name: 'Felix O.', program: 'Conditioning · Wk 6', type: 'endurance', hrv: 84, sleep: 8.1, rhr: 49, steps: 13800, risk: 'low', last: '2h ago', key: 'priya-i' },
+        { name: 'Maya T.', program: 'Performance · Wk 9', type: 'performance', hrv: 76, sleep: 7.4, rhr: 52, steps: 11500, risk: 'low', last: '9h ago', key: 'david-l' }
+      ];
+
+      const avClasses = ['av-1', 'av-2', 'av-3'];
+      const initials = (n) => n.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+      const statusMeta = {
+        high: { dot: 'status-red', text: 'text-red', label: 'At-Risk' },
+        med: { dot: 'status-amber', text: 'text-amber', label: 'Watch' },
+        low: { dot: 'status-green', text: 'text-green', label: 'Steady' }
+      };
+
+      let activeStatus = 'all';
+      let query = '';
+      let lastFocused = null;
+
+      function render() {
+        const q = query.trim().toLowerCase();
+        const matches = roster.filter(c => {
+          const okStatus = activeStatus === 'all' || c.risk === activeStatus;
+          const okQuery = !q || c.name.toLowerCase().includes(q) || c.program.toLowerCase().includes(q);
+          return okStatus && okQuery;
+        });
+
+        tableBody.innerHTML = matches.map((c, i) => {
+          const s = statusMeta[c.risk];
+          const av = avClasses[i % avClasses.length];
+          return `
+            <div class="roster-modal-row" role="row" data-key="${c.key}" tabindex="0">
+              <span class="rmr-member" role="cell">
+                <span class="roster-modal-avatar ${av}" data-name="${c.name}">${initials(c.name)}</span>
+                <span class="rmr-name">${c.name}</span>
+              </span>
+              <span class="rmr-program" role="cell">${c.program}</span>
+              <span class="rmr-vitals" role="cell">
+                <span class="vitals-summary">${c.hrv}ms / ${c.sleep}h</span>
+                <div class="vitals-tooltip" role="tooltip">
+                  <div class="tooltip-header">
+                    <span>Biometric Sync</span>
+                    <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Live ⚡</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-row-lbl">HRV (7d Avg)</span>
+                    <span class="tooltip-row-val ${c.hrv < 40 ? 'text-red' : c.hrv < 60 ? 'text-amber' : 'text-green'}">${c.hrv} ms</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-row-lbl">Sleep Duration</span>
+                    <span class="tooltip-row-val ${c.sleep < 6 ? 'text-red' : c.sleep < 7 ? 'text-amber' : 'text-green'}">${c.sleep}h</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-row-lbl">Resting Heart Rate</span>
+                    <span class="tooltip-row-val">${c.rhr} bpm</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-row-lbl">Daily Steps</span>
+                    <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+                  </div>
+                </div>
+              </span>
+              <span class="rmr-status" role="cell">
+                <span class="status-indicator ${s.dot}"></span>
+                <span class="status-text ${s.text}">${s.label}</span>
+              </span>
+              <span class="rmr-last" role="cell">${c.last}</span>
+            </div>`;
+        }).join('');
+
+        const has = matches.length > 0;
+        emptyState.hidden = has;
+        visibleCountEl.textContent = matches.length;
+        if (window.ZoraFaces) window.ZoraFaces.paint(tableBody);
+      }
+
+      function openModal() {
+        lastFocused = document.activeElement;
+        render();
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => searchInput.focus(), 120);
+      }
+
+      function closeModal() {
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+      }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('show')) {
+          e.stopPropagation();
+          closeModal();
+        }
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        query = e.target.value;
+        render();
+      });
+
+      filterGroup.addEventListener('click', (e) => {
+        const chip = e.target.closest('.roster-chip');
+        if (!chip) return;
+        filterGroup.querySelectorAll('.roster-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeStatus = chip.getAttribute('data-status');
+        render();
+      });
+
+      // Row navigation (click + keyboard) → client detail page
+      tableBody.addEventListener('click', (e) => {
+        const row = e.target.closest('.roster-modal-row');
+        if (!row) return;
+        window.location.href = `reco-card.html?client=${row.getAttribute('data-key')}`;
+      });
+      tableBody.addEventListener('keydown', (e) => {
+        const row = e.target.closest('.roster-modal-row');
+        if (!row) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.location.href = `reco-card.html?client=${row.getAttribute('data-key')}`;
+        }
+      });
+
+      // (full roster) keep the section-head "shown" count synced with the visible cards on the page.
+      const shownCountEl = document.getElementById('roster-count-shown');
+      if (shownCountEl) {
+        const grid = document.getElementById('roster-grid');
+        const sync = () => {
+          const visible = Array.from(grid.querySelectorAll('.client-card'))
+            .filter(c => c.style.display !== 'none').length;
+          shownCountEl.textContent = visible;
+        };
+        const mo = new MutationObserver(sync);
+        mo.observe(grid, { attributes: true, subtree: true, attributeFilter: ['style'] });
+        sync();
+      }
+
+      // Expose opener globally
+      window.__openRosterModal = openModal;
+
+      // Check query parameter to auto-open roster modal
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('roster') === 'open') {
+        setTimeout(openModal, 150);
+      }
+    });
+  </script>
+
+  <!-- Payments Due: pill + slide-in logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fab = document.getElementById('pay-fab');
+      const fabCount = document.getElementById('pay-fab-count');
+      const overlay = document.getElementById('pay-drawer-overlay');
+      const drawer = document.getElementById('pay-drawer');
+      const closeBtn = document.getElementById('close-pay-drawer');
+      const body = document.getElementById('pay-drawer-body');
+      const emptyState = document.getElementById('pay-drawer-empty');
+      const drawerCount = document.getElementById('pay-drawer-count');
+      if (!fab || !drawer) return;
+
+      const toast = document.getElementById('success-toast');
+      const toastTitle = document.getElementById('toast-title');
+      const toastSub = document.getElementById('toast-sub');
+      let toastTimer = null;
+      let lastFocused = null;
+
+      function fireToast(title, subHTML) {
+        if (!toast) return;
+        toastTitle.textContent = title;
+        toastSub.innerHTML = subHTML;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+
+      function remaining() {
+        return body.querySelectorAll('.pay-item:not(.is-resolved)').length;
+      }
+
+      function syncCounts() {
+        const n = remaining();
+        fabCount.textContent = n;
+        drawerCount.textContent = n;
+        fab.classList.toggle('is-clear', n === 0);
+        fab.setAttribute('aria-label', n === 0 ? 'All payments collected' : `${n} payment${n === 1 ? '' : 's'} due`);
+        emptyState.hidden = n !== 0;
+      }
+
+      function openDrawer() {
+        lastFocused = document.activeElement;
+        drawer.classList.add('show');
+        overlay.classList.add('show');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('pay-drawer-open');
+        setTimeout(() => closeBtn.focus(), 120);
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('show');
+        overlay.classList.remove('show');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        document.body.classList.remove('pay-drawer-open');
+        if (lastFocused && lastFocused.focus) lastFocused.focus();
+      }
+
+      fab.addEventListener('click', () => {
+        if (remaining() === 0) return;
+        openDrawer();
+      });
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('show')) {
+          e.stopPropagation();
+          closeDrawer();
+        }
+      });
+
+      body.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pay-action');
+        if (!btn) return;
+        const item = btn.closest('.pay-item');
+        if (!item || item.classList.contains('is-resolved')) return;
+
+        const name = item.getAttribute('data-name');
+        const amount = item.getAttribute('data-amount');
+        const kind = btn.getAttribute('data-kind');
+
+        item.classList.add('is-resolved');
+        // After the collapse animation, sync counts (and reveal empty state if last).
+        setTimeout(syncCounts, 260);
+
+        if (kind === 'reminder') {
+          fireToast('Reminder sent', `<span style="font-weight:600;color:#fff;">${name}</span> got a payment reminder in Zora chat.`);
+        } else {
+          fireToast('Payment link sent', `<span style="font-weight:600;color:#fff;">${name}</span> can pay <span style="font-weight:600;color:#fff;">${amount}</span> from the link.`);
+        }
+      });
+
+      syncCounts();
+    });
+  </script>
+
+  <!-- Notion-style illustrated face avatars (DiceBear notionists, seeded by name) -->
+  <script>
+    window.ZoraFaces = (function () {
+      var SEL = '.avatar, .client-card-avatar, .qi-avatar, .pay-item-avatar, .roster-modal-avatar, .strip-avatar, .thread-avatar, .col-athlete .tile-avatar, .s2-avatar, .chat-client-avatar';
+      function url(seed) {
+        return 'url("https://api.dicebear.com/9.x/notionists/svg?seed=' +
+          encodeURIComponent(seed || 'zora') +
+          '&backgroundColor=transparent&scale=120")';
+      }
+      function seedFor(el) {
+        var row = el.closest('[data-name],[data-client]');
+        var seed = (row && (row.getAttribute('data-name') || row.getAttribute('data-client')))
+          || el.getAttribute('data-name')
+          || (el.textContent || '').trim();
+        return seed || 'zora';
+      }
+      function paintOne(el, seed) {
+        el.style.setProperty('--face', url(seed || seedFor(el)));
+        el.classList.add('has-face');
+      }
+      function paint(root) {
+        (root || document).querySelectorAll(SEL).forEach(function (el) { paintOne(el); });
+      }
+      return { paint: paint, paintOne: paintOne };
+    })();
+    document.addEventListener('DOMContentLoaded', function () { window.ZoraFaces.paint(); });
+  </script>
+
+  <!-- Hero aurora: cursor-tracked glow (rAF-throttled, CSS-var only, no re-renders) -->
+  <script>
+    (function () {
+      var hero = document.getElementById('hero-head');
+      if (!hero) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(hover: none)').matches) return; // skip touch
+
+      var raf = null, mx = 0, my = 0;
+      function apply() {
+        raf = null;
+        hero.style.setProperty('--mx', mx + 'px');
+        hero.style.setProperty('--my', my + 'px');
+      }
+      hero.addEventListener('pointermove', function (e) {
+        var r = hero.getBoundingClientRect();
+        mx = e.clientX - r.left;
+        my = e.clientY - r.top;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+    })();
+  </script>
 </body>
+
+</html>);
+})();
+</script>
+</body>
+
 </html>

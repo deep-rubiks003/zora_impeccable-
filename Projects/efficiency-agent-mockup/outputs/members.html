@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zora Product OS — All Members Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css">
+  <script>
+    // Pre-paint theme boot — avoids flash of incorrect theme
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    /* Chat bubbles styling inside panel */
+    .chat-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-family: var(--font-dm-sans);
+    }
+    .chat-bubble.coach {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-bubble.client {
+      align-self: flex-start;
+      background: var(--paper-3);
+      color: var(--ink);
+      border-bottom-left-radius: 2px;
+      border: 1px solid var(--line-soft);
+    }
+    .chat-bubble.system-zora {
+      align-self: center;
+      background: rgba(122, 84, 135, 0.05);
+      border: 1px solid rgba(122, 84, 135, 0.1);
+      color: var(--accent-deep);
+      font-size: 11.5px;
+      font-weight: 500;
+      text-align: center;
+      max-width: 90%;
+      border-radius: 8px;
+    }
+
+    /* Layout Structure for Master-Detail */
+    .console-split-layout {
+      display: flex;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+      background: transparent;
+    }
+
+    /* Left Sidebar: Roster Vertical List */
+    .roster-sidebar-pane {
+      width: 330px;
+      border-right: 1px solid var(--line-soft);
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      flex-shrink: 0;
+    }
+    [data-theme="dark"] .roster-sidebar-pane {
+      background: rgba(26, 26, 39, 0.2);
+    }
+
+    .roster-pane-search-bar {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .roster-search-field-wrapper {
+      position: relative;
+    }
+    .roster-search-field-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ink-4);
+      pointer-events: none;
+    }
+    .roster-search-input {
+      width: 100%;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px 8px 32px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .roster-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(122, 84, 135, 0.08);
+    }
+
+    /* Roster Chips Filters */
+    .roster-pane-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .roster-pane-chips::-webkit-scrollbar {
+      display: none; /* Hide scrollbar for clean look */
+    }
+    .roster-filter-chip {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      color: var(--ink-3);
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .roster-filter-chip:hover {
+      border-color: rgba(122, 84, 135, 0.25);
+      color: var(--accent);
+    }
+    .roster-filter-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Roster vertical list scroll */
+    .roster-vertical-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .roster-item-card {
+      background: var(--paper-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .roster-item-card:hover {
+      border-color: rgba(122, 84, 135, 0.18);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+    .roster-item-card:active {
+      transform: scale(0.985);
+    }
+    .roster-item-card.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 2px 8px rgba(122, 84, 135, 0.06);
+    }
+
+    .roster-item-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+      color: white;
+      font-size: 13px;
+      background: var(--ink-4);
+      flex-shrink: 0;
+    }
+    .roster-item-avatar.av-1 { background: linear-gradient(135deg, #7a5487, #5e3b6b); }
+    .roster-item-avatar.av-2 { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .roster-item-avatar.av-3 { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+
+    .roster-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .roster-item-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .roster-item-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .roster-item-program {
+      font-size: 11px;
+      color: var(--ink-4);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .roster-item-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .roster-item-status-dot.status-red { background: var(--bad); }
+    .roster-item-status-dot.status-amber { background: var(--warn); }
+    .roster-item-status-dot.status-green { background: var(--ok); }
+
+    /* Right Column: Profile Detail Pane */
+    .profile-detail-pane {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg) var(--space-xl) 60px;
+      background: transparent;
+      position: relative;
+    }
+
+    .detail-pane-header {
+      background: var(--paper-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: var(--space-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .detail-athlete-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .detail-athlete-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: white;
+      font-size: 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    }
+    .detail-athlete-title {
+      font-family: var(--font-geist);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .detail-athlete-sub {
+      font-size: 12.5px;
+      color: var(--ink-4);
+      margin-top: 2px;
+    }
+
+    /* Roster Detail Quick Stats block */
+    .detail-quick-stats {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .quick-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .quick-stat-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-4);
+    }
+    .quick-stat-val {
+      font-family: var(--font-geist);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink-2);
+      margin-top: 2px;
+    }
+    .quick-stat-val.risk-high-text { color: var(--bad); }
+    .quick-stat-val.risk-med-text { color: var(--warn); }
+    .quick-stat-val.risk-low-text { color: var(--ok); }
+
+    /* Top Sub-tabs Navigation inside Detail Rail */
+    .subtabs-nav {
+      display: flex;
+      gap: 4px;
+      background: rgba(26, 26, 46, 0.05);
+      border-radius: 8px;
+      padding: 3px;
+      margin-bottom: var(--space-lg);
+      border: 1px solid var(--line-soft);
+      max-width: 580px;
+    }
+    [data-theme="dark"] .subtabs-nav {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .subtab-btn {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      font-family: var(--font-geist);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .subtab-btn:hover {
+      color: var(--accent);
+    }
+    .subtab-btn.active {
+      background: var(--paper-2);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Tab Content panel container with crossfade blur */
+    .subtab-content-panel {
+      display: none;
+    }
+    .subtab-content-panel.active {
+      display: block;
+      animation: tabFadeIn 0.22s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Transitioning blur class for loading client data */
+    .detail-pane-inner.transitioning {
+      filter: blur(1.5px);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .detail-pane-inner {
+      transition: filter 160ms ease, opacity 160ms ease;
+    }
+
+    /* Shared Card Styles */
+    .detail-card {
+      background: var(--paper-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .detail-card-title {
+      font-family: var(--font-geist);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 1. Schedule Call Workspace */
+    .scheduler-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .scheduler-grid { grid-template-columns: 1fr; }
+    }
+    .time-slot-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .time-slot-btn {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-geist);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+    }
+    .time-slot-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .time-slot-btn.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    
+    .scheduler-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-4);
+    }
+    .form-input, .form-textarea {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      background: #ffffff;
+    }
+
+    /* 2. Biometrics Workspace */
+    .biometric-dials-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .biometric-dials-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    .bio-dial-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      background: var(--paper-3);
+      border-radius: 10px;
+    }
+    .bio-dial-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-2);
+      margin-top: 8px;
+    }
+    .bio-dial-val {
+      font-family: var(--font-geist);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-deep);
+      margin-top: 4px;
+    }
+    .bio-dial-sub {
+      font-size: 10.5px;
+      color: var(--ink-4);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* 3. Nutrition Workspace */
+    .nutrition-macros-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .macro-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--paper-3);
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line-soft);
+    }
+    .macro-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+    }
+    .macro-progress-track {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--line);
+      overflow: hidden;
+    }
+    .macro-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .macro-progress-fill.prot { background: #9b59b6; }
+    .macro-progress-fill.carb { background: #3498db; }
+    .macro-progress-fill.fat { background: #f1c40f; }
+
+    /* 4. Weekly Schedule Workspace */
+    .weekly-schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 768px) {
+      .weekly-schedule-grid { grid-template-columns: 1fr; }
+    }
+    .sched-day-item {
+      background: var(--paper-3);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 90px;
+    }
+    .sched-day-name {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      letter-spacing: 0.05em;
+    }
+    .sched-workout-type {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .sched-workout-detail {
+      font-size: 11px;
+      color: var(--ink-4);
+      line-height: 1.3;
+    }
+    .sched-day-item.rest-day {
+      background: transparent;
+      border-style: dashed;
+    }
+    .sched-day-item.edited-day {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Ambient Context Box styling */
+    .coach-ambient-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: rgba(122, 84, 135, 0.05);
+      border: 1px solid rgba(122, 84, 135, 0.1);
+      margin-bottom: 20px;
+    }
+    .coach-ambient-alert.high-risk {
+      background: rgba(192, 57, 43, 0.05);
+      border-color: rgba(192, 57, 43, 0.1);
+    }
+    .coach-ambient-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .coach-ambient-text {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: var(--ink-2);
+    }
+
+    /* Common Button style */
+    .console-action-btn {
+      font-family: var(--font-geist);
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--accent);
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .console-action-btn:hover {
+      background: var(--accent-deep);
+      transform: translateY(-1px);
+    }
+    .console-action-btn:active {
+      transform: translateY(0) scale(0.97);
+    }
+
+    /* Empty state */
+    .roster-empty-results {
+      padding: 32px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-4);
+    }
+
+    /* Roster item quick chat button styling */
+    .roster-item-chat-btn {
+      background: transparent;
+      border: 0;
+      color: var(--ink-4);
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .roster-item-chat-btn::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: inherit;
+    }
+    .roster-item-chat-btn:hover {
+      background: rgba(122, 84, 135, 0.1);
+      color: var(--accent);
+    }
+    .roster-item-chat-btn:active {
+      transform: scale(0.92);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 0;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-mark">Z</div>
+        <div class="brand-text">
+          <div class="brand-name">ZORA</div>
+          <div class="brand-sub">Coach Console</div>
+        </div>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle" style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;" title="Collapse Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item" onclick="window.location.href='index.html'" style="cursor: pointer;"><span class="dot"></span> Efficiency Agent <span class="nav-badge">2</span></div>
+      <div class="nav-item"><span class="dot"></span> Quality Agent <span class="nav-badge">3</span></div>
+      <div class="nav-item"><span class="dot"></span> AI Action Center</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Roster</div>
+      <div class="nav-item active"><span class="dot"></span> All Members</div>
+      <div class="nav-item" onclick="window.location.href='index.html?filter=risk'" style="cursor: pointer;"><span class="dot"></span> At-Risk</div>
+      <div class="nav-item" onclick="window.location.href='index.html?filter=payment'" style="cursor: pointer;"><span class="dot"></span> Plans Due</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item"><span class="dot"></span> Messages</div>
+      <div class="nav-item"><span class="dot"></span> Reports</div>
+      <div class="nav-item"><span class="dot"></span> Settings</div>
+    </div>
+
+    <div class="coach-card">
+      <div class="avatar">RS</div>
+      <div class="coach-info">
+        <div class="coach-name">Riya Sharma</div>
+        <div class="coach-meta">142 active members</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs">
+        <strong>All Members</strong>
+      </div>
+
+      <input class="search" placeholder="Search Console..." readonly />
+
+      <button class="icon-btn" title="Notifications" style="margin-left: auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        id="theme-toggle"
+        class="theme-toggle"
+        role="switch"
+        aria-checked="false"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+      >
+        <span class="theme-toggle__thumb" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- Master-Detail Workspace Grid -->
+    <div class="console-split-layout">
+      
+      <!-- Left Column: Search, Filter, Athlete Roster List -->
+      <div class="roster-sidebar-pane">
+        <div class="roster-pane-search-bar">
+          <div class="roster-search-field-wrapper">
+            <svg class="roster-search-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="roster-search-input" id="client-search" placeholder="Search 142 members..." autocomplete="off" />
+          </div>
+          <div class="roster-pane-chips">
+            <button class="roster-filter-chip active" data-filter="all">All</button>
+            <button class="roster-filter-chip" data-filter="high">At-Risk</button>
+            <button class="roster-filter-chip" data-filter="med">Watch</button>
+            <button class="roster-filter-chip" data-filter="low">Steady</button>
+          </div>
+        </div>
+
+        <div class="roster-vertical-list" id="sidebar-roster-list">
+          <!-- Injected dynamically by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Right Column: Rich Interactive Profiles -->
+      <div class="profile-detail-pane">
+        <div class="detail-pane-inner" id="profile-detail-content">
+          
+          <!-- Persistent Athlete Identity Ribbon -->
+          <div class="detail-pane-header">
+            <div class="detail-athlete-info">
+              <div class="detail-athlete-avatar" id="active-avatar">SK</div>
+              <div>
+                <h2 class="detail-athlete-title" id="active-name">Sarah K.</h2>
+                <p class="detail-athlete-sub" id="active-program">Half-Marathon · Week 8</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <div class="detail-quick-stats">
+                <div class="quick-stat-item">
+                  <span class="quick-stat-lbl">Wearable Sync</span>
+                  <span class="quick-stat-val" id="active-sync">Live ⚡</span>
+                </div>
+                <div class="quick-stat-item">
+                  <span class="quick-stat-lbl">Adherence</span>
+                  <span class="quick-stat-val" id="active-adherence">98%</span>
+                </div>
+                <div class="quick-stat-item">
+                  <span class="quick-stat-lbl">Status</span>
+                  <span class="quick-stat-val risk-low-text" id="active-status">Steady</span>
+                </div>
+              </div>
+              <button class="console-action-btn" id="btn-open-optimization" style="font-size: 12.5px; padding: 8px 14px; background: transparent; border: 1px solid var(--line); color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px;" type="button">
+                Optimization Sheet
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Sub-Tabs Navigation -->
+          <div class="subtabs-nav">
+            <button class="subtab-btn active" data-tab="weekly-schedule">Weekly Schedule</button>
+            <button class="subtab-btn" data-tab="biometrics">Biometric Data</button>
+            <button class="subtab-btn" data-tab="nutrition">Nutrition Plan</button>
+            <button class="subtab-btn" data-tab="schedule-call">Schedule Call</button>
+            <button class="subtab-btn" data-tab="chat">Chat</button>
+          </div>
+
+          <!-- Ambient Intelligence Context Banner -->
+          <div class="coach-ambient-alert" id="active-ambient-box">
+            <span class="coach-ambient-icon" id="active-ambient-icon">📋</span>
+            <span class="coach-ambient-text" id="active-ambient-text">Sarah's metrics are steady. Ready for next weekly training microcycle blocks.</span>
+          </div>
+
+          <!-- TAB 1: Weekly Schedule Workspace -->
+          <div class="subtab-content-panel active" id="pane-weekly-schedule">
+            <div class="detail-card">
+              <div class="detail-card-title">
+                <span>Active 7-Day Microcycle Schedule</span>
+                <span style="font-size: 11px; color: var(--ink-4); font-weight: normal;" id="active-weeks-count">Progression Phase</span>
+              </div>
+              <div class="weekly-schedule-grid" id="active-weekly-grid">
+                <!-- Days populated dynamically -->
+              </div>
+              <div style="display: flex; justify-content: flex-end; margin-top: var(--space-lg); gap: 12px;">
+                <button class="console-action-btn" id="btn-approve-schedule" style="background: var(--ok);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                  Approve Schedule
+                </button>
+                <button class="console-action-btn" style="background: transparent; border: 1px solid var(--line); color: var(--ink-2);" onclick="alert('Entering schedule edit mode...')">
+                  Edit Workout Slots
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Biometric Data Workspace -->
+          <div class="subtab-content-panel" id="pane-biometrics">
+            <div class="detail-card">
+              <div class="detail-card-title">Autonomic and Recovery Vitals</div>
+              <div class="biometric-dials-row">
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-hrv">72 ms</span>
+                  <span class="bio-dial-name">HRV (7d Avg)</span>
+                  <span class="bio-dial-sub">Healthy baseline</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-sleep">7.8 h</span>
+                  <span class="bio-dial-name">Sleep Score</span>
+                  <span class="bio-dial-sub">Optimal duration</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-rhr">52 bpm</span>
+                  <span class="bio-dial-name">Resting HR</span>
+                  <span class="bio-dial-sub">Stable cardiorespiratory</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-completion">94%</span>
+                  <span class="bio-dial-name">Workout Done</span>
+                  <span class="bio-dial-sub">Target adherence hit</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Wearable Streaming logs -->
+            <div class="detail-card">
+              <div class="detail-card-title">Wearables Sync Logs</div>
+              <div style="font-size: 12.5px; color: var(--ink-3); line-height: 1.5;" id="bio-desc-text">
+                All wearable streams are fully synchronized. Core vitals indicate excellent physiological adaptation to training workloads.
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Nutrition Plan Workspace -->
+          <div class="subtab-content-panel" id="pane-nutrition">
+            <div class="detail-card">
+              <div class="detail-card-title">Daily Nutrition &amp; Macronutrient Target Ranges</div>
+              <div class="nutrition-macros-row">
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Protein</span>
+                    <span id="macro-val-prot">135g / 140g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill prot" id="macro-fill-prot" style="width: 96%;"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Carbohydrates</span>
+                    <span id="macro-val-carb">220g / 250g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill carb" id="macro-fill-carb" style="width: 88%;"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Healthy Fats</span>
+                    <span id="macro-val-fat">60g / 65g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill fat" id="macro-fill-fat" style="width: 92%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <div class="detail-card-title">Hydration and Behavioral Nutrition Protocols</div>
+              <div style="font-size: 13px; color: var(--ink-3); line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
+                <div><strong>Daily Calorie Budget:</strong> <span id="nut-cal-budget">1,900 kcal / day</span></div>
+                <div id="nut-desc-text">Hydration target of 3.2L met consistently. Recommended: maintain present macronutrient splits. Supplement pre-workout with complex carbohydrates.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: Schedule Call Workspace -->
+          <div class="subtab-content-panel" id="pane-schedule-call">
+            <div class="detail-card">
+              <div class="detail-card-title">Schedule virtual coaching feedback session</div>
+              <div class="scheduler-grid">
+                <!-- Left calendar selector -->
+                <div class="scheduler-form">
+                  <div class="form-group">
+                    <label class="form-label" for="call-date">Select date</label>
+                    <input type="date" class="form-input" id="call-date" value="2026-06-03" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Available time slots (Coach Local Time)</label>
+                    <div class="time-slot-list" id="slots-container">
+                      <button class="time-slot-btn selected" type="button">09:00 AM</button>
+                      <button class="time-slot-btn" type="button">10:30 AM</button>
+                      <button class="time-slot-btn" type="button">01:00 PM</button>
+                      <button class="time-slot-btn" type="button">03:30 PM</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right agenda notes -->
+                <div class="scheduler-form">
+                  <div class="form-group">
+                    <label class="form-label" for="call-duration">Meeting Duration</label>
+                    <input type="text" class="form-input" id="call-duration" value="15 minutes (Assessment Check-in)" readonly />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="call-agenda">Call Agenda Notes</label>
+                    <textarea class="form-textarea" id="call-agenda" rows="3" placeholder="Define the primary agenda of this call (e.g. Volume adjustments review, soreness diagnostic)"></textarea>
+                  </div>
+                  <div style="margin-top: auto; display: flex; justify-content: flex-end;">
+                    <button class="console-action-btn" id="btn-schedule-confirm" type="button">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                      Confirm Call Schedule
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: Chat Workspace -->
+          <div class="subtab-content-panel" id="pane-chat">
+            <div class="detail-card" style="display: flex; flex-direction: column; height: 460px; padding: 0; overflow: hidden; border-radius: 12px;">
+              <div style="padding: 14px 16px; border-bottom: 1px solid var(--line-soft); background: var(--paper-2); display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 600; font-size: 13.5px; font-family: var(--font-geist);" id="chat-tab-title">Chat with Sarah K.</span>
+                <span style="font-size: 11px; color: var(--ok); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--ok); display: inline-block;"></span> Active Now
+                </span>
+              </div>
+              
+              <!-- Chat history box -->
+              <div id="chat-tab-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: rgba(26,26,46,0.015);">
+                <!-- Bubbles populated dynamically -->
+              </div>
+              
+              <!-- Smart Reply block -->
+              <div id="chat-tab-smart-reply-container" style="padding: 8px 16px; background: var(--paper-2); border-top: 1px solid var(--line-soft); display: flex; gap: 8px; overflow-x: auto;">
+                <button class="time-slot-btn" id="chat-tab-smart-btn" style="font-size: 11.5px; padding: 6px 12px; margin: 0; white-space: nowrap; width: auto; height: auto;" type="button">Smart Reply: Apply deload walk</button>
+              </div>
+              
+              <!-- Message input -->
+              <div style="padding: 12px 16px; border-top: 1px solid var(--line-soft); background: var(--paper-2); display: flex; gap: 12px; align-items: center;">
+                <textarea id="chat-tab-textarea" rows="1" style="flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 13px; color: var(--ink); outline: none; resize: none; background: var(--paper);" placeholder="Type a message to client..."></textarea>
+                <button id="chat-tab-send-btn" class="console-action-btn" style="padding: 10px 14px; flex-shrink: 0;" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Success Toast -->
+  <div id="success-toast" class="toast" style="bottom: 24px; right: 24px; z-index: 100;">
+    <div class="toast-icon">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    </div>
+    <div>
+      <span id="toast-title" style="font-weight: 600; display: block; line-height: 1.2;">Call Scheduled!</span>
+      <span id="toast-sub" style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
+        Notification sent to client.
+      </span>
+    </div>
+  </div>
+
+  <!-- Notion-style avatars seed logic -->
+  <script>
+    window.ZoraFaces = (function () {
+      var SEL = '.avatar, .roster-item-avatar, .detail-athlete-avatar';
+      function url(seed) {
+        return 'url("https://api.dicebear.com/9.x/notionists/svg?seed=' +
+          encodeURIComponent(seed || 'zora') +
+          '&backgroundColor=transparent&scale=120")';
+      }
+      function paintOne(el, seed) {
+        var name = seed || el.getAttribute('data-name') || (el.textContent || '').trim();
+        el.style.backgroundImage = url(name);
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+      }
+      function paint(root) {
+        (root || document).querySelectorAll(SEL).forEach(function (el) { paintOne(el); });
+      }
+      return { paint: paint, paintOne: paintOne };
+    })();
+    document.addEventListener('DOMContentLoaded', function () { window.ZoraFaces.paint(); });
+  </script>
+
+  <!-- Data bind and Split Pane Logic -->
+  <script>
+    // 20 Roster Athletes data ramp
+    const rosterData = {
+      'sarah-k': {
+        name: 'Sarah K.',
+        program: 'Half-Marathon · Wk 8',
+        type: 'endurance',
+        risk: 'high',
+        recovery: '58%',
+        adherence: '98%',
+        active: '2h ago',
+        hrv: '18 ms',
+        sleep: '4.2 h',
+        rhr: '68 bpm',
+        completion: '67%',
+        macroProt: '115g / 130g',
+        macroProtPct: '88%',
+        macroCarb: '190g / 220g',
+        macroCarbPct: '86%',
+        macroFat: '52g / 60g',
+        macroFatPct: '86%',
+        calories: '1,900 kcal / day',
+        whyContent: '⚠ Sarah\'s sleep has dropped to 3.2 hrs and HRV is 52% below her rolling baseline. Left unchanged she faces high exhaustion crash.',
+        ambientIcon: '⚠',
+        ambientClass: 'high-risk',
+        schedulePhase: 'Deload & Fatigue Management Phase',
+        weekPlan: [
+          { name: "Mon", type: "Recovery Run", detail: "5 km easy jog", edited: true },
+          { name: "Tue", type: "Mobility Focus", detail: "30 min dynamic flexibility", edited: true },
+          { name: "Wed", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Thu", type: "Easy Run", detail: "6 km at aerobic pace", edited: true },
+          { name: "Fri", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sat", type: "Active Recovery", detail: "8 km easy jog", edited: true },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      },
+      'marcus-t': {
+        name: 'Marcus T.',
+        program: 'Strength · Wk 6',
+        type: 'strength',
+        risk: 'high',
+        recovery: '74%',
+        adherence: '40%',
+        active: '4d ago',
+        hrv: '32 ms',
+        sleep: '6.2 h',
+        rhr: '58 bpm',
+        completion: '40%',
+        macroProt: '140g / 180g',
+        macroProtPct: '77%',
+        macroCarb: '210g / 320g',
+        macroCarbPct: '65%',
+        macroFat: '65g / 90g',
+        macroFatPct: '72%',
+        calories: '2,800 kcal / day',
+        whyContent: '⚠ Marcus has not opened the app in 6 days and did not reply to message prompts. Re-engagement block active.',
+        ambientIcon: '⚠',
+        ambientClass: 'high-risk',
+        schedulePhase: 'Lightened Volume Adaptation Block',
+        weekPlan: [
+          { name: "Mon", type: "Strength Workout", detail: "Squat heavy sets (3x5)", edited: false },
+          { name: "Tue", type: "Rest", detail: "Rest day", edited: true },
+          { name: "Wed", type: "Strength Workout", detail: "Bench & upper pulls", edited: false },
+          { name: "Thu", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Fri", type: "Strength Workout", detail: "Deadlift focus sets", edited: false },
+          { name: "Sat", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: true }
+        ]
+      },
+      'aman-khanna': {
+        name: 'Aman Khanna',
+        program: 'Hypertrophy · Wk 14',
+        type: 'strength',
+        risk: 'med',
+        recovery: '62%',
+        adherence: '71%',
+        active: '1d ago',
+        hrv: '42 ms',
+        sleep: '5.4 h',
+        rhr: '71 bpm',
+        completion: '71%',
+        macroProt: '150g / 165g',
+        macroProtPct: '90%',
+        macroCarb: '270g / 300g',
+        macroCarbPct: '90%',
+        macroFat: '70g / 80g',
+        macroFatPct: '87%',
+        calories: '2,600 kcal / day',
+        whyContent: '⚡ Aman has high local muscular soreness (8/10) after Wk 13 peak intensity volume. Deload suggested.',
+        ambientIcon: '⚡',
+        ambientClass: 'normal',
+        schedulePhase: 'Muscular Deload Phase',
+        weekPlan: [
+          { name: "Mon", type: "Upper Body", detail: "High rep range (50% loads)", edited: true },
+          { name: "Tue", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Wed", type: "Lower Body", detail: "Leg press & extensions light", edited: true },
+          { name: "Thu", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Fri", type: "Active Rest", detail: "20 min foam rolling & walk", edited: true },
+          { name: "Sat", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      },
+      'meera-joshi': {
+        name: 'Meera Joshi',
+        program: 'Nutrition · Wk 6',
+        type: 'weight-loss',
+        risk: 'med',
+        recovery: '68%',
+        adherence: '91%',
+        active: '5h ago',
+        hrv: '68 ms',
+        sleep: '7.8 h',
+        rhr: '56 bpm',
+        completion: '91%',
+        macroProt: '90g / 120g',
+        macroProtPct: '75%',
+        macroCarb: '130g / 160g',
+        macroCarbPct: '81%',
+        macroFat: '40g / 50g',
+        macroFatPct: '80%',
+        calories: '1,500 kcal / day',
+        whyContent: '⚡ Meera is experiencing travel meal inconsistency. Suggest snack replacement guidelines.',
+        ambientIcon: '⚡',
+        ambientClass: 'normal',
+        schedulePhase: 'Dietary Consistency Support Weeks',
+        weekPlan: [
+          { name: "Mon", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Tue", type: "Cardio", detail: "30 min LISS zone 2", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Thu", type: "Cardio", detail: "30 min LISS zone 2", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sat", type: "Conditioning", detail: "Full body bodyweight", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      },
+      'priya-i': {
+        name: 'Priya I.',
+        program: 'Performance · Wk 6',
+        type: 'performance',
+        risk: 'low',
+        recovery: '71%',
+        adherence: '94%',
+        active: '10m ago',
+        hrv: '71 ms',
+        sleep: '7.8 h',
+        rhr: '52 bpm',
+        completion: '95%',
+        macroProt: '130g / 130g',
+        macroProtPct: '100%',
+        macroCarb: '250g / 250g',
+        macroCarbPct: '100%',
+        macroFat: '58g / 60g',
+        macroFatPct: '96%',
+        calories: '2,100 kcal / day',
+        whyContent: '🏆 Priya set a 5km Personal Best on Saturday! Autonomic scores are completely stabilized.',
+        ambientIcon: '🏆',
+        ambientClass: 'normal',
+        schedulePhase: 'Peak Aerobic Performance Block',
+        weekPlan: [
+          { name: "Mon", type: "Track Intervals", detail: "4x800m progression sprint", edited: false },
+          { name: "Tue", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Wed", type: "Tempo Run", detail: "6 km at race pace", edited: false },
+          { name: "Thu", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Fri", type: "Strength", detail: "Core & unilateral legs", edited: false },
+          { name: "Sat", type: "Long Run", detail: "16 km base pace", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      },
+      'david-l': {
+        name: 'David L.',
+        program: 'Base Phase · Wk 4',
+        type: 'nutrition',
+        risk: 'low',
+        recovery: '65%',
+        adherence: '90%',
+        active: '6h ago',
+        hrv: '65 ms',
+        sleep: '7.2 h',
+        rhr: '58 bpm',
+        completion: '88%',
+        macroProt: '140g / 150g',
+        macroProtPct: '93%',
+        macroCarb: '220g / 240g',
+        macroCarbPct: '91%',
+        macroFat: '60g / 65g',
+        macroFatPct: '92%',
+        calories: '2,200 kcal / day',
+        whyContent: '🏆 David has achieved 100% hydration adherence targets over the past 14 days.',
+        ambientIcon: '🏆',
+        ambientClass: 'normal',
+        schedulePhase: 'Base Conditioning Block',
+        weekPlan: [
+          { name: "Mon", type: "Base Run", detail: "8 km easy aerobic", edited: false },
+          { name: "Tue", type: "Strength", detail: "Full body accessory focus", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Thu", type: "Base Run", detail: "8 km easy aerobic", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sat", type: "Aerobic Capacity", detail: "10 km progressive pace", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      }
+    };
+
+    // Auto-generate mock data for remaining 14 athletes to fill the roster list
+    const remainingAthletes = [
+      { name: 'Elena R.',     program: 'Peak Volume · Wk 12',   type: 'strength',    risk: 'low',  active: '3h ago' },
+      { name: 'Jordan M.',    program: 'Recovery · Wk 2',       type: 'performance', risk: 'med',  active: '2d ago' },
+      { name: 'Tariq K.',     program: 'Conditioning · Wk 9',   type: 'endurance',   risk: 'low',  active: '8h ago' },
+      { name: 'Sonia V.',     program: 'Strength · Wk 5',       type: 'strength',    risk: 'med',  active: '1d ago' },
+      { name: 'Liam P.',      program: 'Marathon · Wk 18',      type: 'endurance',   risk: 'high', active: '6d ago' },
+      { name: 'Nina F.',      program: 'Fat Loss · Wk 7',       type: 'weight-loss', risk: 'low',  active: '4h ago' },
+      { name: 'Omar B.',      program: 'Hypertrophy · Wk 11',   type: 'strength',    risk: 'med',  active: '2d ago' },
+      { name: 'Grace W.',     program: 'Performance · Wk 3',    type: 'performance', risk: 'low',  active: '25m ago' },
+      { name: 'Hassan R.',    program: 'Base Phase · Wk 1',     type: 'nutrition',   risk: 'med',  active: '3d ago' },
+      { name: 'Chloe N.',     program: 'Half-Marathon · Wk 10', type: 'endurance',   risk: 'high', active: '5d ago' },
+      { name: 'Devon A.',     program: 'Strength · Wk 8',       type: 'strength',    risk: 'low',  active: '7h ago' },
+      { name: 'Ria S.',       program: 'Fat Loss · Wk 4',       type: 'weight-loss', risk: 'med',  active: '1d ago' },
+      { name: 'Felix O.',     program: 'Conditioning · Wk 6',   type: 'endurance',   risk: 'low',  active: '2h ago' },
+      { name: 'Maya T.',      program: 'Performance · Wk 9',    type: 'performance', risk: 'low',  active: '9h ago' }
+    ];
+
+    remainingAthletes.forEach((ath, i) => {
+      const key = ath.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      rosterData[key] = {
+        name: ath.name,
+        program: ath.program,
+        type: ath.type,
+        risk: ath.risk,
+        recovery: `${Math.floor(Math.random() * 30) + 60}%`,
+        adherence: `${Math.floor(Math.random() * 20) + 75}%`,
+        active: ath.active,
+        hrv: `${Math.floor(Math.random() * 40) + 35} ms`,
+        sleep: `${(Math.random() * 2 + 6).toFixed(1)} h`,
+        rhr: `${Math.floor(Math.random() * 15) + 50} bpm`,
+        completion: `${Math.floor(Math.random() * 30) + 70}%`,
+        macroProt: '120g / 140g',
+        macroProtPct: '85%',
+        macroCarb: '200g / 240g',
+        macroCarbPct: '83%',
+        macroFat: '50g / 60g',
+        macroFatPct: '83%',
+        calories: '2,000 kcal / day',
+        whyContent: `📋 ${ath.name} is progressing steadily through current cycles. Autonomic indices show complete recovery.`,
+        ambientIcon: '📋',
+        ambientClass: 'normal',
+        schedulePhase: 'Standard Progression Cycle',
+        weekPlan: [
+          { name: "Mon", type: "Conditioning", detail: "General physical prep", edited: false },
+          { name: "Tue", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Wed", type: "Cardio Focus", detail: "Zone 2 aerobic work", edited: false },
+          { name: "Thu", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Fri", type: "Strength Prep", detail: "Callisthenics & core work", edited: false },
+          { name: "Sat", type: "Rest", detail: "Rest day", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ]
+      };
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const rosterListContainer = document.getElementById('sidebar-roster-list');
+      const searchInput = document.getElementById('client-search');
+      const filterChips = document.querySelectorAll('.roster-filter-chip');
+      const detailContainer = document.getElementById('profile-detail-content');
+
+      let currentSelectedClient = 'sarah-k';
+      let activeFilter = 'all';
+      let searchQuery = '';
+
+      // Initialize roster items
+      function renderRosterSidebar() {
+        rosterListContainer.innerHTML = '';
+        const keys = Object.keys(rosterData);
+
+        const filteredKeys = keys.filter(key => {
+          const client = rosterData[key];
+          const matchesSearch = client.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                client.program.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          let matchesFilter = false;
+          if (activeFilter === 'all') matchesFilter = true;
+          else if (activeFilter === 'high' && client.risk === 'high') matchesFilter = true;
+          else if (activeFilter === 'med' && client.risk === 'med') matchesFilter = true;
+          else if (activeFilter === 'low' && client.risk === 'low') matchesFilter = true;
+
+          return matchesSearch && matchesFilter;
+        });
+
+        if (filteredKeys.length === 0) {
+          rosterListContainer.innerHTML = `<div class="roster-empty-results">No members found matching filter</div>`;
+          return;
+        }
+
+        filteredKeys.forEach(key => {
+          const client = rosterData[key];
+          const initials = client.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+          
+          let statusClass = 'status-green';
+          if (client.risk === 'high') statusClass = 'status-red';
+          else if (client.risk === 'med') statusClass = 'status-amber';
+
+          const card = document.createElement('div');
+          card.className = `roster-item-card ${key === currentSelectedClient ? 'active' : ''}`;
+          card.setAttribute('data-key', key);
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('role', 'button');
+          card.innerHTML = `
+            <div class="roster-item-avatar" data-name="${client.name}">${initials}</div>
+            <div class="roster-item-info">
+              <div class="roster-item-name-row">
+                <span class="roster-item-name">${client.name}</span>
+                <span class="roster-item-status-dot ${statusClass}"></span>
+              </div>
+              <div class="roster-item-program">${client.program}</div>
+            </div>
+            <button class="roster-item-chat-btn" title="Chat with ${client.name}" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+          `;
+
+          card.addEventListener('click', () => {
+            selectClient(key);
+          });
+
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectClient(key);
+            }
+          });
+
+          const chatBtn = card.querySelector('.roster-item-chat-btn');
+          if (chatBtn) {
+            chatBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              selectClient(key);
+              const chatTab = document.querySelector('.subtab-btn[data-tab="chat"]');
+              if (chatTab) chatTab.click();
+            });
+          }
+
+          rosterListContainer.appendChild(card);
+        });
+
+        if (window.ZoraFaces) window.ZoraFaces.paint(rosterListContainer);
+      }
+
+      // Load Profile details dynamically
+      function selectClient(key) {
+        if (!rosterData[key]) return;
+        currentSelectedClient = key;
+
+        // Apply visual crossfade state blur transition
+        detailContainer.classList.add('transitioning');
+
+        setTimeout(() => {
+          const client = rosterData[key];
+          
+          // Render Identity header
+          document.getElementById('active-avatar').textContent = client.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+          document.getElementById('active-avatar').setAttribute('data-name', client.name);
+          document.getElementById('active-name').textContent = client.name;
+          document.getElementById('active-program').textContent = client.program;
+          
+          document.getElementById('active-adherence').textContent = client.adherence;
+          
+          const statusVal = document.getElementById('active-status');
+          statusVal.textContent = client.risk === 'high' ? 'At-Risk' : client.risk === 'med' ? 'Watch' : 'Steady';
+          statusVal.className = 'quick-stat-val ' + (client.risk === 'high' ? 'risk-high-text' : client.risk === 'med' ? 'risk-med-text' : 'risk-low-text');
+
+          // Roster Ambient Banner
+          const ambientBox = document.getElementById('active-ambient-box');
+          ambientBox.className = 'coach-ambient-alert ' + (client.risk === 'high' ? 'high-risk' : '');
+          document.getElementById('active-ambient-icon').textContent = client.ambientIcon;
+          document.getElementById('active-ambient-text').innerHTML = client.whyContent;
+
+          // Workspace 1: Weekly Schedule
+          document.getElementById('active-weeks-count').textContent = client.schedulePhase;
+          const weeklyGrid = document.getElementById('active-weekly-grid');
+          weeklyGrid.innerHTML = client.weekPlan.map(day => {
+            const isRest = day.type.toLowerCase().includes('rest');
+            return `
+              <div class="sched-day-item ${isRest ? 'rest-day' : ''} ${day.edited ? 'edited-day' : ''}">
+                <span class="sched-day-name">${day.name}</span>
+                <span class="sched-workout-type">${day.type}</span>
+                <span class="sched-workout-detail">${day.detail}</span>
+              </div>
+            `;
+          }).join('');
+
+          // Workspace 2: Biometrics
+          document.getElementById('bio-val-hrv').textContent = client.hrv;
+          document.getElementById('bio-val-sleep').textContent = client.sleep;
+          document.getElementById('bio-val-rhr').textContent = client.rhr;
+          document.getElementById('bio-val-completion').textContent = client.completion;
+          
+          let logDescription = `All wearable biometric streams are fully synchronized. Autonomic indices indicate steady progression.`;
+          if (client.risk === 'high') {
+            logDescription = `⚠ Biometrics show substantial stress signs: Sleep duration dropped below critical thresholds, and HRV displays a sustained downwards trajectory. Injury threat is elevated.`;
+          } else if (client.risk === 'med') {
+            logDescription = `⚠ Noticeable fluctuation in biometric recovery score. Check-in values suggest transient central nervous system fatigue.`;
+          }
+          document.getElementById('bio-desc-text').textContent = logDescription;
+
+          // Workspace 3: Nutrition
+          document.getElementById('macro-val-prot').textContent = client.macroProt;
+          document.getElementById('macro-fill-prot').style.width = client.macroProtPct;
+          
+          document.getElementById('macro-val-carb').textContent = client.macroCarb;
+          document.getElementById('macro-fill-carb').style.width = client.macroCarbPct;
+          
+          document.getElementById('macro-val-fat').textContent = client.macroFat;
+          document.getElementById('macro-fill-fat').style.width = client.macroFatPct;
+
+          document.getElementById('nut-cal-budget').textContent = client.calories;
+          
+          let nutDescription = `Hydration levels consistent. Calorie intake aligned with training workloads.`;
+          if (client.risk === 'high') {
+            nutDescription = `⚠ Protein intake has drifted 40g/day under target limits. Suggest nutritional adjustment blocks to mitigate muscle recovery delay.`;
+          }
+          document.getElementById('nut-desc-text').textContent = nutDescription;
+
+          // Paint avatar
+          if (window.ZoraFaces) {
+            window.ZoraFaces.paintOne(document.getElementById('active-avatar'), client.name);
+          }
+
+          // Active list card toggle
+          document.querySelectorAll('.roster-item-card').forEach(c => {
+            if (c.getAttribute('data-key') === key) c.classList.add('active');
+            else c.classList.remove('active');
+          });
+
+          // Reset transition
+          detailContainer.classList.remove('transitioning');
+        }, 160);
+      }
+
+      // Search field handler
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderRosterSidebar();
+      });
+
+      // Filter chips handler
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          filterChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          activeFilter = chip.getAttribute('data-filter');
+          renderRosterSidebar();
+        });
+      });
+
+      // Subtabs Navigation handler
+      const tabs = document.querySelectorAll('.subtab-btn');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const targetTabId = tab.getAttribute('data-tab');
+          document.querySelectorAll('.subtab-content-panel').forEach(panel => {
+            if (panel.id === `pane-${targetTabId}`) {
+              panel.classList.add('active');
+            } else {
+              panel.classList.remove('active');
+            }
+          });
+        });
+      });
+
+      // Call Schedule Confirmation Logic
+      const schedulerConfirmBtn = document.getElementById('btn-schedule-confirm');
+      if (schedulerConfirmBtn) {
+        schedulerConfirmBtn.addEventListener('click', () => {
+          const date = document.getElementById('call-date').value;
+          const selectedSlot = document.querySelector('.time-slot-btn.selected');
+          const time = selectedSlot ? selectedSlot.textContent : '09:00 AM';
+          const notes = document.getElementById('call-agenda').value || 'General Assessment';
+
+          // Fire toast notification
+          const toast = document.getElementById('success-toast');
+          const toastTitle = document.getElementById('toast-title');
+          const toastSub = document.getElementById('toast-sub');
+          
+          toastTitle.textContent = "Call Scheduled!";
+          toastSub.innerHTML = `Virtual Check-in confirmed with <span style="font-weight: 600;">${rosterData[currentSelectedClient].name}</span> for ${date} at ${time}.`;
+          
+          toast.classList.add('show');
+          
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 4000);
+        });
+      }
+
+      // Time Slot Selector inside Scheduler
+      const slotsContainer = document.getElementById('slots-container');
+      if (slotsContainer) {
+        slotsContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.time-slot-btn');
+          if (!btn) return;
+          slotsContainer.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        });
+      }
+
+      // Weekly Schedule Approval
+      const approveScheduleBtn = document.getElementById('btn-approve-schedule');
+      if (approveScheduleBtn) {
+        approveScheduleBtn.addEventListener('click', () => {
+          // Fire toast notification
+          const toast = document.getElementById('success-toast');
+          const toastTitle = document.getElementById('toast-title');
+          const toastSub = document.getElementById('toast-sub');
+          
+          toastTitle.textContent = "Schedule Approved!";
+          toastSub.innerHTML = `Updated weekly microcycle was sent to <span style="font-weight: 600;">${rosterData[currentSelectedClient].name}</span>.`;
+          
+          toast.classList.add('show');
+          
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 4000);
+        });
+      }
+
+      // Populate chatHistory for any client that doesn't have it
+      Object.keys(rosterData).forEach(key => {
+        if (!rosterData[key].chatHistory) {
+          rosterData[key].chatHistory = [
+            { sender: 'system-zora', text: `Zora system sync completed for ${rosterData[key].name}.` },
+            { sender: 'coach', text: `Hi ${rosterData[key].name.split(' ')[0]}, how did your training feel today?` },
+            { sender: 'client', text: `Hey Coach! Feeling pretty good, completed the sessions.` }
+          ];
+        }
+      });
+
+      // Specific custom chat histories
+      rosterData['sarah-k'].chatHistory = [
+        { sender: "system-zora", text: "Zora detected: Sleep score 42, HRV 18ms. Exhaustion threat high." },
+        { sender: "coach", text: "Hey Sarah, saw you got 3.2h sleep and your HRV is down. How's the knee feeling?" },
+        { sender: "client", text: "My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall." }
+      ];
+      rosterData['marcus-t'].chatHistory = [
+        { sender: "system-zora", text: "Zora alert: 6 consecutive days without app activity. Churn risk high." },
+        { sender: "coach", text: "Hey Marcus, noticed you've been inactive for a few days. Everything okay?" },
+        { sender: "client", text: "Yeah, work has been crazy busy. Struggling to get to the gym." }
+      ];
+
+      // Dynamic chat loading inside selectClient
+      const originalSelectClient = selectClient;
+      selectClient = function(key) {
+        originalSelectClient(key);
+        
+        const client = rosterData[key];
+        
+        // Update chat tab title
+        const chatTitle = document.getElementById('chat-tab-title');
+        if (chatTitle) chatTitle.textContent = `Chat with ${client.name}`;
+        
+        // Render chat messages
+        renderChatTabHistory(client);
+        
+        // Smart reply button toggles
+        const smartBtn = document.getElementById('chat-tab-smart-btn');
+        if (smartBtn) {
+          if (key === 'sarah-k') {
+            smartBtn.style.display = 'block';
+            smartBtn.textContent = "Smart Reply: Apply deload walk";
+          } else if (key === 'marcus-t') {
+            smartBtn.style.display = 'block';
+            smartBtn.textContent = "Smart Reply: 3 strength sessions sounds good";
+          } else if (key === 'priya-i') {
+            smartBtn.style.display = 'block';
+            smartBtn.textContent = "Smart Reply: Sticking to the plan!";
+          } else {
+            smartBtn.style.display = 'none';
+          }
+        }
+      };
+
+      function renderChatTabHistory(client) {
+        const container = document.getElementById('chat-tab-messages');
+        if (!container) return;
+        container.innerHTML = '';
+        client.chatHistory.forEach(msg => {
+          const bubble = document.createElement('div');
+          bubble.className = `chat-bubble ${msg.sender}`;
+          bubble.innerHTML = msg.text;
+          container.appendChild(bubble);
+        });
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function sendTabCoachMessage(text) {
+        if (!text.trim()) return;
+        const client = rosterData[currentSelectedClient];
+        
+        // Save to data
+        client.chatHistory.push({ sender: 'coach', text });
+        renderChatTabHistory(client);
+        
+        const textarea = document.getElementById('chat-tab-textarea');
+        if (textarea) textarea.value = '';
+        
+        // Auto client reply simulation
+        setTimeout(() => {
+          let reply = "Thanks for checking in, Coach! I'll take a look.";
+          if (currentSelectedClient === 'sarah-k') {
+            reply = "Yeah, a recovery walk sounds way better than intervals today. My knee is quite sore. Thanks for making the swap!";
+          } else if (currentSelectedClient === 'marcus-t') {
+            reply = "Thanks Riya, 3 sessions this week is way more manageable. I'll make sure to get them done.";
+          } else if (currentSelectedClient === 'priya-i') {
+            reply = "Sticking to the plan! Feeling solid. Enjoy your weekend coach!";
+          }
+          
+          client.chatHistory.push({ sender: 'client', text: reply });
+          renderChatTabHistory(client);
+        }, 1500);
+      }
+
+      // Bind send message
+      const sendMsgBtn = document.getElementById('chat-tab-send-btn');
+      if (sendMsgBtn) {
+        sendMsgBtn.addEventListener('click', () => {
+          const val = document.getElementById('chat-tab-textarea').value;
+          sendTabCoachMessage(val);
+        });
+      }
+
+      const chatTextarea = document.getElementById('chat-tab-textarea');
+      if (chatTextarea) {
+        chatTextarea.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMsgBtn.click();
+          }
+        });
+      }
+
+      // Bind smart reply
+      const smartReplyBtn = document.getElementById('chat-tab-smart-btn');
+      if (smartReplyBtn) {
+        smartReplyBtn.addEventListener('click', () => {
+          const text = smartReplyBtn.textContent.replace('Smart Reply: ', '');
+          sendTabCoachMessage(text);
+        });
+      }
+
+      // Bind optimization sheet button click
+      const openOptBtn = document.getElementById('btn-open-optimization');
+      if (openOptBtn) {
+        openOptBtn.addEventListener('click', () => {
+          window.location.href = `reco-card.html?client=${currentSelectedClient}&source=members`;
+        });
+      }
+
+      // Initialize
+      renderRosterSidebar();
+      selectClient('sarah-k');
+    });
+  </script>
+
+  <!-- Sidebar collapsible script -->
+  <script>
+    (function() {
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+
+      if (sidebarToggle && sidebar) {
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        if (isCollapsed) {
+          sidebar.classList.add('collapsed');
+          sidebarToggle.setAttribute('title', 'Expand Sidebar');
+        }
+
+        sidebarToggle.addEventListener('click', () => {
+          const collapsed = sidebar.classList.toggle('collapsed');
+          localStorage.setItem('sidebar-collapsed', collapsed);
+          sidebarToggle.setAttribute('title', collapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+        });
+      }
+    })();
+  </script>
+
+  <!-- Theme Switcher script -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      function sync() {
+        var isDark = root.getAttribute('data-theme') === 'dark';
+        btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        btn.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+
+      sync();
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync();
+      });
+    })();
+  </script>
+</body>
+</html>
