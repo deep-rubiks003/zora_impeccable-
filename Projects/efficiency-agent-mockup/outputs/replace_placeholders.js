@@ -743,6 +743,8 @@ const drawFatigueChart = `function drawFatigueChart(svgId, fatigueData) {
     dot.setAttribute("fill", "var(--accent)");
     dot.setAttribute("stroke", "#ffffff");
     dot.setAttribute("stroke-width", "1");
+    dot.setAttribute("class", "fatigue-static-dot");
+    dot.setAttribute("style", "transition: opacity 0.15s ease;");
     
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = "Day " + (idx + 1) + " Volume: " + pt.val + " TSS";
@@ -758,6 +760,8 @@ const drawFatigueChart = `function drawFatigueChart(svgId, fatigueData) {
     dot.setAttribute("fill", "#e67e22");
     dot.setAttribute("stroke", "#ffffff");
     dot.setAttribute("stroke-width", "1");
+    dot.setAttribute("class", "fatigue-static-dot");
+    dot.setAttribute("style", "transition: opacity 0.15s ease;");
     
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = "Day " + (idx + 1) + " Recovery: " + pt.val + "%";
@@ -779,6 +783,80 @@ const drawFatigueChart = `function drawFatigueChart(svgId, fatigueData) {
     txt.textContent = day;
     svg.appendChild(txt);
   });
+
+  // Hover Callout Group
+  const hoverCallout = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  hoverCallout.setAttribute("id", "fatigue-hover-callout");
+  hoverCallout.setAttribute("style", "pointer-events: none; opacity: 0; transition: opacity 0.15s ease;");
+  
+  const hoverLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  hoverLine.setAttribute("id", "fatigue-hover-line");
+  hoverLine.setAttribute("x1", "0");
+  hoverLine.setAttribute("y1", paddingTop);
+  hoverLine.setAttribute("x2", "0");
+  hoverLine.setAttribute("y2", paddingTop + chartH);
+  hoverLine.setAttribute("stroke", "var(--line)");
+  hoverLine.setAttribute("stroke-width", "0.8");
+  hoverLine.setAttribute("stroke-dasharray", "2 2");
+  hoverCallout.appendChild(hoverLine);
+  
+  const hoverText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  hoverText.setAttribute("id", "fatigue-hover-text");
+  hoverText.setAttribute("x", "0");
+  hoverText.setAttribute("y", "10");
+  hoverText.setAttribute("font-family", "var(--font-geist-mono)");
+  hoverText.setAttribute("font-size", "8.5px");
+  hoverText.setAttribute("font-weight", "700");
+  hoverText.setAttribute("text-anchor", "middle");
+  hoverText.setAttribute("fill", "var(--ink)");
+  hoverCallout.appendChild(hoverText);
+  
+  const hoverDot1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  hoverDot1.setAttribute("id", "fatigue-hover-dot1");
+  hoverDot1.setAttribute("r", "4");
+  hoverDot1.setAttribute("fill", "var(--accent)");
+  hoverDot1.setAttribute("stroke", "#ffffff");
+  hoverDot1.setAttribute("stroke-width", "1.2");
+  hoverCallout.appendChild(hoverDot1);
+  
+  const hoverDot2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  hoverDot2.setAttribute("id", "fatigue-hover-dot2");
+  hoverDot2.setAttribute("r", "4");
+  hoverDot2.setAttribute("fill", "#e67e22");
+  hoverDot2.setAttribute("stroke", "#ffffff");
+  hoverDot2.setAttribute("stroke-width", "1.2");
+  hoverCallout.appendChild(hoverDot2);
+  
+  svg.appendChild(hoverCallout);
+
+  // Draw invisible hover capture slices
+  for (let idx = 0; idx < len; idx++) {
+    const cx = volPoints[idx].x;
+    const cy1 = volPoints[idx].y;
+    const cy2 = recPoints[idx].y;
+    const volVal = volPoints[idx].val;
+    const recVal = recPoints[idx].val;
+    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const dayName = dayNames[idx % 7];
+    
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", cx - step / 2);
+    rect.setAttribute("y", paddingTop);
+    rect.setAttribute("width", step);
+    rect.setAttribute("height", chartH);
+    rect.setAttribute("fill", "transparent");
+    rect.setAttribute("style", "cursor: pointer; pointer-events: all;");
+    rect.setAttribute("data-cx", cx);
+    rect.setAttribute("data-cy1", cy1);
+    rect.setAttribute("data-cy2", cy2);
+    rect.setAttribute("data-volval", volVal);
+    rect.setAttribute("data-recval", recVal);
+    rect.setAttribute("data-dayname", dayName);
+    rect.setAttribute("onmouseover", "window.FatigueChartHover(this, 'over')");
+    rect.setAttribute("onmouseout", "window.FatigueChartHover(this, 'out')");
+    
+    svg.appendChild(rect);
+  }
 }`;
 
 const renderRiskCard = `function renderRiskCard(client) {

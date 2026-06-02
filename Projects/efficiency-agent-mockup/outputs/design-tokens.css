@@ -92,7 +92,43 @@
   /* Fonts */
   --font-dm-sans: 'DM Sans', sans-serif;
   --font-geist: 'Geist', sans-serif;
+
+  /* Care-type system variables */
+  --care-fitness: #7a5487;   /* brand purple */
+  --care-hypertension: #c2456b;  /* rose */
+  --care-diabetes: #0d9488;  /* teal */
 }
+
+/* Care-type system: badge + whisper surface tint */
+.care-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  font-family: var(--font-geist);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--care-color, var(--care-fitness));
+  background: color-mix(in oklab, var(--care-color, var(--care-fitness)) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--care-color, var(--care-fitness)) 30%, transparent);
+}
+.care-badge[data-care="fitness"]      { --care-color: var(--care-fitness); }
+.care-badge[data-care="hypertension"] { --care-color: var(--care-hypertension); }
+.care-badge[data-care="diabetes"]     { --care-color: var(--care-diabetes); }
+.care-badge-ico { font-size: 11px; line-height: 1; }
+.care-badge--sm { font-size: 9.5px; padding: 1px 7px 1px 5px; margin-left: 6px; vertical-align: middle; }
+.care-badge--sm .care-badge-ico { font-size: 9.5px; }
+
+/* Whisper surface tint per care type, on the page background only. Kept
+   extremely faint so it never competes with severity reds/ambers/greens. */
+html[data-care="hypertension"] body { background-color: color-mix(in oklab, var(--care-hypertension) 4%, var(--paper)) !important; background-image: none !important; }
+html[data-care="diabetes"] body     { background-color: color-mix(in oklab, var(--care-diabetes) 4%, var(--paper)) !important; background-image: none !important; }
+html[data-theme="dark"][data-care="hypertension"] body { background-color: color-mix(in oklab, var(--care-hypertension) 9%, var(--paper)) !important; background-image: none !important; }
+html[data-theme="dark"][data-care="diabetes"] body     { background-color: color-mix(in oklab, var(--care-diabetes) 9%, var(--paper)) !important; background-image: none !important; }
 
 * {
   box-sizing: border-box;
@@ -1411,13 +1447,7 @@ body {
     box-shadow 200ms var(--ease-out);
 }
 
-.btn-edit::after {
-  content: "→";
-  font-size: 14px;
-  line-height: 1;
-  transform: translateY(-1px);
-  transition: transform 200ms var(--ease-out);
-}
+
 
 .btn-skip {
   padding: 8px 6px;
@@ -1747,9 +1777,7 @@ body {
     box-shadow: 0 8px 20px -8px rgba(122, 84, 135, 0.55);
   }
 
-  .btn-edit:hover::after {
-    transform: translate(3px, -1px);
-  }
+
 
   .btn-skip:hover {
     color: var(--ink);
@@ -2457,25 +2485,93 @@ body {
   color: var(--ink-4);
 }
 
-/* Segmented toggle with a sliding thumb behind the active option. */
+/* ===== Self-explaining week switch (squared segmented control) =====
+   Two labeled sides; the active one is filled by the thumb. No external
+   label, the words on the control carry the meaning. aria-checked=true => Zora. */
 .week-toggle {
   position: relative;
   display: inline-flex;
   align-items: stretch;
+  height: 34px;
   padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 9px;            /* squared, not pill */
   background: rgba(26, 26, 46, 0.05);
-  border: 1px solid var(--line-soft);
-  border-radius: 999px;
+  cursor: pointer;
   flex-shrink: 0;
-  transition: box-shadow 260ms var(--ease-out), border-color 260ms var(--ease-out);
+  transition: border-color 260ms var(--ease-out);
 }
-[data-theme="dark"] .week-toggle {
-  background: rgba(255, 255, 255, 0.06);
-}
+[data-theme="dark"] .week-toggle { background: rgba(255, 255, 255, 0.06); }
+.week-toggle:active { transform: scale(0.99); }
+.week-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .no-changes .week-toggle { display: none; }
 
-/* A one-shot ring that blooms outward when the coach flips to Zora's
-   recommended week, rhyming with the signals toggle's bloom. */
+.week-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  border-radius: 6px;           /* matches the squared shell */
+  background: var(--accent);
+  box-shadow: 0 2px 8px -2px rgba(122, 84, 135, 0.5);
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms var(--ease-out);
+  z-index: 0;
+}
+[data-view="recommended"] .week-toggle .week-toggle-thumb {
+  box-shadow: 0 3px 14px -3px rgba(122, 84, 135, 0.7);
+}
+
+/* The two labeled sides split the control into equal halves so the 50% thumb
+   aligns exactly with one; equal flex basis prevents the labels overlapping. */
+.week-toggle-end {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--ink-3);
+  white-space: nowrap;
+  transition: color 220ms var(--ease-out);
+  pointer-events: none;
+}
+.week-toggle[aria-checked="false"] .week-toggle-end--left  { color: #fff; }
+.week-toggle[aria-checked="true"]  .week-toggle-end--right { color: #fff; }
+
+/* Count pill rides Zora's label. */
+.week-toggle-count {
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+  color: var(--accent-deep);
+  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out), transform 220ms var(--ease-out);
+}
+[data-theme="dark"] .week-toggle-count { color: var(--accent); }
+/* When Zora's side is filled (white text), the count flips to a white-on-glass chip. */
+.week-toggle[aria-checked="true"] .week-toggle-end--right .week-toggle-count {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+.week-toggle-count.is-ticking { animation: week-count-tick 460ms var(--ease-out); }
+@keyframes week-count-tick {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+/* One-shot bloom ring when flipping to Zora's side. */
 .week-toggle::after {
   content: "";
   position: absolute;
@@ -2488,76 +2584,7 @@ body {
 .week-toggle.is-blooming::after { animation: week-toggle-bloom 520ms var(--ease-out); }
 @keyframes week-toggle-bloom {
   0%   { opacity: 0.55; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.16); }
-}
-
-.week-toggle-thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  bottom: 3px;
-  width: calc(50% - 3px);
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 2px 8px -2px rgba(122, 84, 135, 0.5);
-  /* Spring overshoot so the flip lands with weight, not mechanically. */
-  transition: transform 380ms cubic-bezier(0.34, 1.18, 0.64, 1),
-    box-shadow 260ms var(--ease-out);
-  z-index: 0;
-}
-/* The thumb glows a touch brighter on the recommended side: it's the meaningful one. */
-[data-view="recommended"] .week-toggle .week-toggle-thumb {
-  box-shadow: 0 3px 14px -3px rgba(122, 84, 135, 0.7);
-}
-.week-toggle-opt {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-geist);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  color: var(--ink-3);
-  padding: 6px 14px;
-  border-radius: 999px;
-  white-space: nowrap;
-  transition: color 220ms var(--ease-out);
-}
-.week-toggle-opt:hover { color: var(--ink); }
-.week-toggle-opt.is-active { color: #ffffff; }
-.week-toggle-opt.is-active:hover { color: #ffffff; }
-.week-toggle-opt:active { transform: scale(0.97); }
-.week-toggle-opt:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-.week-toggle-count {
-  font-family: var(--font-geist-mono);
-  font-size: 10.5px;
-  font-weight: 600;
-  line-height: 1.3;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: rgba(122, 84, 135, 0.14);
-  color: var(--accent-deep);
-  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out),
-    transform 220ms var(--ease-out);
-}
-.week-toggle-opt.is-active .week-toggle-count {
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-}
-/* The count gives one confident tick when the recommended week lands. */
-.week-toggle-count.is-ticking { animation: week-count-tick 460ms var(--ease-out); }
-@keyframes week-count-tick {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.22); }
-  100% { transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.12); }
 }
 
 /* The 7-day track. Equal columns; horizontal scroll-snap on narrow widths. */
@@ -2599,34 +2626,20 @@ body {
 [data-theme="dark"] .week-day:hover { border-color: rgba(255, 255, 255, 0.14); }
 
 /* Changed days carry a quiet accent identity that strengthens on the reco view. */
-.week-day.is-changed { border-color: rgba(122, 84, 135, 0.2); }
+.week-day.is-changed { border-color: rgba(122, 84, 135, 0.3); }
+/* Changed day carries a full accent border all the way around on the
+   recommended view (no top-only bar). */
 [data-view="recommended"] .week-day.is-changed {
-  border-color: rgba(122, 84, 135, 0.4);
+  border-color: var(--accent);
   box-shadow: 0 4px 14px -4px rgba(122, 84, 135, 0.22);
-}
-[data-view="recommended"] .week-day.is-changed::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: var(--accent);
-  transform-origin: left center;
 }
 
 /* When the recommended week is revealed, the days Zora touched light up in
    sequence (left to right) so the eye reads "she changed these", not a snap.
    --i carries the per-cell index set in JS. */
-[data-view="recommended"] .week-strip-track.lighting-up .week-day.is-changed::before {
-  animation: week-bar-sweep 420ms var(--ease-out) backwards;
-  animation-delay: calc(var(--i, 0) * 90ms);
-}
 [data-view="recommended"] .week-strip-track.lighting-up .week-day.is-changed {
   animation: week-day-glow 620ms var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * 90ms);
-}
-@keyframes week-bar-sweep {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
 }
 @keyframes week-day-glow {
   0%   { box-shadow: 0 4px 14px -4px rgba(122, 84, 135, 0.22); }
@@ -2707,11 +2720,10 @@ body {
   .week-strip.just-updated,
   .week-toggle.is-blooming::after,
   .week-toggle-count.is-ticking,
-  [data-view="recommended"] .week-strip-track.lighting-up .week-day.is-changed,
-  [data-view="recommended"] .week-strip-track.lighting-up .week-day.is-changed::before { animation: none; }
+  [data-view="recommended"] .week-strip-track.lighting-up .week-day.is-changed { animation: none; }
   .week-toggle-thumb,
   .week-toggle,
-  .week-toggle-opt,
+  .week-toggle-end,
   .week-strip-track,
   .week-day,
   .week-day-flag { transition: none; }
@@ -2720,9 +2732,7 @@ body {
 /* Responsive: the 7 columns become a horizontal scroll-snap track on narrow
    widths so day cells keep a legible minimum size and never overflow. */
 @media (max-width: 760px) {
-  .week-strip-head { gap: 12px; }
-  .week-toggle { width: 100%; }
-  .week-toggle-opt { flex: 1; justify-content: center; }
+  .week-strip-head { gap: 12px; flex-wrap: wrap; }
   .week-strip-track {
     display: flex;
     overflow-x: auto;
@@ -2736,6 +2746,218 @@ body {
     scroll-snap-align: start;
   }
 }
+
+/* Selection state for week days */
+.week-day {
+  cursor: pointer;
+}
+.week-day:active {
+  transform: scale(0.97) !important;
+}
+.week-day.is-selected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(122, 84, 135, 0.22) !important;
+}
+[data-theme="dark"] .week-day.is-selected {
+  box-shadow: 0 0 0 2px rgba(162, 114, 175, 0.3) !important;
+}
+
+/* Inline day details styles */
+.inline-day-details {
+  margin-top: 24px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 24px;
+  animation: inline-fade-in 300ms var(--ease-out);
+}
+
+@keyframes inline-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.inline-day-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.inline-day-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+[data-theme="light"] .inline-day-card {
+  background: var(--paper-3);
+  border-color: rgba(26, 26, 46, 0.08);
+}
+
+.inline-day-card:hover {
+  border-color: var(--line);
+}
+
+.inline-day-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-geist);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inline-day-card-ico {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inline-day-item {
+  font-family: var(--font-dm-sans);
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.45;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="light"] .inline-day-item {
+  background: #ffffff;
+}
+
+.inline-day-item-label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.inline-day-item-sub {
+  font-size: 11px;
+  color: var(--ink-4);
+  margin-top: 2px;
+}
+
+/* Edit form styling inside training card */
+.inline-day-edit-toggle {
+  font-family: var(--font-dm-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  align-self: flex-start;
+  transition: background 150ms ease;
+  margin-top: 4px;
+}
+
+.inline-day-edit-toggle:hover {
+  background: var(--accent-soft);
+}
+
+.inline-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--paper);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .inline-edit-form {
+  background: #ffffff;
+}
+
+.inline-edit-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.inline-edit-label {
+  font-family: var(--font-dm-sans);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+
+.inline-edit-input {
+  font-family: var(--font-dm-sans);
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inline-edit-input:focus {
+  border-color: var(--accent);
+}
+
+.inline-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.inline-edit-btn-save {
+  font-family: var(--font-dm-sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--accent);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.inline-edit-btn-save:hover {
+  opacity: 0.9;
+}
+
+.inline-edit-btn-cancel {
+  font-family: var(--font-dm-sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+
+.inline-edit-btn-cancel:hover {
+  background: var(--paper-3);
+}
+
+/* Highlight for changed day details */
+.inline-day-item.is-proposal {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+}
+
 
 
 /* Inline AI Sparkle and Status Indicator */

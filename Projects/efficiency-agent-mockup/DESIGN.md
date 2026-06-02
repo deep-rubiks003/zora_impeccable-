@@ -113,6 +113,42 @@ reduced-motion paints instantly.
 toggle is delighted: chevron peek on hover, springy flip, a one-shot bloom ring
 on switch, lift + accent glow.
 
+### Weekly Schedule strip + week toggle (`reco-card.html` → Plan & Performance)
+The "Recommended Weekly Schedule Adjustment" renders as a **horizontal 7-day
+strip** (Mon→Sun) inside the recommendation card. A single **segmented week
+toggle** flips the whole strip between the client's **current week** and
+**Zora's recommended** week (a count pill marks how many days changed); per-day
+controls were dropped in favor of this one decisive control. Switching
+crossfades the row (`.transitioning` blur idiom); revealing the recommended
+week lights the changed days up left-to-right. Defaults to recommended; a
+no-changes client shows a quiet empty line and hides the toggle. Reduced-motion
+collapses to instant.
+
+### Client switcher (`reco-card.html`, in the header strip)
+Built into the persistent header (not a standalone bar): compact circular
+prev/next arrows flank the client identity, and an "N of M" counter under the
+name opens a **jump-to roster dropdown**. The dropdown is a soft accent-tinted
+glass panel (`z 100`), ~5 rows then scroll, each row a distilled
+face + name + flag reason ("Fatigue risk", "Churn risk", "Deload pending",
+"Nutrition drift", "On track") colored by severity, current row marked with a
+check. Selecting or stepping switches the client **in place** (re-renders via
+`renderClientCore`, preserves the active tab, updates the URL, lands at the
+top). Outside-click / Esc collapse it; ↑/↓/Enter navigate it; tap targets use
+the invisible `::before` hit-buffer to clear WCAG size.
+
+### Directional client transition (`reco-card.html`)
+Stepping between clients slides the detail the way you moved: **next** exits
+left and enters from the right, **prev** mirrors it (driven by a `--cs-dir`
+custom property). `transform`/`opacity`/`filter` only; a re-entrancy guard
+prevents overlapping transitions; reduced-motion swaps instantly.
+
+### Action rail (`reco-card.html`, sticky right column)
+Vertical icon+label tiles, sticky so they follow the page. Top group is the
+four always-available quick actions (**Nutrition, Schedule, Chat, Call**); a
+hairline divider separates secondary jumps (**Biometric, History**). Section
+buttons scroll to and flash their panel; Chat/Call open their existing surfaces.
+Active tile is accent-tinted.
+
 ### Full-roster modal (`index.html`)
 "View full roster" opens a centered dialog (palette-overlay idiom, z 2000) with a
 searchable, status-filterable dense table of all clients; rows route to the

@@ -356,6 +356,7 @@ All interface components must feel highly responsive, tactile, and fluid. The fo
 - **Do** enforce tabular numbers on all tables and lists containing numerical scores.
 - **Do** expand tiny tap targets using absolute pseudo-element buffers.
 - **Do** support unified dark mode toggles with a pre-paint boot script to avoid theme flashing.
+- **Do** apply extremely faint care-specific background tints using `color-mix(in oklab, ...)` to preserve contrast on severity status colors.
 
 ### Don't:
 - **Don't** use hardcoded color values (`#ffffff` or `#f5f5f7`) directly for layout nodes; use theme-mapped CSS variables.
@@ -363,3 +364,24 @@ All interface components must feel highly responsive, tactile, and fluid. The fo
 - **Don't** use fluid text scaling on headings; stick to the fixed H1-H3 scale.
 - **Don't** apply heavy dark box shadows on card elements.
 - **Don't** allow paragraph lines to exceed `68ch` in width.
+- **Don't** use high-opacity care tints that can compete with or muddy standard green/amber/red status colors.
+
+## Care-Type System Design Guidelines
+
+### Color Tokens
+- **Fitness** (`--care-fitness`): `#7a5487` (Brand Purple)
+- **Hypertension** (`--care-hypertension`): `#c2456b` (Desaturated Rose)
+- **Diabetes** (`--care-diabetes`): `#0d9488` (Teal)
+
+### Badges (`.care-badge`)
+Rendered next to names in headers and table listings. Must feature:
+- Background: `color-mix(in oklab, var(--care-color) 12%, transparent)`
+- Border: `color-mix(in oklab, var(--care-color) 30%, transparent)`
+- Text Color: `var(--care-color)`
+- Font size: `11px` (`9.5px` for `.care-badge--sm`)
+
+### Whisper Background Surface Washes
+Applied dynamically on `html[data-care]` elements.
+- Light Mode: `4%` care color mix on `--paper` background.
+- Dark Mode: `9%` care color mix on `--paper` background.
+- Ambient gradients must be hidden (`background-image: none`) in clinical modes to keep backgrounds flat, clean, and clinical.

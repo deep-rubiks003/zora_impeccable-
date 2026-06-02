@@ -184,16 +184,10 @@
                 </div>
               </div>
               <div class="draft-actions">
-                <div class="draft-fix">
-                  <span class="draft-fix-lbl">AI drafted</span>
-                  <span class="draft-fix-val">Volume deload</span>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
-                  <button class="btn-edit"
-                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
-                    aria-label="Review deload plan for Sarah K.">Review</button>
-                </div>
+                <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
+                <button class="btn-edit"
+                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
+                  aria-label="Review deload plan for Sarah K.">Review</button>
               </div>
             </div>
             <div class="draft-skipped-state">
@@ -228,16 +222,10 @@
                 </div>
               </div>
               <div class="draft-actions">
-                <div class="draft-fix">
-                  <span class="draft-fix-lbl">AI drafted</span>
-                  <span class="draft-fix-val">Re-engage nudge</span>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-                  <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
-                  <button class="btn-edit"
-                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
-                    aria-label="Review intervention for Marcus T.">Review</button>
-                </div>
+                <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
+                <button class="btn-edit"
+                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
+                  aria-label="Review intervention for Marcus T.">Review</button>
               </div>
             </div>
             <div class="draft-skipped-state">
@@ -271,16 +259,10 @@
                 </div>
               </div>
               <div class="draft-actions">
-                <div class="draft-fix">
-                  <span class="draft-fix-lbl">AI drafted</span>
-                  <span class="draft-fix-val">Recovery deload</span>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Aman Khanna">Skip</button>
-                  <button class="btn-edit"
-                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
-                    aria-label="Review deload plan for Aman Khanna">Review</button>
-                </div>
+                <button class="btn-skip" type="button" aria-label="Skip deload plan for Aman Khanna">Skip</button>
+                <button class="btn-edit"
+                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
+                  aria-label="Review deload plan for Aman Khanna">Review</button>
               </div>
             </div>
             <div class="draft-skipped-state">
@@ -370,6 +352,8 @@
                   <button class="sort-item type-item" data-type="weight-loss">Weight Loss</button>
                   <button class="sort-item type-item" data-type="performance">Performance</button>
                   <button class="sort-item type-item" data-type="nutrition">Nutrition</button>
+                  <button class="sort-item type-item" data-type="hypertension">Hypertension</button>
+                  <button class="sort-item type-item" data-type="diabetes">Diabetes</button>
                 </div>
               </div>
             </div>
@@ -603,6 +587,88 @@
               <div class="client-card-footer">
                 <span>Active 6h ago</span>
                 <span style="color: var(--ok); font-weight: 600;">Steady</span>
+              </div>
+            </div>
+
+            <!-- Raj M -->
+            <div class="client-card" data-client="raj-m" data-risk="high" data-recency="1" data-type="hypertension"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=raj-m'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">RM</div>
+                <div>
+                  <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>Raj M.</span>
+                    <span class="care-badge care-badge--sm" data-care="hypertension"><span class="care-badge-ico" aria-hidden="true">❤</span>Hypertension</span>
+                  </div>
+                  <div class="client-card-program">Hypertension · Stage 1</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">Elevated</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Meds Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 86%;"></div>
+                    </div>
+                    <span>86%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Sodium Adherence</span>
+                    <span>62%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Cuff Readings</span>
+                    <span>148/94 Latest · 142/90 Avg</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 1h ago</span>
+                <span style="color: var(--bad); font-weight: 600;">BP Above Target</span>
+              </div>
+            </div>
+
+            <!-- Lena P -->
+            <div class="client-card" data-client="lena-p" data-risk="med" data-recency="0.3" data-type="diabetes"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=lena-p'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">LP</div>
+                <div>
+                  <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>Lena P.</span>
+                    <span class="care-badge care-badge--sm" data-care="diabetes"><span class="care-badge-ico" aria-hidden="true">🩸</span>Diabetes</span>
+                  </div>
+                  <div class="client-card-program">Type 2 Diabetes · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Watch</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Meds Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 92%;"></div>
+                    </div>
+                    <span>92%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Time In Range</span>
+                    <span>54%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>CGM Readings</span>
+                    <span>168 Latest · 162 Avg</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 20m ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Low Time-In-Range</span>
               </div>
             </div>
           </div>
@@ -910,39 +976,31 @@
         });
       }
 
-      drafts.forEach((draft) => {
-        // Card-level click
-        draft.addEventListener('click', (e) => {
-          const undoBtn = e.target.closest('.btn-undo');
-          const skipBtn = e.target.closest('.btn-skip');
-
-          // If clicked while skipped, ignore unless it is the Undo button
-          if (draft.classList.contains('is-skipped')) {
-            if (undoBtn) {
-              e.stopPropagation();
-              draft.classList.remove('is-skipped');
-              updateAlertCount();
-            }
-            return;
-          }
-
-          // If clicking "Skip" button, trigger skip state
-          if (skipBtn) {
-            e.stopPropagation();
+      // Bind Skip buttons directly
+      document.querySelectorAll('.btn-skip').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const draft = btn.closest('.draft');
+          if (draft) {
             draft.classList.add('is-skipped');
             updateAlertCount();
-            return;
           }
-
-          // Navigate for click on body or "Review" button
-          const name = draft.getAttribute('data-name') || '';
-          const tab = draft.getAttribute('data-tab') || 'plan';
-          let clientKey = 'sarah-k';
-          if (name.includes('Marcus')) clientKey = 'marcus-t';
-          if (name.includes('Aman')) clientKey = 'aman-khanna';
-          window.location.href = `reco-card.html?client=${clientKey}&tab=${tab}`;
         });
+      });
 
+      // Bind Undo buttons directly
+      document.querySelectorAll('.btn-undo').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const draft = btn.closest('.draft');
+          if (draft) {
+            draft.classList.remove('is-skipped');
+            updateAlertCount();
+          }
+        });
+      });
+
+      drafts.forEach((draft) => {
         // Keydown handler for accessibility Focus Routing
         draft.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -1765,10 +1823,13 @@
       const sidebarToggle = document.getElementById('sidebar-toggle');
 
       if (sidebarToggle && sidebar) {
-        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        // Collapsed by default; only expanded if the user explicitly expanded it.
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') !== 'false';
         if (isCollapsed) {
           sidebar.classList.add('collapsed');
           sidebarToggle.setAttribute('title', 'Expand Sidebar');
+        } else {
+          sidebarToggle.setAttribute('title', 'Collapse Sidebar');
         }
 
         sidebarToggle.addEventListener('click', () => {
@@ -1795,8 +1856,7 @@
       const filterGroup = document.getElementById('roster-modal-filters');
       if (!overlay || !openBtn) return;
 
-      // The six clients with real detail-page keys, plus the wider roster so the
-      // modal reflects the 142-member book the dashboard reports.
+      // The eight clients with real detail-page keys, plus the wider roster so the
       const roster = [
         { name: 'Sarah K.', program: 'Half-Marathon · Wk 8', type: 'endurance', hrv: 18, sleep: 4.2, rhr: 74, steps: 3420, risk: 'high', last: '2h ago', key: 'sarah-k' },
         { name: 'Marcus T.', program: 'Strength · Wk 6', type: 'strength', hrv: 32, sleep: 6.2, rhr: 68, steps: 5100, risk: 'high', last: '4d ago', key: 'marcus-t' },
@@ -1804,6 +1864,8 @@
         { name: 'Meera Joshi', program: 'Nutrition · Wk 6', type: 'weight-loss', hrv: 68, sleep: 7.8, rhr: 56, steps: 11200, risk: 'med', last: '5h ago', key: 'meera-joshi' },
         { name: 'Priya I.', program: 'Performance · Wk 6', type: 'performance', hrv: 71, sleep: 7.8, rhr: 52, steps: 13400, risk: 'low', last: '10m ago', key: 'priya-i' },
         { name: 'David L.', program: 'Base Phase · Wk 4', type: 'nutrition', hrv: 65, sleep: 7.2, rhr: 58, steps: 10500, risk: 'low', last: '6h ago', key: 'david-l' },
+        { name: 'Raj M.', program: 'Hypertension · Stage 1', type: 'hypertension', hrv: 0, sleep: 0, rhr: 0, steps: 6200, risk: 'high', last: '1h ago', key: 'raj-m', bp: '148/94' },
+        { name: 'Lena P.', program: 'Type 2 Diabetes · Wk 6', type: 'diabetes', hrv: 0, sleep: 0, rhr: 0, steps: 5800, risk: 'med', last: '20m ago', key: 'lena-p', glucose: 168 },
         { name: 'Elena R.', program: 'Peak Volume · Wk 12', type: 'strength', hrv: 74, sleep: 8.0, rhr: 54, steps: 12800, risk: 'low', last: '3h ago', key: 'priya-i' },
         { name: 'Jordan M.', program: 'Recovery · Wk 2', type: 'performance', hrv: 48, sleep: 5.8, rhr: 65, steps: 8200, risk: 'med', last: '2d ago', key: 'david-l' },
         { name: 'Tariq K.', program: 'Conditioning · Wk 9', type: 'endurance', hrv: 80, sleep: 7.5, rhr: 50, steps: 14100, risk: 'low', last: '8h ago', key: 'priya-i' },
@@ -1843,36 +1905,90 @@
         tableBody.innerHTML = matches.map((c, i) => {
           const s = statusMeta[c.risk];
           const av = avClasses[i % avClasses.length];
+          
+          let vitalsSummaryHtml = '';
+          let tooltipHtml = '';
+          if (c.type === 'hypertension') {
+            vitalsSummaryHtml = `<span class="vitals-summary" style="color: var(--bad); font-weight: 600;">${c.bp || '148/94'} BP</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Hypertension Vitals</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Cuff ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Latest BP</span>
+                <span class="tooltip-row-val text-red">${c.bp || '148/94'}</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">7-day avg</span>
+                <span class="tooltip-row-val text-amber">142/90</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          } else if (c.type === 'diabetes') {
+            vitalsSummaryHtml = `<span class="vitals-summary" style="color: var(--bad); font-weight: 600;">${c.glucose || '168'} mg/dL</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Diabetes Vitals</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">CGM ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Latest Glucose</span>
+                <span class="tooltip-row-val text-red">${c.glucose || '168'} mg/dL</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Time in Range</span>
+                <span class="tooltip-row-val text-amber">54%</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          } else {
+            vitalsSummaryHtml = `<span class="vitals-summary">${c.hrv}ms / ${c.sleep}h</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Biometric Sync</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Live ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">HRV (7d Avg)</span>
+                <span class="tooltip-row-val ${c.hrv < 40 ? 'text-red' : c.hrv < 60 ? 'text-amber' : 'text-green'}">${c.hrv} ms</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Sleep Duration</span>
+                <span class="tooltip-row-val ${c.sleep < 6 ? 'text-red' : c.sleep < 7 ? 'text-amber' : 'text-green'}">${c.sleep}h</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Resting Heart Rate</span>
+                <span class="tooltip-row-val">${c.rhr} bpm</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          }
+
+          const careBadge = c.type === 'hypertension' || c.type === 'diabetes' 
+            ? ` <span class="care-badge care-badge--sm" data-care="${c.type}"><span class="care-badge-ico">${c.type === 'hypertension' ? '❤' : '🩸'}</span>${c.type === 'hypertension' ? 'Hypertension' : 'Diabetes'}</span>`
+            : '';
+
           return `
             <div class="roster-modal-row" role="row" data-key="${c.key}" tabindex="0">
               <span class="rmr-member" role="cell">
                 <span class="roster-modal-avatar ${av}" data-name="${c.name}">${initials(c.name)}</span>
-                <span class="rmr-name">${c.name}</span>
+                <span class="rmr-name">${c.name}${careBadge}</span>
               </span>
               <span class="rmr-program" role="cell">${c.program}</span>
               <span class="rmr-vitals" role="cell">
-                <span class="vitals-summary">${c.hrv}ms / ${c.sleep}h</span>
+                ${vitalsSummaryHtml}
                 <div class="vitals-tooltip" role="tooltip">
-                  <div class="tooltip-header">
-                    <span>Biometric Sync</span>
-                    <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Live ⚡</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-row-lbl">HRV (7d Avg)</span>
-                    <span class="tooltip-row-val ${c.hrv < 40 ? 'text-red' : c.hrv < 60 ? 'text-amber' : 'text-green'}">${c.hrv} ms</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-row-lbl">Sleep Duration</span>
-                    <span class="tooltip-row-val ${c.sleep < 6 ? 'text-red' : c.sleep < 7 ? 'text-amber' : 'text-green'}">${c.sleep}h</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-row-lbl">Resting Heart Rate</span>
-                    <span class="tooltip-row-val">${c.rhr} bpm</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-row-lbl">Daily Steps</span>
-                    <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
-                  </div>
+                  ${tooltipHtml}
                 </div>
               </span>
               <span class="rmr-status" role="cell">

@@ -499,8 +499,8 @@
     }
     .bio-dial-val {
       font-family: var(--font-geist);
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 500;
       color: var(--accent-deep);
       margin-top: 4px;
     }
@@ -877,8 +877,8 @@
           <!-- TAB 2: Biometric Data Workspace -->
           <div class="subtab-content-panel" id="pane-biometrics">
             <div class="detail-card">
-              <div class="detail-card-title">Autonomic and Recovery Vitals</div>
-              <div class="biometric-dials-row">
+              <div class="detail-card-title" id="bio-dials-title">Autonomic and Recovery Vitals</div>
+              <div class="biometric-dials-row" id="biometric-dials-container">
                 <div class="bio-dial-card">
                   <span class="bio-dial-val" id="bio-val-hrv">72 ms</span>
                   <span class="bio-dial-name">HRV (7d Avg)</span>
@@ -914,8 +914,8 @@
           <!-- TAB 3: Nutrition Plan Workspace -->
           <div class="subtab-content-panel" id="pane-nutrition">
             <div class="detail-card">
-              <div class="detail-card-title">Daily Nutrition &amp; Macronutrient Target Ranges</div>
-              <div class="nutrition-macros-row">
+              <div class="detail-card-title" id="nutrition-target-title">Daily Nutrition &amp; Macronutrient Target Ranges</div>
+              <div class="nutrition-macros-row" id="nutrition-macros-container">
                 <div class="macro-bar-container">
                   <div class="macro-label-row">
                     <span>Protein</span>
@@ -1276,6 +1276,96 @@
           { name: "Sat", type: "Aerobic Capacity", detail: "10 km progressive pace", edited: false },
           { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
         ]
+      },
+      'raj-m': {
+        name: 'Raj M.',
+        program: 'Hypertension · Stage 1',
+        type: 'hypertension',
+        careType: 'hypertension',
+        risk: 'high',
+        recovery: '142/90',
+        adherence: '86%',
+        active: '1h ago',
+        hrv: 'N/A',
+        sleep: 'N/A',
+        rhr: 'N/A',
+        completion: '86%',
+        macroProt: 'N/A',
+        macroProtPct: '0%',
+        macroCarb: 'N/A',
+        macroCarbPct: '0%',
+        macroFat: 'N/A',
+        macroFatPct: '0%',
+        calories: 'N/A',
+        whyContent: '⚠ Raj\'s BP has averaged 142/90 with today at 148/94. Sodium is over target most days and he missed 2 doses this week.',
+        ambientIcon: '⚠',
+        ambientClass: 'high-risk',
+        schedulePhase: 'Hypertension Clinical Support Phase',
+        weekPlan: [
+          { name: "Mon", type: "Morning + evening BP", detail: "Log both readings", edited: false },
+          { name: "Tue", type: "30 min walk", detail: "Brisk, post-dinner", edited: false },
+          { name: "Wed", type: "Morning + evening BP", detail: "Log both readings", edited: false },
+          { name: "Thu", type: "30 min walk", detail: "Brisk, post-dinner", edited: false },
+          { name: "Fri", type: "Morning + evening BP", detail: "Log both readings", edited: false },
+          { name: "Sat", type: "Recheck + review", detail: "Compare to target", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ],
+        chatHistory: [
+          { sender: "system-zora", text: "Zora detected: BP 148/94, above the 140/90 target, sodium over range." },
+          { sender: "coach", text: "Hi Raj, readings are up a bit and I saw two missed doses. Let's tighten sodium and recheck in 3 days." },
+          { sender: "client", text: "Got it. Weekend takeout was probably the salt. I'll be stricter and set a reminder for the meds." }
+        ],
+        careDials: [
+          { name: "Systolic", value: "148", unit: "mmHg", pct: 74, state: "bad",  why: "above 140 target" },
+          { name: "Diastolic", value: "94", unit: "mmHg", pct: 80, state: "bad",  why: "above 90 target" },
+          { name: "Sodium", value: "62", unit: "%", pct: 62, state: "warn", why: "over 1.5 g most days" },
+          { name: "Meds", value: "86", unit: "%", pct: 86, state: "ok",   why: "2 missed this week" }
+        ]
+      },
+      'lena-p': {
+        name: 'Lena P.',
+        program: 'Type 2 Diabetes · Wk 6',
+        type: 'diabetes',
+        careType: 'diabetes',
+        risk: 'med',
+        recovery: '54%',
+        adherence: '92%',
+        active: '20m ago',
+        hrv: 'N/A',
+        sleep: 'N/A',
+        rhr: 'N/A',
+        completion: '92%',
+        macroProt: 'N/A',
+        macroProtPct: '0%',
+        macroCarb: 'N/A',
+        macroCarbPct: '0%',
+        macroFat: 'N/A',
+        macroFatPct: '0%',
+        calories: 'N/A',
+        whyContent: '⚠ Lena\'s average glucose is 162 mg/dL with time-in-range at 54% against a 70% target. The pattern points to post-dinner spikes.',
+        ambientIcon: '⚠',
+        ambientClass: 'high-risk',
+        schedulePhase: 'Diabetes Clinical Support Phase',
+        weekPlan: [
+          { name: "Mon", type: "Fasting + post-meal glucose", detail: "Log 4 readings", edited: false },
+          { name: "Tue", type: "15 min post-dinner walk", detail: "Blunt the evening spike", edited: false },
+          { name: "Wed", type: "Fasting + post-meal glucose", detail: "Log 4 readings", edited: false },
+          { name: "Thu", type: "15 min post-dinner walk", detail: "Blunt the evening spike", edited: false },
+          { name: "Fri", type: "Fasting + post-meal glucose", detail: "Log 4 readings", edited: false },
+          { name: "Sat", type: "Review week + adjust carbs", detail: "Shift carbs earlier", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest day", edited: false }
+        ],
+        chatHistory: [
+          { sender: "system-zora", text: "Zora detected: avg glucose 162 mg/dL, time-in-range 54%, post-dinner spikes." },
+          { sender: "coach", text: "Hi Lena, your evenings are spiking. Let's move carbs earlier and add a short walk after dinner this week." },
+          { sender: "client", text: "That makes sense, dinner is my biggest meal. I can do a walk after." }
+        ],
+        careDials: [
+          { name: "Avg glucose", value: "162", unit: "mg/dL", pct: 68, state: "bad",  why: "above 140 target" },
+          { name: "Time in range", value: "54", unit: "%", pct: 54, state: "warn", why: "target is 70%" },
+          { name: "Variability", value: "38", unit: "%", pct: 62, state: "warn", why: "post-meal spikes" },
+          { name: "Meds", value: "92", unit: "%", pct: 92, state: "ok",   why: "1 missed this week" }
+        ]
       }
     };
 
@@ -1376,6 +1466,13 @@
           if (client.risk === 'high') statusClass = 'status-red';
           else if (client.risk === 'med') statusClass = 'status-amber';
 
+          let badgeHtml = '';
+          if (client.careType && client.careType !== 'fitness') {
+            const ico = client.careType === 'hypertension' ? '❤️' : '🩸';
+            const label = client.careType === 'hypertension' ? 'Hypertension' : 'Diabetes';
+            badgeHtml = ` <span class="care-badge care-badge--sm" data-care="${client.careType}"><span class="care-badge-ico">${ico}</span> ${label}</span>`;
+          }
+
           const card = document.createElement('div');
           card.className = `roster-item-card ${key === currentSelectedClient ? 'active' : ''}`;
           card.setAttribute('data-key', key);
@@ -1385,7 +1482,7 @@
             <div class="roster-item-avatar" data-name="${client.name}">${initials}</div>
             <div class="roster-item-info">
               <div class="roster-item-name-row">
-                <span class="roster-item-name">${client.name}</span>
+                <span class="roster-item-name">${client.name}${badgeHtml}</span>
                 <span class="roster-item-status-dot ${statusClass}"></span>
               </div>
               <div class="roster-item-program">${client.program}</div>
@@ -1435,10 +1532,20 @@
         setTimeout(() => {
           const client = rosterData[key];
           
+          // Set page-wide care type attribute for desaturated background surface tints
+          document.documentElement.setAttribute('data-care', client.careType || 'fitness');
+
           // Render Identity header
           document.getElementById('active-avatar').textContent = client.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
           document.getElementById('active-avatar').setAttribute('data-name', client.name);
-          document.getElementById('active-name').textContent = client.name;
+          
+          let headerBadgeHtml = '';
+          if (client.careType) {
+            const ico = client.careType === 'hypertension' ? '❤️' : client.careType === 'diabetes' ? '🩸' : '🏃';
+            const label = client.careType === 'hypertension' ? 'Hypertension' : client.careType === 'diabetes' ? 'Diabetes' : 'Fitness';
+            headerBadgeHtml = ` <span class="care-badge" data-care="${client.careType}"><span class="care-badge-ico">${ico}</span> ${label}</span>`;
+          }
+          document.getElementById('active-name').innerHTML = client.name + headerBadgeHtml;
           document.getElementById('active-program').textContent = client.program;
           
           document.getElementById('active-adherence').textContent = client.adherence;
@@ -1467,14 +1574,67 @@
             `;
           }).join('');
 
-          // Workspace 2: Biometrics
-          document.getElementById('bio-val-hrv').textContent = client.hrv;
-          document.getElementById('bio-val-sleep').textContent = client.sleep;
-          document.getElementById('bio-val-rhr').textContent = client.rhr;
-          document.getElementById('bio-val-completion').textContent = client.completion;
+          // Workspace 2: Biometrics / Care Dials
+          const dialsTitle = document.getElementById('bio-dials-title');
+          if (dialsTitle) {
+            if (client.careType === 'hypertension') {
+              dialsTitle.textContent = "Cardiovascular & Adherence Vitals";
+            } else if (client.careType === 'diabetes') {
+              dialsTitle.textContent = "Glycemic & Adherence Vitals";
+            } else {
+              dialsTitle.textContent = "Autonomic and Recovery Vitals";
+            }
+          }
+
+          const dialsContainer = document.getElementById('biometric-dials-container');
+          if (dialsContainer) {
+            if (client.careDials) {
+              dialsContainer.innerHTML = client.careDials.map(dial => {
+                let colorClass = 'var(--accent-deep)';
+                if (dial.state === 'bad') colorClass = 'var(--bad)';
+                else if (dial.state === 'warn') colorClass = 'var(--warn)';
+                else if (dial.state === 'ok') colorClass = 'var(--ok)';
+                
+                return `
+                  <div class="bio-dial-card">
+                    <span class="bio-dial-val" style="color: ${colorClass}">${dial.value} <span style="font-size: 11px; font-weight: normal;">${dial.unit}</span></span>
+                    <span class="bio-dial-name">${dial.name}</span>
+                    <span class="bio-dial-sub">${dial.why}</span>
+                  </div>
+                `;
+              }).join('');
+            } else {
+              dialsContainer.innerHTML = `
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-hrv">${client.hrv || 'N/A'}</span>
+                  <span class="bio-dial-name">HRV (7d Avg)</span>
+                  <span class="bio-dial-sub">Healthy baseline</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-sleep">${client.sleep || 'N/A'}</span>
+                  <span class="bio-dial-name">Sleep Score</span>
+                  <span class="bio-dial-sub">Optimal duration</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-rhr">${client.rhr || 'N/A'}</span>
+                  <span class="bio-dial-name">Resting HR</span>
+                  <span class="bio-dial-sub">Stable cardiorespiratory</span>
+                </div>
+                <div class="bio-dial-card">
+                  <span class="bio-dial-val" id="bio-val-completion">${client.completion || 'N/A'}</span>
+                  <span class="bio-dial-name">Workout Done</span>
+                  <span class="bio-dial-sub">Target adherence hit</span>
+                </div>
+              `;
+            }
+          }
           
           let logDescription = `All wearable biometric streams are fully synchronized. Autonomic indices indicate steady progression.`;
-          if (client.risk === 'high') {
+          if (client.careType === 'hypertension') {
+            logDescription = `BP monitoring active. Daily logs indicate elevated systolic pressure during evening hours. Sodium restriction and adherence protocols recommended.`;
+          } else if (client.careType === 'diabetes') {
+            logDescription = `CGM sync active. Patterns reveal post-prandial glycemic excursions following evening carb loads. Short walking windows advised to blunt spikes.`;
+          } else if (client.risk === 'high') {
             logDescription = `⚠ Biometrics show substantial stress signs: Sleep duration dropped below critical thresholds, and HRV displays a sustained downwards trajectory. Injury threat is elevated.`;
           } else if (client.risk === 'med') {
             logDescription = `⚠ Noticeable fluctuation in biometric recovery score. Check-in values suggest transient central nervous system fatigue.`;
@@ -1482,19 +1642,114 @@
           document.getElementById('bio-desc-text').textContent = logDescription;
 
           // Workspace 3: Nutrition
-          document.getElementById('macro-val-prot').textContent = client.macroProt;
-          document.getElementById('macro-fill-prot').style.width = client.macroProtPct;
+          const nutTitle = document.getElementById('nutrition-target-title');
+          const nutContainer = document.getElementById('nutrition-macros-container');
           
-          document.getElementById('macro-val-carb').textContent = client.macroCarb;
-          document.getElementById('macro-fill-carb').style.width = client.macroCarbPct;
-          
-          document.getElementById('macro-val-fat').textContent = client.macroFat;
-          document.getElementById('macro-fill-fat').style.width = client.macroFatPct;
+          if (nutContainer) {
+            if (client.careType === 'hypertension') {
+              if (nutTitle) nutTitle.textContent = "Daily Dietary Mineral & Fluid Targets";
+              nutContainer.innerHTML = `
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Sodium</span>
+                    <span>1,850mg / 1,500mg</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill fat" style="width: 100%; background: var(--bad);"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Potassium</span>
+                    <span>3,100mg / 3,500mg</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill carb" style="width: 88%;"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Fluid Intake</span>
+                    <span>2.8L / 3.2L</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill prot" style="width: 87%;"></div>
+                  </div>
+                </div>
+              `;
+            } else if (client.careType === 'diabetes') {
+              if (nutTitle) nutTitle.textContent = "Daily Glycemic & Fiber Targets";
+              nutContainer.innerHTML = `
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Net Carbohydrates</span>
+                    <span>165g / 150g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill fat" style="width: 100%; background: var(--warn);"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Dietary Fiber</span>
+                    <span>26g / 35g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill carb" style="width: 74%;"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Protein</span>
+                    <span>88g / 90g</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill prot" style="width: 97%;"></div>
+                  </div>
+                </div>
+              `;
+            } else {
+              if (nutTitle) nutTitle.textContent = "Daily Nutrition & Macronutrient Target Ranges";
+              nutContainer.innerHTML = `
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Protein</span>
+                    <span id="macro-val-prot">${client.macroProt || 'N/A'}</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill prot" id="macro-fill-prot" style="width: ${client.macroProtPct || '0%'};"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Carbohydrates</span>
+                    <span id="macro-val-carb">${client.macroCarb || 'N/A'}</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill carb" id="macro-fill-carb" style="width: ${client.macroCarbPct || '0%'};"></div>
+                  </div>
+                </div>
+                <div class="macro-bar-container">
+                  <div class="macro-label-row">
+                    <span>Healthy Fats</span>
+                    <span id="macro-val-fat">${client.macroFat || 'N/A'}</span>
+                  </div>
+                  <div class="macro-progress-track">
+                    <div class="macro-progress-fill fat" id="macro-fill-fat" style="width: ${client.macroFatPct || '0%'};"></div>
+                  </div>
+                </div>
+              `;
+            }
+          }
 
           document.getElementById('nut-cal-budget').textContent = client.calories;
           
           let nutDescription = `Hydration levels consistent. Calorie intake aligned with training workloads.`;
-          if (client.risk === 'high') {
+          if (client.careType === 'hypertension') {
+            nutDescription = `High sodium intake detected. Target under 1,500mg daily to assist with systolic pressure management. Consider salt-substitute options.`;
+          } else if (client.careType === 'diabetes') {
+            nutDescription = `Carbohydrate levels close to limits. Prioritize complex carbs over simple starches and distribute evenly across meals.`;
+          } else if (client.risk === 'high') {
             nutDescription = `⚠ Protein intake has drifted 40g/day under target limits. Suggest nutritional adjustment blocks to mitigate muscle recovery delay.`;
           }
           document.getElementById('nut-desc-text').textContent = nutDescription;
@@ -1749,10 +2004,13 @@
       const sidebarToggle = document.getElementById('sidebar-toggle');
 
       if (sidebarToggle && sidebar) {
-        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        // Collapsed by default; only expanded if the user explicitly expanded it.
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') !== 'false';
         if (isCollapsed) {
           sidebar.classList.add('collapsed');
           sidebarToggle.setAttribute('title', 'Expand Sidebar');
+        } else {
+          sidebarToggle.setAttribute('title', 'Collapse Sidebar');
         }
 
         sidebarToggle.addEventListener('click', () => {

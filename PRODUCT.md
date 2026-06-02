@@ -50,3 +50,12 @@ Deliver an investor-grade, highly convincing clickable mockup showing that a sin
 - `aman-khanna`: Deload Pending (Soreness 8/10, Sleep 58/100, HRV 42ms, Hypertrophy program)
 - `meera-joshi`: Nutrition Drift (Lagging protein, Sleep 78/100, HRV 68ms, Meal prep adjustments)
 - `priya-i`: Optimized State (High performance, Sleep 78/100, HRV 71ms, No adjustments needed)
+- `raj-m`: Hypertension (BP 148/94, sodium overage, 2 missed meds doses, Hypertension care type)
+- `lena-p`: Diabetes (Glucose 168 mg/dL, 54% time-in-range, post-dinner spikes, Diabetes care type)
+
+## Chronic Care Expansion & Care-Type System
+To support clinical coaching, the Console expands beyond fitness into chronic disease support:
+- **🏃 Fitness (Default)**: Focuses on autonomic metrics (HRV, sleep, resting heart rate, workout completion).
+- **❤️ Hypertension**: Tracks blood pressure (systolic/diastolic), daily sodium intake, and medication adherence.
+- **🩸 Diabetes**: Focuses on glycemic control (CGM averages, time-in-range, glycemic variability, and medication adherence).
+Each mode dynamically reskins the console headers, status badges, and vitals readouts, applying a desaturated ambient tint to the page background (Hypertension: Rose; Diabetes: Teal) to orient the coach.
