@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zora Product OS — Growth Agent Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&family=Geist+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css?v=1">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --brand: var(--accent);
+      --brand-tint: var(--accent-soft);
+      --brand-tint-2: color-mix(in oklab, var(--accent) 30%, transparent);
+      --brand-ink: var(--accent-deep);
+      --border: var(--line);
+      --border-2: var(--line);
+      --surface: var(--paper-2);
+      --surface-2: var(--paper-3);
+      --bg: var(--paper);
+      --bg-2: var(--paper-3);
+      --ink-1: var(--ink);
+      --ink-2: var(--ink-2);
+      --ink-3: var(--ink-3);
+      --ink-4: var(--ink-4);
+      --ok-bg: color-mix(in oklab, var(--ok) 12%, transparent);
+      --ok-ink: var(--ok);
+      --bad-bg: color-mix(in oklab, var(--bad) 12%, transparent);
+      --bad-ink: var(--bad);
+      --warn-bg: color-mix(in oklab, var(--warn) 12%, transparent);
+      --warn-ink: var(--warn);
+      
+      /* Lead pipeline stage colors */
+      --stage-lead: var(--accent);
+      --stage-consult: #0284c7;
+      --stage-trial: var(--warn);
+      --stage-expand: var(--ok);
+    }
+
+    .zmain-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .ghead { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
+    .gtitle { font-size:35px; font-weight:800; letter-spacing:-.028em; line-height:1.02; text-wrap:balance; }
+    .gtitle em { color:var(--brand); font-style:normal; }
+    .gsub { font-size:13px; color:var(--ink-3); margin-top:11px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; font-weight:500; letter-spacing:.002em; }
+    .gsub b { color:var(--ink-1); font-weight:700; font-variant-numeric:tabular-nums; }
+    .gsub .live { color:var(--ok-ink); font-weight:700; }
+    .hr-sep { margin:0; border: 0; border-top: 1px solid var(--line); }
+
+    .sec-h { display:flex; align-items:baseline; gap:12px; margin-bottom: 16px; }
+    .sec-h h2 { font-size:21px; font-weight:700; letter-spacing:-.022em; line-height:1.1; position:relative; padding-left:13px; color: var(--ink); }
+    .sec-h h2::before { content:""; position:absolute; left:0; top:.18em; bottom:.16em; width:3px; border-radius:2px; background:var(--brand); }
+    .sec-h .c { color:var(--brand); }
+    .sec-h .hint { margin-left:auto; font-size:10px; color:var(--ink-4); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .sec-h .agent { margin-left:auto; font-size:12px; font-weight:600; color:var(--ink-4); display:flex; align-items:center; gap:6px; }
+    .sec-h .agent svg { width:13px; height:13px; }
+
+    /* topbar sync */
+    .tb-sync { display:inline-flex; align-items:center; gap:7px; margin-left:12px; font-size:11px; font-weight:600; color:var(--ink-4); padding:4px 11px 4px 9px; border:1px solid var(--border); border-radius:99px; background:var(--surface); white-space:nowrap; }
+    .tb-sync .dot { width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px var(--ok-bg); }
+    .tb-sync.syncing { color:var(--warn-ink); }
+    .tb-sync.syncing .dot { background:var(--warn); box-shadow:0 0 0 3px var(--warn-bg); animation:tbpulse 1s ease-in-out infinite; }
+    @keyframes tbpulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* lead pipeline — CRM */
+    .psum { display:flex; align-items:stretch; background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-sm); padding:6px 8px; }
+    .psum .ps-item { padding:10px 20px; display:flex; flex-direction:column; justify-content:center; gap:6px; position:relative; }
+    .psum .ps-item + .ps-item::before { content:''; position:absolute; left:0; top:16%; height:68%; width:1px; background:var(--border); }
+    .psum .ps-top { display:flex; align-items:baseline; gap:8px; }
+    .psum .ps-v { font-family:var(--font-geist-mono, monospace); font-size:22px; font-weight:700; letter-spacing:-.025em; line-height:1; color: var(--ink); }
+    .psum .ps-v.ok { color:var(--ok-ink); }
+    .psum .ps-v.brand { color:var(--brand-ink); }
+    .psum .ps-delta { font-family:var(--font-geist-mono, monospace); font-size:10px; font-weight:700; line-height:1; display:inline-flex; align-items:center; gap:3px; padding:3px 7px; border-radius:99px; white-space:nowrap; }
+    .psum .ps-delta .ar { font-size:8px; line-height:1; }
+    .psum .ps-delta.up { color:var(--ok-ink); background:var(--ok-bg); }
+    .psum .ps-delta.down { color:var(--bad-ink); background:var(--bad-bg); }
+    .psum .ps-l { font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-4); font-weight:700; white-space:nowrap; }
+    .psum .ps-spacer { flex:1; }
+    .psum .ps-legend { align-self:center; display:inline-flex; align-items:center; gap:7px; margin-right:6px; font-size:11px; color:var(--brand-ink); font-weight:700; background:var(--brand-tint); border:1px solid var(--brand-tint-2); padding:6px 12px; border-radius:99px; white-space:nowrap; }
+    .psum .ps-legend svg { width:13px; height:13px; color:var(--brand); }
+    .psum .ps-legend .ld { width:6px; height:6px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 3px var(--brand-tint-2); animation:psLive 2s ease-in-out infinite; }
+    @keyframes psLive { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .board { display:flex; align-items:flex-start; gap: 12px; overflow-x: auto; padding-bottom:4px; }
+    .bcol { flex:1; min-width:250px; display:flex; flex-direction:column; }
+    .bch { display:flex; align-items:center; gap:8px; height:28px; padding:0 3px; }
+    .bch .dot { width:9px; height:9px; border-radius:50%; flex:none; }
+    .bch .bt { font-weight:700; font-size:13.5px; letter-spacing:-.01em; color: var(--ink); }
+    .bch .bn { font-family:var(--font-geist-mono, monospace); font-weight:700; font-size:11px; color:var(--ink-3); background:var(--surface-2); border:1px solid var(--border); border-radius:99px; padding:1px 8px; }
+    .bch .bval { margin-left:auto; font-family:var(--font-geist-mono, monospace); font-size:12px; font-weight:700; color:var(--ink-4); }
+    .blist { display:flex; flex-direction:column; gap:9px; min-height:90px; padding:9px 4px 4px; flex:1; border-radius:12px; transition:background .15s, box-shadow .15s; }
+    .blist.drag-over { background:var(--brand-tint); box-shadow:inset 0 0 0 1.5px var(--brand-tint-2); }
+    .bmore { font-size:12px; font-weight:600; color:var(--ink-4); text-align:center; padding:7px; border:1px dashed var(--border-2); border-radius:8px; margin-top:1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s; }
+    .bmore:hover { color: var(--ink-2); border-color: var(--ink-4); background: var(--surface-2); }
+    .bmore svg { width: 14px; height: 14px; }
+
+    /* connector + conversion rate between columns */
+    .bconn { flex:none; width:34px; align-self:stretch; display:flex; flex-direction:column; align-items:center; padding-top:30px; }
+    .bconn .crate { font-family:var(--font-geist-mono, monospace); font-size:13px; font-weight:700; color:var(--ink-2); }
+    .bconn .carrow { color:var(--ink-5); margin-top:1px; }
+    .bconn .carrow svg { width:16px; height:16px; display:block; }
+    .bconn .clbl { font-size:8px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-5); font-weight:700; margin-top:2px; }
+
+    /* lead card */
+    .lcard { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:11px 12px 10px; box-shadow:var(--shadow-sm); cursor:grab; transition:box-shadow .15s, transform .12s, border-color .15s, opacity .15s; }
+    .lcard:hover { box-shadow:var(--shadow-md); border-color:var(--border-2); }
+    .lcard.dragging { opacity:.22; cursor:grabbing; box-shadow:none; border-color: transparent; background: var(--surface-2); }
+    .lcard .lc-top { display:flex; align-items:flex-start; gap:9px; }
+    .lcard .lc-id { flex:1; min-width:0; }
+    .lcard .lc-nm { font-weight:700; font-size:13px; line-height:1.15; letter-spacing:-.01em; color: var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lcard .lc-src { font-size:10px; color:var(--ink-4); font-weight:600; letter-spacing:.02em; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lcard .lc-score { flex:none; font-family:var(--font-geist-mono, monospace); font-size:11px; font-weight:700; padding:2px 7px 2px 6px; border-radius:99px; display:inline-flex; align-items:center; gap:3px; line-height:1; }
+    .lcard .lc-score::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; opacity:.85; }
+    .score-hi  { background:var(--ok-bg);    color:var(--ok-ink);    border:1px solid transparent; }
+    .score-mid { background:var(--brand-tint); color:var(--brand-ink); border:1px solid var(--brand-tint-2); }
+    .score-lo  { background:var(--surface-2); color:var(--ink-4);     border:1px solid var(--border); }
+    .lcard .lc-goal { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--ink-2); background:var(--surface-2); border:1px solid var(--border); padding:3px 9px; border-radius:99px; }
+    .lcard .lc-goal .gd { width:6px; height:6px; border-radius:2px; flex:none; }
+    .lcard .lc-meta { display:flex; align-items:center; gap:10px; margin-top:11px; padding-top:9px; border-top:1px solid var(--line); }
+    .lcard .lc-days { font-size:10px; color:var(--ink-4); font-weight:600; display:flex; align-items:center; gap:4px; white-space:nowrap; }
+    .lcard .lc-days svg { width:12px; height:12px; flex:none; }
+    .lcard .lc-prob { margin-left:auto; display:flex; align-items:center; gap:6px; }
+    .lcard .lc-prob .pbar { width:32px; height:4px; border-radius:99px; background:var(--bg-2); overflow:hidden; flex:none; }
+    .lcard .lc-prob .pbar i { display:block; height:100%; border-radius:99px; background:var(--brand); }
+    .lcard .lc-prob .pv { font-family:var(--font-geist-mono, monospace); font-size:10px; font-weight:700; color:var(--ink-3); }
+    .lcard.won .lc-prob .pv { color:var(--ok-ink); }
+    .lcard .lc-act { display:flex; gap:5px; margin-top:0; max-height:0; opacity:0; overflow:hidden; transition:max-height .2s var(--ease-out), opacity .16s, margin-top .2s var(--ease-out); }
+    .lcard:hover .lc-act, .lcard:focus-within .lc-act { max-height:40px; opacity:1; margin-top:9px; }
+    .lc-act .qb { flex:1; height:28px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; border:1px solid var(--border-2); background:var(--surface); color:var(--ink-4); transition:all .14s; cursor: pointer; }
+    .lc-act .qb svg { width:14px; height:14px; }
+    .lc-act .qb:hover { color:var(--brand-ink); border-color:var(--brand-tint-2); background:var(--brand-tint); }
+
+    /* lead card tags + status + next action */
+    .lcard .lc-tags { display:flex; align-items:center; gap:6px; margin-top:10px; flex-wrap:wrap; }
+    .lcard .lc-tags .lc-goal { margin-top:0; }
+    .lcard .lc-status { font-size:10px; font-weight:700; letter-spacing:.01em; padding:3px 9px; border-radius:99px; display:inline-flex; align-items:center; gap:5px; line-height:1; }
+    .lcard .lc-status::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .st-new   { background:var(--surface-2);  color:var(--ink-3);     border:1px solid var(--border); }
+    .st-touch { background:var(--brand-tint); color:var(--brand-ink); border:1px solid var(--brand-tint-2); }
+    .st-trial { background:var(--warn-bg);    color:var(--warn-ink);  border:1px solid transparent; }
+    .st-warn  { background:var(--bad-bg);    color:var(--bad-ink);  border:1px solid transparent; }
+    .st-won   { background:var(--ok-bg);      color:var(--ok-ink);    border:1px solid transparent; }
+    .lcard .lc-next { display:flex; align-items:center; gap:7px; margin-top:11px; padding-top:10px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-3); font-weight:600; }
+    .lcard .lc-next .nx-ic { color:var(--brand); display:flex; flex:none; }
+    .lcard .lc-next .nx-ic svg { width:13px; height:13px; }
+    .lcard .lc-next .nx-t { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .lcard .lc-next .nx-t b { color:var(--ink-1); font-weight:700; }
+    .lcard .lc-next .lc-time { margin-left:auto; font-size:10px; color:var(--ink-4); font-weight:600; white-space:nowrap; flex:none; padding-left:6px; }
+    .lcard.won .lc-next .lc-time { color:var(--ok-ink); font-family:var(--font-geist-mono, monospace); }
+
+    /* revenue operations */
+    .rcc { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .rcard2 { background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-sm); padding:16px 17px; display:flex; flex-direction:column; }
+    .rcard2 .rl { font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-4); font-weight:700; }
+    .rcard2 .rv { font-family:var(--font-geist-mono, monospace); font-size:26px; font-weight:700; letter-spacing:-.02em; margin-top:10px; line-height:1; color: var(--ink); }
+    .rcard2 .rv small { font-size:13px; color:var(--ink-4); font-weight:600; letter-spacing:0; }
+    .rcard2 .rv .up { color:var(--ok-ink); }
+    .rcard2 .rs { font-size:12px; color:var(--ink-4); margin-top:8px; line-height:1.4; }
+    .rcard2 .ra { margin-top:auto; padding-top:14px; }
+    .rcard2 .ra a { font-size:12px; font-weight:700; color:var(--brand-ink); display:inline-flex; align-items:center; gap:5px; cursor:pointer; transition:gap .15s; }
+    .rcard2 .ra a:hover { gap:9px; }
+    .rcard2 .ra a svg { width:13px; height:13px; }
+    .rcard2.risk .rv { color:var(--bad-ink); }
+    .rcard2.exp .rv { color:var(--ok-ink); }
+    .rcard2.fc .rv { color:var(--ok-ink); }
+
+    /* revenue intelligence */
+    .rev { display:grid; grid-template-columns:1.55fr 1fr; gap:16px; align-items:stretch; }
+    .rev-forecast { background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-sm); padding:20px 22px 16px; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+    .rev-forecast::before { content:""; position:absolute; inset:0 0 auto 0; height:72px; background:linear-gradient(180deg,var(--brand-tint),transparent); opacity:.6; pointer-events:none; }
+    .rev-fh { display:flex; align-items:center; gap:12px; position:relative; }
+    .rev-fh .fl { font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-4); font-weight:700; }
+    .rev-fh .conf-chip { margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; color:var(--ok-ink); background:var(--ok-bg); border:1px solid transparent; padding:4px 10px; border-radius:99px; }
+    .rev-fh .conf-chip .dot { width:6px; height:6px; border-radius:50%; background:var(--ok); }
+    .rev-val { display:flex; align-items:baseline; gap:11px; margin-top:10px; position:relative; }
+    .rev-val .v { font-family:var(--font-geist-mono, monospace); font-size:40px; font-weight:700; letter-spacing:-.03em; line-height:1; color: var(--ink); }
+    .rev-val .delta { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-geist-mono, monospace); font-size:13px; font-weight:700; color:var(--ok-ink); background:var(--ok-bg); border:1px solid transparent; padding:3px 9px; border-radius:99px; }
+    .rev-sub { font-size:12px; color:var(--ink-4); margin-top:7px; position:relative; }
+    .rev-chart { margin-top:6px; flex:1; position:relative; }
+    .rev-chart svg { width:100%; height:auto; display:block; }
+    .rev-chart .axl { fill:var(--ink-5); font:600 9px/1 var(--font-geist-mono, monospace); letter-spacing:.05em; }
+    .rev-chart .axl.now { fill:var(--ink-4); }
+    .rev-chart .plbl { fill:var(--ok-ink); font:700 12px/1 var(--font-geist-mono, monospace); letter-spacing:-.01em; }
+    .rev-legend { display:flex; align-items:center; gap:16px; margin-top:6px; padding-top:11px; border-top:1px solid var(--line); font-size:10px; color:var(--ink-4); font-weight:600; }
+    .rev-legend .lg { display:inline-flex; align-items:center; gap:6px; }
+    .rev-legend .lg .ln { width:15px; border-top:2.5px solid var(--brand); border-radius:2px; }
+    .rev-legend .lg .ln.proj { border-top-style:dashed; border-color:var(--ok); }
+    .rev-legend .now { margin-left:auto; }
+    .rev-legend .now b { color:var(--ink-2); font-family:var(--font-geist-mono, monospace); font-weight:700; }
+
+    .rev-drivers { display:flex; flex-direction:column; gap:14px; }
+    .drv { flex:1; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-sm); padding:15px 16px 14px; cursor:pointer; transition:box-shadow .16s, transform .16s, border-color .16s; text-align:left; }
+    .drv:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); border-color:var(--border-2); }
+    .drv-head { display:flex; align-items:center; gap:11px; }
+    .drv-ic { width:34px; height:34px; flex:none; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+    .drv-ic svg { width:17px; height:17px; }
+    .drv.up .drv-ic { background:var(--ok-bg); color:var(--ok-ink); }
+    .drv.exp .drv-ic { background:color-mix(in oklab, #0f766e 16%, var(--surface)); color:#0f766e; }
+    .drv.risk .drv-ic { background:var(--bad-bg); color:var(--bad-ink); }
+    .drv-tt { flex:1; min-width:0; }
+    .drv-t { display:block; font-weight:700; font-size:13.5px; color: var(--ink); letter-spacing:-.012em; }
+    .drv-s { display:block; font-size:11px; color:var(--ink-4); margin-top:1px; font-weight:600; }
+    .drv-v { font-family:var(--font-geist-mono, monospace); font-weight:700; font-size:21px; letter-spacing:-.028em; flex:none; line-height:1; }
+    .drv.up .drv-v { color:var(--ok-ink); } .drv.exp .drv-v { color:#0f766e; } .drv.risk .drv-v { color:var(--bad-ink); }
+
+    /* contribution bar */
+    .drv-bar { margin-top:auto; padding-top:14px; }
+    .drv-bar .bl { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+    .drv-bar .bl .bk { font-size:9px; font-weight:700; color:var(--ink-5); letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+    .drv-bar .bl .bp { font-family:var(--font-geist-mono, monospace); font-size:12px; font-weight:700; color:var(--ink-2); letter-spacing:-.01em; }
+    .drv-track { height:5px; border-radius:99px; background:var(--bg-2); overflow:hidden; }
+    .drv-track i { display:block; height:100%; border-radius:99px; }
+    .drv.up .drv-track i { background:var(--ok); }
+    .drv.exp .drv-track i { background:#0d9488; }
+    .drv.risk .drv-track i { background:var(--bad); }
+
+    /* footer mini-stats */
+    .drv-foot { display:flex; margin-top:13px; padding-top:12px; border-top:1px solid var(--line); }
+    .drv-fact { flex:1; min-width:0; padding:0 12px; position:relative; }
+    .drv-fact:first-child { padding-left:0; }
+    .drv-fact:last-child { padding-right:0; }
+    .drv-fact + .drv-fact::before { content:''; position:absolute; left:0; top:1px; bottom:1px; width:1px; background:var(--border); }
+    .drv-fact .fv { font-family:var(--font-geist-mono, monospace); font-size:14px; font-weight:700; letter-spacing:-.015em; color:var(--ink-1); line-height:1.1; white-space:nowrap; }
+    .drv-fact .fl { font-size:9px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-5); font-weight:700; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .rev-vitals { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:4px; }
+    .vtile { background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-sm); padding:15px 16px; }
+    .vtile .vl { font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-4); font-weight:700; }
+    .vtile .vv { font-family:var(--font-geist-mono, monospace); font-size:23px; font-weight:700; letter-spacing:-.028em; margin-top:9px; line-height:1; color: var(--ink); }
+    .vtile .vd { font-size:12px; margin-top:7px; color:var(--ink-4); font-weight:600; }
+    .vtile .vd.up { color:var(--ok-ink); }
+
+    @media (max-width:1150px){
+      .bcol { min-width:220px; }
+      .rev { grid-template-columns: 1fr; }
+      .rev-drivers { flex-direction: row; gap: 12px; }
+      .rev-vitals { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width:680px) {
+      .rev-drivers { flex-direction: column; }
+      .drv-s { display: none; }
+    }
+
+    /* ===== Shell primitives (not in design-tokens.css) ===== */
+    .zoverlay { position:fixed; inset:0; background:rgba(28,18,38,.34); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity .2s; z-index:2000; }
+    .zoverlay.open { opacity:1; pointer-events:auto; }
+
+    .zdrawer { position:fixed; top:0; right:0; bottom:0; width:460px; max-width:calc(100vw - 24px); background:var(--paper-2); border-left:1px solid var(--line); box-shadow:-20px 0 54px rgba(28,18,38,.22); display:flex; flex-direction:column; transform:translateX(106%); transition:transform .34s cubic-bezier(0.23,1,0.32,1); z-index:2200; }
+    .zdrawer.open { transform:none; }
+    .zdr-head { padding:18px 20px 16px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:13px; }
+    .zdr-head .hi { flex:1; min-width:0; }
+    .zdr-head .hn { font-weight:700; font-size:17px; letter-spacing:-.01em; color:var(--ink); }
+    .zdr-head .hp { font-size:11px; color:var(--ink-4); margin-top:3px; }
+    .zdr-head .badges { display:flex; gap:7px; margin-top:10px; flex-wrap:wrap; }
+    .zdr-x { width:30px; height:30px; flex:none; border-radius:8px; border:1px solid var(--line); background:var(--paper-2); color:var(--ink-4); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:color .14s,border-color .14s; }
+    .zdr-x:hover { color:var(--bad); border-color:rgba(192,57,43,.35); }
+    .zdr-x svg { width:16px; height:16px; }
+    .zdr-body { flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:18px; }
+    .zdr-sec .ol { font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--ink-4); margin-bottom:10px; }
+    .zdr-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px 16px; }
+    .zdr-vit { display:flex; flex-direction:column; gap:10px; }
+    .zdr-vrow { display:flex; align-items:center; gap:12px; font-size:13px; }
+    .zdr-note { font-size:13px; color:var(--ink-2); line-height:1.55; background:var(--paper-3); border:1px solid var(--line); border-radius:10px; padding:13px 15px; }
+    .zdr-note b { color:var(--accent-deep); }
+    .zdr-foot { border-top:1px solid var(--line); padding:14px 20px; display:flex; flex-direction:column; gap:8px; }
+    .zdr-foot .frow { display:flex; gap:8px; }
+    .zdr-foot .frow .btn-primary,
+    .zdr-foot .frow .btn-secondary { flex:1; }
+
+    .zflow-ov { position:fixed; inset:0; background:rgba(28,18,38,.42); backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .22s; z-index:5000; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .zflow-ov.open { opacity:1; pointer-events:auto; }
+    .zflow { width:424px; max-width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:14px; box-shadow:0 16px 40px rgba(26,26,46,.18),0 2px 8px rgba(26,26,46,.08); transform:translateY(12px) scale(.98); opacity:0; transition:transform .28s cubic-bezier(0.23,1,0.32,1),opacity .2s; overflow:hidden; }
+    .zflow-ov.open .zflow { transform:none; opacity:1; }
+    .zflow-h { display:flex; align-items:center; gap:13px; padding:18px 20px; border-bottom:1px solid var(--line); }
+    .zflow-ic { width:42px; height:42px; flex:none; border-radius:12px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; transition:background .3s,color .3s; }
+    .zflow-ic svg { width:21px; height:21px; }
+    .zflow-ic.ok { background:var(--ok-bg); color:var(--ok-ink); }
+    .zflow-h .zflow-t { font-weight:700; font-size:15px; letter-spacing:-.01em; color:var(--ink); }
+    .zflow-h .zflow-s { font-size:11px; color:var(--ink-4); margin-top:2px; }
+    .zflow-b { padding:14px 20px; display:flex; flex-direction:column; }
+    .zflow-f { padding:13px 20px; border-top:1px solid var(--line); display:flex; align-items:center; gap:8px; background:var(--paper-3); }
+    .zflow-dl { flex:1; font-size:12px; color:var(--ok-ink); font-weight:600; display:flex; align-items:center; gap:7px; opacity:0; transition:opacity .3s; }
+    .zflow-dl svg { width:14px; height:14px; }
+    .zflow-dl.show { opacity:1; }
+    .zflow-f .btn[disabled] { opacity:.55; pointer-events:none; }
+
+    /* ===== Lead action panels ===== */
+    /* Bring shell.css zdrawer / zflow-ov variables into growth scope */
+    :root {
+      --border-2: var(--line);
+      --surface: var(--paper-2);
+      --surface-2: var(--paper-3);
+      --border: var(--line);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --r-md: 10px;
+      --r-lg: 14px;
+      --r-xl: 18px;
+      --r-pill: 999px;
+      --t-2xs: 10px;
+      --t-xs: 11px;
+      --t-sm: 13px;
+      --t-h2: 17px;
+      --t-h3: 15px;
+      --sh-pop: 0 16px 40px rgba(26,26,46,.18), 0 2px 8px rgba(26,26,46,.08);
+      --bad-ring: rgba(192,57,43,.35);
+      --brand-strong: var(--accent-deep);
+      --brand-soft: var(--accent-soft);
+      --brand-deep: var(--accent-deep);
+    }
+
+    /* Consult slot picker */
+    .consult-slot {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      border: 1.5px solid var(--border); background: var(--surface);
+      cursor: pointer; text-align: left; width: 100%;
+      transition: border-color 140ms var(--ease-out), background 140ms var(--ease-out), box-shadow 140ms;
+      font-family: var(--font-geist, sans-serif);
+    }
+    .consult-slot:hover { border-color: var(--brand-tint-2); background: var(--brand-tint); }
+    .consult-slot.is-selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 12%, transparent); }
+    .consult-slot .cs-check {
+      width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border-2);
+      flex: none; display: flex; align-items: center; justify-content: center;
+      transition: background 140ms, border-color 140ms;
+    }
+    .consult-slot.is-selected .cs-check { background: var(--accent); border-color: var(--accent); }
+    .consult-slot.is-selected .cs-check svg { opacity: 1; }
+    .consult-slot .cs-check svg { width: 10px; height: 10px; color: #fff; opacity: 0; stroke-width: 3; }
+    .consult-slot .cs-body { flex: 1; min-width: 0; }
+    .consult-slot .cs-day { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+    .consult-slot .cs-time { font-size: 11px; color: var(--ink-3); font-weight: 600; margin-top: 2px; }
+    .consult-slot .cs-tag { font-size: 10px; font-weight: 700; color: var(--ok-ink); background: var(--ok-bg); padding: 2px 8px; border-radius: 99px; flex: none; }
+    .consult-slot .cs-tag.alt { color: var(--brand-ink); background: var(--brand-tint); }
+
+    /* Profile stat grid in drawer */
+    .zdr-grid .gk { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-4); font-weight: 700; }
+    .zdr-grid .gv { font-size: 13px; font-weight: 700; color: var(--ink); margin-top: 3px; }
+
+    /* Timeline items */
+    .zdr-vrow .vk { color: var(--ink-3); width: 108px; font-size: 12px; }
+    .zdr-vrow .vv { font-weight: 700; color: var(--ink); font-size: 12px; }
+    .zdr-vrow .vv.ok { color: var(--ok-ink); }
+    .zdr-vrow .vv.warn { color: var(--warn); }
+
+    /* Send button loading state */
+    #contact-send-btn.is-sending { opacity: .75; pointer-events: none; }
+    #contact-send-btn.is-sent { background: var(--ok); border-color: var(--ok); }
+  </style>
+</head>
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-mark">Z</div>
+        <div class="brand-text">
+          <div class="brand-name">ZORA</div>
+          <div class="brand-sub">COACH OS</div>
+        </div>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle"
+        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.25s;"
+        title="Expand Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item" onclick="window.location.href='index.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item active" onclick="window.location.href='growth.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        <span>Growth Agent</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='copilot.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>Ask Zora</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='settings.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      <div class="coach-card">
+        <div class="avatar text-avatar" data-name="Jordan Hayes">JH</div>
+        <div class="coach-info">
+          <div class="coach-name">Jordan Hayes</div>
+          <div class="coach-meta">142 active members</div>
+        </div>
+      </div>
+      <button id="theme-toggle" class="sidebar-theme-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <span>Theme</span>
+      </button>
+      <button onclick="window.location.href='login.html'" class="sidebar-logout-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+    
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs">
+        <strong>Growth Agent</strong>
+        <span class="sep">/</span>
+        <span id="crumb-tail">Revenue Workspace</span>
+        <span class="tb-sync" id="tbSync"><span class="dot"></span>Synced 2m ago</span>
+      </div>
+
+      <button onclick="window.location.href='index.html?roster=open'" style="margin-right: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; color: var(--ink-3); font-family: var(--font-geist); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-4);">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        <span>Payments Due</span>
+      </button>
+
+      <input class="search" id="topbar-search-trigger" placeholder="Search leads, clients, revenue..." readonly
+        style="cursor:pointer;" />
+
+      <button class="icon-btn" id="tbRefresh" title="Refresh revenue data">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"></path>
+        </svg>
+      </button>
+
+      <button class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+
+      <button type="button" id="theme-toggle" class="theme-toggle" role="switch" aria-checked="false"
+        aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="theme-toggle__thumb" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- Scrollable Workspace Container -->
+    <div class="zmain-scroll" data-screen-label="Growth Agent">
+      
+      <!-- Greeting and Headline -->
+      <div class="ghead rise">
+        <div>
+          <div class="gtitle">Growth <em>Agent</em></div>
+          <div class="gsub"><span class="live">● Active</span> · <b>24</b> leads in pipeline · <b>11</b> renewals in 30 days · <b>$5.4k</b> at risk</div>
+        </div>
+      </div>
+      <hr class="hr-sep"/>
+
+      <!-- LEAD PIPELINE -->
+      <section class="rise s1">
+        <div class="sec-h">
+          <h2>Lead Pipeline</h2>
+        </div>
+
+        <div class="psum">
+          <div class="ps-item"><div class="ps-top"><span class="ps-v" id="psLeads">24</span><span class="ps-delta up"><span class="ar">▲</span>+3</span></div><span class="ps-l">Leads in flight</span></div>
+          <div class="ps-item"><div class="ps-top"><span class="ps-v ok">32%</span><span class="ps-delta up"><span class="ar">▲</span>+4 pts</span></div><span class="ps-l">New → Converted</span></div>
+          <div class="ps-item"><div class="ps-top"><span class="ps-v brand">$12.4k</span><span class="ps-delta up"><span class="ar">▲</span>+$1.8k</span></div><span class="ps-l">Potential revenue</span></div>
+          <div class="ps-item"><div class="ps-top"><span class="ps-v">8</span><span class="ps-delta up"><span class="ar">▲</span>+2</span></div><span class="ps-l">New this week</span></div>
+          <div class="ps-item"><div class="ps-top"><span class="ps-v">3.4d</span><span class="ps-delta up"><span class="ar">▼</span>0.6d faster</span></div><span class="ps-l">Avg. in stage</span></div>
+          <div class="ps-spacer"></div>
+          <div class="ps-legend"><span class="ld"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 4px;"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z"/></svg>Scored &amp; ranked by Zora</div>
+        </div>
+
+        <div class="board" id="board" style="margin-top: 16px;">
+          
+          <!-- Column 1: New Lead -->
+          <div class="bcol" data-count="8" data-stage="New Lead">
+            <div class="bch"><span class="dot" style="background:var(--stage-lead)"></span><span class="bt">New Lead</span><span class="bn">8</span><span class="bval">$3.1k</span></div>
+            <div class="blist">
+              <div class="lcard" draggable="true" data-goal="Weight Loss" data-name="Cole Harris">
+                <div class="lc-top"><div class="avatar av-slate sm">CH</div><div class="lc-id"><div class="lc-nm">Cole Harris</div><div class="lc-src">Instagram</div></div><span class="lc-score score-hi">78</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-trial)"></span>Weight Loss</span><span class="lc-status st-new">New</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Send intro message</b></span><span class="lc-time">3d</span></div>
+              </div>
+              <div class="lcard" draggable="true" data-goal="Body Recomp" data-name="Hailey Ross">
+                <div class="lc-top"><div class="avatar av-plum sm">HR</div><div class="lc-id"><div class="lc-nm">Hailey Ross</div><div class="lc-src">Referral · Emily C.</div></div><span class="lc-score score-mid">71</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--brand)"></span>Body Recomp</span><span class="lc-status st-new">New</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Send intro message</b></span><span class="lc-time">1d</span></div>
+              </div>
+              <div class="lcard" draggable="true" data-goal="Strength" data-name="Marcus Lee">
+                <div class="lc-top"><div class="avatar av-bronze sm">ML</div><div class="lc-id"><div class="lc-nm">Marcus Lee</div><div class="lc-src">Website</div></div><span class="lc-score score-lo">63</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-consult)"></span>Strength</span><span class="lc-status st-new">New</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Qualify &amp; reply</b></span><span class="lc-time">2d</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bconn"><span class="crate">64%</span><span class="carrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="clbl">advance</span></div>
+
+          <!-- Column 2: Contacted -->
+          <div class="bcol" data-count="6" data-stage="Contacted">
+            <div class="bch"><span class="dot" style="background:var(--stage-consult)"></span><span class="bt">Contacted</span><span class="bn">6</span><span class="bval">$2.6k</span></div>
+            <div class="blist">
+              <div class="lcard" draggable="true" data-goal="Strength" data-name="Ashley Moore">
+                <div class="lc-top"><div class="avatar av-teal sm">AM</div><div class="lc-id"><div class="lc-nm">Ashley Moore</div><div class="lc-src">Instagram</div></div><span class="lc-score score-hi">82</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-consult)"></span>Strength</span><span class="lc-status st-touch">In touch</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Book a consult</b></span><span class="lc-time">2d</span></div>
+              </div>
+              <div class="lcard" draggable="true" data-goal="Marathon" data-name="Derek Shaw">
+                <div class="lc-top"><div class="avatar av-slate sm">DS</div><div class="lc-id"><div class="lc-nm">Derek Shaw</div><div class="lc-src">Website</div></div><span class="lc-score score-mid">69</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-expand)"></span>Marathon</span><span class="lc-status st-touch">In touch</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Send follow-up</b></span><span class="lc-time">4d</span></div>
+              </div>
+              <div class="lcard" draggable="true" data-goal="Weight Loss" data-name="Priya Nair">
+                <div class="lc-top"><div class="avatar av-bronze sm">PN</div><div class="lc-id"><div class="lc-nm">Priya Nair</div><div class="lc-src">Facebook Ad</div></div><span class="lc-score score-lo">57</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-trial)"></span>Weight Loss</span><span class="lc-status st-touch">In touch</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Re-engage</b></span><span class="lc-time">5d</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bconn"><span class="crate">52%</span><span class="carrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="clbl">advance</span></div>
+
+          <!-- Column 3: Trial -->
+          <div class="bcol" data-count="6" data-stage="Trial">
+            <div class="bch"><span class="dot" style="background:var(--stage-trial)"></span><span class="bt">Trial</span><span class="bn">6</span><span class="bval">$4.6k</span></div>
+            <div class="blist">
+              <div class="lcard" draggable="true" data-goal="Hyrox" data-name="Lauren Webb">
+                <div class="lc-top"><div class="avatar av-teal sm">LW</div><div class="lc-id"><div class="lc-nm">Lauren Webb</div><div class="lc-src">Referral</div></div><span class="lc-score score-hi">88</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-expand)"></span>Hyrox</span><span class="lc-status st-trial">Trialing</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="nx-t">Next · <b>Confirm &amp; convert</b></span><span class="lc-time">2d</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bconn"><span class="crate">75%</span><span class="carrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="clbl">advance</span></div>
+
+          <!-- Column 4: Converted -->
+          <div class="bcol" data-count="4" data-stage="Converted">
+            <div class="bch"><span class="dot" style="background:var(--stage-expand)"></span><span class="bt">Converted</span><span class="bn">4</span><span class="bval">$2.1k</span></div>
+            <div class="blist">
+              <div class="lcard won" draggable="true" data-goal="Strength" data-name="Daniel Vance">
+                <div class="lc-top"><div class="avatar av-plum sm">DV</div><div class="lc-id"><div class="lc-nm">Daniel Vance</div><div class="lc-src">Website</div></div><span class="lc-score score-hi">94</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-consult)"></span>Strength</span><span class="lc-status st-won">Won</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="nx-t">Converted · <b>Onboarding completed</b></span><span class="lc-time">$540/mo</span></div>
+              </div>
+              <div class="lcard won" draggable="true" data-goal="Weight Loss" data-name="Chloe Adams">
+                <div class="lc-top"><div class="avatar av-bronze sm">CA</div><div class="lc-id"><div class="lc-nm">Chloe Adams</div><div class="lc-src">Instagram</div></div><span class="lc-score score-mid">73</span></div>
+                <div class="lc-tags"><span class="lc-goal"><span class="gd" style="background:var(--stage-trial)"></span>Weight Loss</span><span class="lc-status st-won">Won</span></div>
+                <div class="lc-next"><span class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="nx-t">Converted · <b>Offer accepted</b></span><span class="lc-time">$420/mo</span></div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- REVENUE OPERATIONS -->
+      <section class="rise s2">
+        <div class="sec-h">
+          <h2>Revenue Operations</h2>
+        </div>
+
+        <div class="rev">
+          <!-- Left Col: Forecast and Chart -->
+          <div class="rev-forecast">
+            <div class="rev-fh">
+              <span class="fl">Monthly Recurring Revenue Projection</span>
+              <span class="conf-chip"><span class="dot"></span>94% projection confidence</span>
+            </div>
+            <div class="rev-val">
+              <span class="v">$24.8k</span>
+              <span class="delta">▲ +$2.6k</span>
+            </div>
+            <div class="rev-sub">Forecast runs to 30 June · <b>$5.4k</b> at risk flagged in pipeline</div>
+            <div class="rev-chart" style="margin-top: 20px;">
+              <!-- Beautiful inline SVG chart -->
+              <svg viewBox="0 0 520 180" width="100%">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--brand)" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="var(--brand)" stop-opacity="0.0"/>
+                  </linearGradient>
+                  <linearGradient id="chartProjGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--ok)" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="var(--ok)" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 50 140 Q 120 125 180 115 T 310 95" fill="none" stroke="var(--brand)" stroke-width="3"/>
+                <path d="M 50 140 Q 120 125 180 115 T 310 95 L 310 180 L 50 180 Z" fill="url(#chartGrad)"/>
+                <path d="M 310 95 Q 370 85 430 75 T 490 60" fill="none" stroke="var(--ok)" stroke-dasharray="4 3" stroke-width="3"/>
+                <path d="M 310 95 Q 370 85 430 75 T 490 60 L 490 180 L 310 180 Z" fill="url(#chartProjGrad)"/>
+                <line x1="310" y1="20" x2="310" y2="160" stroke="var(--line)" stroke-width="1"/>
+                <circle cx="310" cy="95" r="5" fill="var(--brand)"/>
+                <text x="310" y="15" class="axl now" text-anchor="middle">TODAY</text>
+                <!-- Labels -->
+                <text x="50" y="172" class="axl">1 May</text>
+                <text x="180" y="172" class="axl">15 May</text>
+                <text x="310" y="172" class="axl">Today</text>
+                <text x="490" y="172" class="axl" text-anchor="end">30 Jun</text>
+                <text x="490" y="50" class="plbl" text-anchor="end">$24.8k</text>
+              </svg>
+            </div>
+            <div class="rev-legend">
+              <div class="lg"><i class="ln"></i>Historical MRR</div>
+              <div class="lg"><i class="ln proj"></i>Projected MRR (Zora Read)</div>
+              <div class="now">Active clients: <b>142</b></div>
+            </div>
+          </div>
+
+          <!-- Right Col: Drivers -->
+          <div class="rev-drivers">
+            <div class="drv up">
+              <div class="drv-head">
+                <span class="drv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
+                <div class="drv-tt"><span class="drv-t">Upsell Conversions</span><span class="drv-s">High active engagement streak</span></div>
+                <span class="drv-v">+$1.8k</span>
+              </div>
+              <div class="drv-bar">
+                <div class="bl"><span class="bk">driver contribution</span><span class="bp">55%</span></div>
+                <div class="drv-track"><i style="width: 55%;"></i></div>
+              </div>
+            </div>
+            <div class="drv exp">
+              <div class="drv-head">
+                <span class="drv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+                <div class="drv-tt"><span class="drv-t">Expansion pipeline</span><span class="drv-s">11 renewals landing in 30 days</span></div>
+                <span class="drv-v">+$1.4k</span>
+              </div>
+              <div class="drv-bar">
+                <div class="bl"><span class="bk">driver contribution</span><span class="bp">32%</span></div>
+                <div class="drv-track"><i style="width: 32%;"></i></div>
+              </div>
+            </div>
+            <div class="drv risk">
+              <div class="drv-head">
+                <span class="drv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+                <div class="drv-tt"><span class="drv-t">At-risk Revenue</span><span class="drv-s">4 critical accounts flagged</span></div>
+                <span class="drv-v">-$1.2k</span>
+              </div>
+              <div class="drv-bar">
+                <div class="bl"><span class="bk">revenue leakage</span><span class="bp">13%</span></div>
+                <div class="drv-track"><i style="width: 13%;"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rev-vitals" style="margin-top: 14px; margin-bottom: 24px;">
+          <div class="vtile"><div class="vl">Expansion Value</div><div class="vv">+$3.2k</div><div class="vd up">▲ 24% vs last week</div></div>
+          <div class="vtile"><div class="vl">LTV Estimate</div><div class="vv">$6.8k</div><div class="vd">Avg. lifetime value</div></div>
+          <div class="vtile"><div class="vl">Churn Risk Avg</div><div class="vv">14%</div><div class="vd">Adherence matches expectations</div></div>
+          <div class="vtile"><div class="vl">Pipeline velocity</div><div class="vv">3.4d</div><div class="vd up">▲ 18% faster stage hops</div></div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- ===== SHARED OVERLAY ===== -->
+  <div class="zoverlay" id="lead-overlay"></div>
+
+  <!-- ===== CONTACT DRAWER ===== -->
+  <div class="zdrawer" id="contact-drawer" role="dialog" aria-modal="true" aria-labelledby="contact-drawer-title">
+    <div class="zdr-head">
+      <div class="avatar av-slate sm" id="contact-drawer-av" style="width:40px;height:40px;font-size:13px;flex:none;">--</div>
+      <div class="hi">
+        <div class="hn" id="contact-drawer-title">Contact Lead</div>
+        <div class="hp" id="contact-drawer-sub">Zora drafted this message based on their profile and goal.</div>
+      </div>
+      <button class="zdr-x" id="contact-drawer-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="zdr-body">
+      <div class="zdr-sec">
+        <div class="ol">Drafted by Zora</div>
+        <div class="zdr-note" id="contact-drawer-msg" contenteditable="true" spellcheck="true" style="min-height:120px;outline:none;cursor:text;line-height:1.6;font-size:13.5px;"></div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:7px;">
+          <span style="font-size:11px;color:var(--ink-4);font-weight:600;">Channel:</span>
+          <span id="contact-drawer-ch" style="font-size:11px;font-weight:700;color:var(--brand-ink);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:2px 9px;border-radius:99px;">Email</span>
+        </div>
+      </div>
+      <div class="zdr-sec">
+        <div class="ol">Suggested follow-up</div>
+        <div class="zdr-vit">
+          <div class="zdr-vrow"><span class="vk">If no reply</span><span class="vv">Follow up in 3 days</span></div>
+          <div class="zdr-vrow"><span class="vk">Tone</span><span class="vv" id="contact-drawer-tone">Warm, direct</span></div>
+          <div class="zdr-vrow"><span class="vk">Goal mention</span><span class="vv" id="contact-drawer-goalref">Yes — personalised</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="zdr-foot">
+      <div class="frow">
+        <button class="btn-primary" id="contact-send-btn" style="flex:1;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          Send message
+        </button>
+        <button class="btn-secondary" id="contact-edit-btn" style="flex:none;">Ask Zora to revise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE DRAWER ===== -->
+  <div class="zdrawer" id="profile-drawer" role="dialog" aria-modal="true" aria-labelledby="profile-drawer-title">
+    <div class="zdr-head">
+      <div class="avatar av-slate sm" id="profile-drawer-av" style="width:40px;height:40px;font-size:13px;flex:none;">--</div>
+      <div class="hi">
+        <div class="hn" id="profile-drawer-title">Lead Profile</div>
+        <div class="hp" id="profile-drawer-sub">CRM sync · just now</div>
+        <div class="badges" id="profile-drawer-badges"></div>
+      </div>
+      <button class="zdr-x" id="profile-drawer-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="zdr-body">
+      <div class="zdr-sec">
+        <div class="ol">Lead details</div>
+        <div class="zdr-grid" id="profile-drawer-grid"></div>
+      </div>
+      <div class="zdr-sec">
+        <div class="ol">Zora intelligence</div>
+        <div class="zdr-note" id="profile-drawer-note" style="font-size:13px;line-height:1.6;"></div>
+      </div>
+      <div class="zdr-sec">
+        <div class="ol">Activity timeline</div>
+        <div class="zdr-vit" id="profile-drawer-timeline"></div>
+      </div>
+    </div>
+    <div class="zdr-foot">
+      <div class="frow">
+        <button class="btn-primary" id="profile-contact-btn" style="flex:1;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          Message
+        </button>
+        <button class="btn-secondary" id="profile-schedule-btn" style="flex:1;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+          Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHEDULE CONSULT MODAL ===== -->
+  <div class="zflow-ov" id="consult-modal" role="dialog" aria-modal="true" aria-labelledby="consult-modal-title">
+    <div class="zflow" style="width:400px;">
+      <div class="zflow-h">
+        <div class="zflow-ic" id="consult-modal-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+        </div>
+        <div>
+          <div class="zflow-t" id="consult-modal-title">Schedule Consult</div>
+          <div class="zflow-s" id="consult-modal-sub">Pick an open slot for the initial call.</div>
+        </div>
+        <button class="zdr-x" id="consult-modal-close" style="margin-left:auto;" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="zflow-b" style="gap:8px;padding-bottom:16px;">
+        <div style="font-size:11px;color:var(--ink-4);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Available slots</div>
+        <div id="consult-slots" style="display:flex;flex-direction:column;gap:7px;"></div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-4);display:flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Duration: 30 min · Video call link sent automatically
+        </div>
+      </div>
+      <div class="zflow-f" style="gap:8px;">
+        <div class="zflow-dl" id="consult-confirm-msg" style="font-size:12.5px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Invite sent to lead
+        </div>
+        <button class="btn-ghost" id="consult-modal-cancel" style="margin-left:auto;">Cancel</button>
+        <button class="btn-primary" id="consult-send-btn" disabled style="min-width:130px;justify-content:center;">
+          Send invite
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast alert -->
+  <div id="success-toast" class="toast">
+    <div class="toast-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <div class="toast-content">
+      <span id="toast-title" style="font-weight: 600; display: block; line-height: 1.2;">Plan adjustment sent!</span>
+      <span id="toast-sub" style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
+        <span id="toast-client-name" style="font-weight: 600; color: #ffffff;">Sarah K.</span> was notified via their client app.
+      </span>
+    </div>
+  </div>
+
+  <!-- Notion-style illustrated face avatars (DiceBear notionists) -->
+  <script>
+    window.ZoraFaces = (function () {
+      var SEL = '.avatar, .client-card-avatar, .qi-avatar, .pay-item-avatar, .roster-modal-avatar, .strip-avatar, .thread-avatar, .col-athlete .tile-avatar, .s2-avatar, .chat-client-avatar';
+      function url(seed) {
+        return 'url("https://api.dicebear.com/9.x/notionists/svg?seed=' +
+          encodeURIComponent(seed || 'zora') +
+          '&backgroundColor=transparent&scale=120")';
+      }
+      function seedFor(el) {
+        var row = el.closest('[data-name],[data-client]');
+        var seed = (row && (row.getAttribute('data-name') || row.getAttribute('data-client')))
+          || el.getAttribute('data-name')
+          || (el.textContent || '').trim();
+        return seed || 'zora';
+      }
+      function paintOne(el, seed) {
+        el.style.setProperty('--face', url(seed || seedFor(el)));
+        el.classList.add('has-face');
+      }
+      function paint(root) {
+        (root || document).querySelectorAll(SEL).forEach(function (el) { paintOne(el); });
+      }
+      return { paint: paint, paintOne: paintOne };
+    })();
+    document.addEventListener('DOMContentLoaded', function () { window.ZoraFaces.paint(); });
+  </script>
+
+  <!-- Interactive Logic Script -->
+  <script>
+    // Theme Switcher Logic
+    (function () {
+      const toggles = document.querySelectorAll('#theme-toggle');
+      toggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+        });
+      });
+    })();
+
+    // Sidebar collapse logic matching other pages: starts collapsed on load
+    (function () {
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      if (sidebar) {
+        sidebar.classList.add('collapsed');
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebarToggle.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+          });
+        }
+      }
+    })();
+
+    // Toast Implementation
+    (function() {
+      let toastTimer = null;
+      window.zoraToast = function(title, options) {
+        const toast = document.getElementById('success-toast');
+        const toastTitle = document.getElementById('toast-title');
+        const toastSub = document.getElementById('toast-sub');
+        if (!toast || !toastTitle || !toastSub) return;
+        
+        toastTitle.textContent = title;
+        toastSub.innerHTML = (options && options.desc) ? options.desc : '';
+        
+        const iconWrap = toast.querySelector('.toast-icon');
+        if (iconWrap) {
+          if (options && options.type === 'info') {
+            iconWrap.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+            iconWrap.style.background = 'rgba(56, 189, 248, 0.2)';
+            iconWrap.style.color = '#38bdf8';
+          } else {
+            iconWrap.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            iconWrap.style.background = 'rgba(16, 185, 129, 0.2)';
+            iconWrap.style.color = '#10b981';
+          }
+        }
+        
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+      };
+    })();
+
+    // Lead pipeline drag and drop + counts
+    (function(){
+      const board = document.getElementById('board');
+      if(!board) return;
+      
+      const cols = [...board.querySelectorAll('.bcol')];
+      
+      function applyCounts(col){
+        if(!col) return;
+        const n = Math.max(0, parseInt(col.dataset.count||'0', 10));
+        col.querySelector('.bn').textContent = n;
+        const list = col.querySelector('.blist');
+        const vis = list.querySelectorAll('.lcard').length;
+        let more = list.querySelector('.bmore');
+        const extra = n - vis;
+        
+        if(extra > 0){
+          if(!more){
+            more = document.createElement('div');
+            more.className = 'bmore';
+          }
+          more.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>View ${extra} more`;
+          list.appendChild(more);
+        } else if(more){
+          more.remove();
+        }
+      }
+
+      function moveBetween(from, to, card){
+        const list = to.querySelector('.blist');
+        const more = list.querySelector('.bmore');
+        if (more) list.insertBefore(card, more);
+        else list.appendChild(card);
+        
+        card.classList.remove('won');
+        from.dataset.count = Math.max(0, parseInt(from.dataset.count||'0', 10) - 1);
+        to.dataset.count = parseInt(to.dataset.count||'0', 10) + 1;
+        applyCounts(from);
+        applyCounts(to);
+      }
+
+      // Quick action icons
+      const ICN = {
+        contact: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg>',
+        consult: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>',
+        move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+        profile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.3" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>'
+      };
+
+      function enhanceCard(card){
+        const act = document.createElement('div');
+        act.className = 'lc-act';
+        act.innerHTML = `
+          <button class="qb" title="Contact">${ICN.contact}</button>
+          <button class="qb" title="Schedule consult">${ICN.consult}</button>
+          <button class="qb" title="Move to next stage">${ICN.move}</button>
+          <button class="qb" title="Open profile">${ICN.profile}</button>
+        `;
+        card.appendChild(act);
+        
+        act.querySelectorAll('.qb').forEach(b => {
+          b.draggable = false;
+          b.dataset.live = '1';
+          b.addEventListener('mousedown', e => e.stopPropagation());
+        });
+        
+        const nm = (card.querySelector('.lc-nm')||{}).textContent||'lead';
+        
+        const goal = card.dataset.goal || 'General Fitness';
+        const src  = (card.querySelector('.lc-src')  || {}).textContent || 'Unknown';
+        const score = (card.querySelector('.lc-score') || {}).textContent || '—';
+        const days  = (card.querySelector('.lc-time')  || {}).textContent || '—';
+        const initials = nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        const stage = (card.closest('.bcol') || {}).dataset?.stage || '';
+
+        // Contact button → draft message drawer
+        act.children[0].addEventListener('click', e => {
+          e.stopPropagation();
+          window.openContactDrawer({ nm, goal, src, initials });
+        });
+
+        // Schedule consult button → slot picker modal
+        act.children[1].addEventListener('click', e => {
+          e.stopPropagation();
+          window.openConsultModal({ nm, goal, initials });
+        });
+
+        // Move to next stage → stays as toast (direct action)
+        act.children[2].addEventListener('click', e => {
+          e.stopPropagation();
+          const col = card.closest('.bcol');
+          const i = cols.indexOf(col);
+          if (i > -1 && i < cols.length - 1) {
+            moveBetween(col, cols[i+1], card);
+            window.zoraToast('Stage advanced', {
+              desc: `<span style="font-weight:600;color:#fff;">${nm}</span> moved to ${cols[i+1].dataset.stage}.`
+            });
+          } else {
+            window.zoraToast('Already converted', {
+              desc: `<span style="font-weight:600;color:#fff;">${nm}</span> is already at the final stage.`,
+              type: 'info'
+            });
+          }
+        });
+
+        // Open profile → profile detail drawer
+        act.children[3].addEventListener('click', e => {
+          e.stopPropagation();
+          window.openProfileDrawer({ nm, goal, src, score, days, stage, initials });
+        });
+      }
+
+      let dragEl = null;
+      let ghostEl = null;
+
+      // Returns the card in `list` that the pointer is above, for insertion ordering.
+      function getDragAfterEl(list, y) {
+        const cards = [...list.querySelectorAll('.lcard:not(.dragging)')];
+        return cards.reduce((closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) return { offset, el: child };
+          return closest;
+        }, { offset: Number.NEGATIVE_INFINITY }).el;
+      }
+
+      function wireCardDrag(c) {
+        c.addEventListener('dragstart', e => {
+          dragEl = c;
+          e.dataTransfer.effectAllowed = 'move';
+          try { e.dataTransfer.setData('text/plain', c.dataset.name || 'card'); } catch(_) {}
+
+          // Build a crisp ghost matching the card's actual size.
+          ghostEl = c.cloneNode(true);
+          ghostEl.style.cssText = `
+            position: fixed; top: -9999px; left: -9999px;
+            width: ${c.offsetWidth}px;
+            margin: 0; pointer-events: none;
+            box-shadow: 0 8px 28px rgba(26,26,46,.22), 0 2px 8px rgba(26,26,46,.12);
+            border-radius: 12px; opacity: 1;
+            background: var(--surface);
+            border: 1px solid var(--border-2);
+            transform: rotate(1.5deg) scale(1.03);
+          `;
+          document.body.appendChild(ghostEl);
+          e.dataTransfer.setDragImage(ghostEl, e.offsetX, e.offsetY);
+
+          // Fade the original after the ghost snapshot is taken.
+          requestAnimationFrame(() => c.classList.add('dragging'));
+        });
+
+        c.addEventListener('dragend', () => {
+          c.classList.remove('dragging');
+          dragEl = null;
+          if (ghostEl) { ghostEl.remove(); ghostEl = null; }
+          board.querySelectorAll('.blist').forEach(l => {
+            l.classList.remove('drag-over');
+            const indicator = l.querySelector('.drop-indicator');
+            if (indicator) indicator.remove();
+          });
+        });
+      }
+
+      board.querySelectorAll('.lcard').forEach(card => {
+        enhanceCard(card);
+        wireCardDrag(card);
+      });
+
+      board.querySelectorAll('.blist').forEach(list => {
+        list.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          list.classList.add('drag-over');
+
+          // Show insertion indicator line between cards.
+          let indicator = list.querySelector('.drop-indicator');
+          if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.className = 'drop-indicator';
+            indicator.style.cssText = 'height:2px;border-radius:2px;background:var(--brand);margin:0 2px;pointer-events:none;transition:none;';
+          }
+          const afterEl = getDragAfterEl(list, e.clientY);
+          if (afterEl) {
+            list.insertBefore(indicator, afterEl);
+          } else {
+            const more = list.querySelector('.bmore');
+            if (more) list.insertBefore(indicator, more);
+            else list.appendChild(indicator);
+          }
+        });
+
+        list.addEventListener('dragleave', e => {
+          if (!list.contains(e.relatedTarget)) {
+            list.classList.remove('drag-over');
+            const indicator = list.querySelector('.drop-indicator');
+            if (indicator) indicator.remove();
+          }
+        });
+
+        list.addEventListener('drop', e => {
+          e.preventDefault();
+          list.classList.remove('drag-over');
+          const indicator = list.querySelector('.drop-indicator');
+          if (!dragEl) { if (indicator) indicator.remove(); return; }
+
+          const afterEl = getDragAfterEl(list, e.clientY);
+          const from = dragEl.closest('.bcol'), to = list.closest('.bcol');
+
+          if (from === to) {
+            if (afterEl) list.insertBefore(dragEl, afterEl);
+            else {
+              const more = list.querySelector('.bmore');
+              if (more) list.insertBefore(dragEl, more);
+              else list.appendChild(dragEl);
+            }
+            if (indicator) indicator.remove();
+            return;
+          }
+
+          if (indicator) indicator.remove();
+          moveBetween(from, to, dragEl);
+
+          // Insert at the correct position in the new column.
+          if (afterEl) list.insertBefore(dragEl, afterEl);
+          else {
+            const more = list.querySelector('.bmore');
+            if (more) list.insertBefore(dragEl, more);
+            else list.appendChild(dragEl);
+          }
+        });
+      });
+
+      cols.forEach(applyCounts);
+    })();
+
+    // ===== Lead action panel controllers =====
+    (function() {
+      const overlay = document.getElementById('lead-overlay');
+
+      function openOverlay(onClose) {
+        overlay.classList.add('open');
+        overlay._onClose = onClose;
+      }
+      function closeOverlay() {
+        overlay.classList.remove('open');
+        if (typeof overlay._onClose === 'function') overlay._onClose();
+        overlay._onClose = null;
+      }
+      overlay.addEventListener('click', closeOverlay);
+
+      // --- helpers ---
+      function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      function avatarClass(initials) {
+        const classes = ['av-slate','av-plum','av-teal','av-bronze'];
+        let h = 0; for (let c of initials) h = (h * 31 + c.charCodeAt(0)) & 0xff;
+        return classes[h % classes.length];
+      }
+
+      // --- CONTACT DRAWER ---
+      const contactDrawer = document.getElementById('contact-drawer');
+      const contactClose  = document.getElementById('contact-drawer-close');
+      const contactSendBtn = document.getElementById('contact-send-btn');
+      const contactEditBtn = document.getElementById('contact-edit-btn');
+
+      const DRAFT_TEMPLATES = [
+        (nm, goal) => `Hi ${nm.split(' ')[0]},\n\nI came across your profile and thought your goal around ${goal.toLowerCase()} is something I specialise in. I've helped clients achieve similar results with a structured, personalised approach.\n\nWould you be open to a quick 20-minute call this week to see if it might be a good fit?\n\nLooking forward to hearing from you.`,
+        (nm, goal) => `Hey ${nm.split(' ')[0]} — love that you're working towards ${goal.toLowerCase()}. I'd love to share a few ideas that have worked really well for people in a similar spot.\n\nAny chance you're free for a quick call this week?`,
+        (nm, goal) => `Hi ${nm.split(' ')[0]},\n\nThought I'd reach out — your interest in ${goal.toLowerCase()} caught my eye. I work with clients at all stages and would be happy to give you a personalised overview of what's possible.\n\nLet me know if that sounds helpful.`,
+      ];
+
+      window.openContactDrawer = function({ nm, goal, src, initials }) {
+        const av = document.getElementById('contact-drawer-av');
+        av.textContent = initials;
+        av.className = 'avatar sm ' + avatarClass(initials);
+        av.style.cssText = 'width:40px;height:40px;font-size:13px;flex:none;';
+
+        document.getElementById('contact-drawer-title').textContent = nm;
+        document.getElementById('contact-drawer-sub').textContent = `Zora drafted this based on their ${goal} goal.`;
+
+        const tpl = DRAFT_TEMPLATES[Math.floor(Math.random() * DRAFT_TEMPLATES.length)];
+        const msg = document.getElementById('contact-drawer-msg');
+        msg.textContent = tpl(nm, goal);
+
+        const ch = src.toLowerCase().includes('instagram') ? 'Instagram DM' :
+                   src.toLowerCase().includes('facebook')  ? 'Facebook Messenger' : 'Email';
+        document.getElementById('contact-drawer-ch').textContent = ch;
+
+        // reset send button
+        contactSendBtn.classList.remove('is-sending','is-sent');
+        contactSendBtn.disabled = false;
+        contactSendBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> Send message`;
+        contactSendBtn._nm = nm;
+
+        openOverlay(closeContactDrawer);
+        contactDrawer.classList.add('open');
+      };
+
+      function closeContactDrawer() {
+        contactDrawer.classList.remove('open');
+        closeOverlay();
+      }
+      contactClose.addEventListener('click', closeContactDrawer);
+
+      contactSendBtn.addEventListener('click', () => {
+        const nm = contactSendBtn._nm || 'lead';
+        contactSendBtn.classList.add('is-sending');
+        contactSendBtn.disabled = true;
+        contactSendBtn.innerHTML = `Sending…`;
+        setTimeout(() => {
+          contactSendBtn.classList.remove('is-sending');
+          contactSendBtn.classList.add('is-sent');
+          contactSendBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sent`;
+          window.zoraToast('Message sent', {
+            desc: `Intro message delivered to <span style="font-weight:600;color:#fff;">${nm}</span>.`,
+            type: 'ok'
+          });
+          setTimeout(closeContactDrawer, 900);
+        }, 900);
+      });
+
+      contactEditBtn.addEventListener('click', () => {
+        const msg = document.getElementById('contact-drawer-msg');
+        msg.focus();
+        document.execCommand('selectAll');
+        window.zoraToast('Edit mode', { desc: 'Message is now editable — adjust and send.', type: 'info' });
+      });
+
+      // --- CONSULT MODAL ---
+      const consultModal     = document.getElementById('consult-modal');
+      const consultClose     = document.getElementById('consult-modal-close');
+      const consultCancel    = document.getElementById('consult-modal-cancel');
+      const consultSendBtn   = document.getElementById('consult-send-btn');
+      const consultConfirmMsg = document.getElementById('consult-confirm-msg');
+      const consultSlots     = document.getElementById('consult-slots');
+
+      const SLOTS = [
+        { day: 'Tomorrow, Wed 4 Jun', time: '10:00 – 10:30 am', tag: 'Best match', tagClass: '' },
+        { day: 'Thursday, 5 Jun', time: '2:00 – 2:30 pm', tag: 'Open', tagClass: 'alt' },
+        { day: 'Friday, 6 Jun', time: '11:00 – 11:30 am', tag: 'Open', tagClass: 'alt' },
+      ];
+
+      let selectedSlot = null;
+
+      window.openConsultModal = function({ nm, goal, initials }) {
+        document.getElementById('consult-modal-title').textContent = `Schedule consult — ${nm.split(' ')[0]}`;
+        document.getElementById('consult-modal-sub').textContent = `Pick an open slot. A video link will be sent to ${nm.split(' ')[0]}.`;
+        document.getElementById('consult-modal-ic').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>`;
+
+        selectedSlot = null;
+        consultSendBtn.disabled = true;
+        consultConfirmMsg.classList.remove('show');
+        consultSendBtn._nm = nm;
+
+        consultSlots.innerHTML = SLOTS.map((s, i) => `
+          <button class="consult-slot" data-slot="${i}" type="button">
+            <span class="cs-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="cs-body">
+              <span class="cs-day">${s.day}</span>
+              <span class="cs-time">${s.time}</span>
+            </span>
+            ${s.tag ? `<span class="cs-tag ${s.tagClass}">${s.tag}</span>` : ''}
+          </button>
+        `).join('');
+
+        consultSlots.querySelectorAll('.consult-slot').forEach(btn => {
+          btn.addEventListener('click', () => {
+            consultSlots.querySelectorAll('.consult-slot').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            selectedSlot = parseInt(btn.dataset.slot);
+            consultSendBtn.disabled = false;
+          });
+        });
+
+        openOverlay(closeConsultModal);
+        consultModal.classList.add('open');
+      };
+
+      function closeConsultModal() {
+        consultModal.classList.remove('open');
+        closeOverlay();
+      }
+      consultClose.addEventListener('click', closeConsultModal);
+      consultCancel.addEventListener('click', closeConsultModal);
+
+      consultSendBtn.addEventListener('click', () => {
+        if (selectedSlot === null) return;
+        const nm = consultSendBtn._nm || 'lead';
+        const slot = SLOTS[selectedSlot];
+        consultSendBtn.disabled = true;
+        consultSendBtn.textContent = 'Sending…';
+        setTimeout(() => {
+          consultConfirmMsg.classList.add('show');
+          consultSendBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sent`;
+          document.getElementById('consult-modal-ic').classList.add('ok');
+          document.getElementById('consult-modal-ic').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+          window.zoraToast('Consult scheduled', {
+            desc: `<span style="font-weight:600;color:#fff;">${nm}</span> invited for ${slot.day} at ${slot.time.split('–')[0].trim()}.`,
+            type: 'ok'
+          });
+          setTimeout(closeConsultModal, 1200);
+        }, 700);
+      });
+
+      // --- PROFILE DRAWER ---
+      const profileDrawer   = document.getElementById('profile-drawer');
+      const profileClose    = document.getElementById('profile-drawer-close');
+      const profileContactBtn  = document.getElementById('profile-contact-btn');
+      const profileScheduleBtn = document.getElementById('profile-schedule-btn');
+
+      const PROFILE_NOTES = {
+        'Weight Loss': (nm) => `${nm.split(' ')[0]} has expressed a clear goal around sustainable weight loss. Zora flagged this lead as high-intent based on repeat visits to the intake form and a specific mention of "accountability coaching" in their inquiry.`,
+        'Body Recomp': (nm) => `Looking for a body recomposition approach. Zora notes a comparison inquiry between two coaches — personalisation and check-in frequency were the deciding factors mentioned.`,
+        'Strength':    (nm) => `${nm.split(' ')[0]} wants to build strength for functional reasons (not aesthetic). Mentioned "back pain" and "posture" in their first message — tailor the initial pitch to corrective and progressive loading.`,
+        'Marathon':    (nm) => `Training for a sub-4 hour marathon attempt. Zora recommends leading with a structured 16-week plan overview in the first call.`,
+        'General Fitness': (nm) => `Early-stage interest. Zora rates intent as moderate — a personalised trial offer tends to convert this segment at +18% vs a standard pitch.`,
+      };
+
+      const TIMELINE_ENTRIES = [
+        { k: 'Discovered Zora',  v: '12 days ago', cls: '' },
+        { k: 'Intake form',      v: 'Completed',  cls: 'ok' },
+        { k: 'First contact',    v: 'Not yet',    cls: 'warn' },
+        { k: 'Avg. response time', v: '< 2 hrs',  cls: '' },
+      ];
+
+      window.openProfileDrawer = function({ nm, goal, src, score, days, stage, initials }) {
+        const av = document.getElementById('profile-drawer-av');
+        av.textContent = initials;
+        av.className = 'avatar sm ' + avatarClass(initials);
+        av.style.cssText = 'width:40px;height:40px;font-size:13px;flex:none;';
+
+        document.getElementById('profile-drawer-title').textContent = nm;
+        document.getElementById('profile-drawer-sub').textContent = `${src} · Stage: ${stage || 'New Lead'}`;
+
+        const badges = document.getElementById('profile-drawer-badges');
+        badges.innerHTML = `
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--brand-tint);color:var(--brand-ink);border:1px solid var(--brand-tint-2);">${goal}</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--ok-bg);color:var(--ok-ink);">Score ${score}</span>
+        `;
+
+        document.getElementById('profile-drawer-grid').innerHTML = `
+          <div><div class="gk">Source</div><div class="gv">${esc(src)}</div></div>
+          <div><div class="gk">Goal</div><div class="gv">${esc(goal)}</div></div>
+          <div><div class="gk">Score</div><div class="gv">${esc(score)}</div></div>
+          <div><div class="gk">Days in stage</div><div class="gv">${esc(days)}</div></div>
+          <div><div class="gk">Current stage</div><div class="gv">${esc(stage || '—')}</div></div>
+          <div><div class="gk">Next action</div><div class="gv" style="color:var(--brand-ink);">See card</div></div>
+        `;
+
+        const noteText = (PROFILE_NOTES[goal] || PROFILE_NOTES['General Fitness'])(nm);
+        document.getElementById('profile-drawer-note').textContent = noteText;
+
+        const tl = document.getElementById('profile-drawer-timeline');
+        tl.innerHTML = TIMELINE_ENTRIES.map(e => `
+          <div class="zdr-vrow">
+            <span class="vk">${esc(e.k)}</span>
+            <span class="vv ${e.cls}">${esc(e.v)}</span>
+          </div>
+        `).join('');
+
+        // wire bottom buttons with context
+        profileContactBtn._ctx = { nm, goal, src, initials };
+        profileScheduleBtn._ctx = { nm, goal, initials };
+
+        openOverlay(closeProfileDrawer);
+        profileDrawer.classList.add('open');
+      };
+
+      function closeProfileDrawer() {
+        profileDrawer.classList.remove('open');
+        closeOverlay();
+      }
+      profileClose.addEventListener('click', closeProfileDrawer);
+
+      profileContactBtn.addEventListener('click', () => {
+        closeProfileDrawer();
+        setTimeout(() => window.openContactDrawer(profileContactBtn._ctx), 180);
+      });
+      profileScheduleBtn.addEventListener('click', () => {
+        closeProfileDrawer();
+        setTimeout(() => window.openConsultModal(profileScheduleBtn._ctx), 180);
+      });
+
+    })();
+
+    // Topbar Refresh Control
+    (function(){
+      const refresh = document.getElementById('tbRefresh'), sync = document.getElementById('tbSync');
+      if (refresh) {
+        let busy = false;
+        refresh.addEventListener('click', () => {
+          if (busy) return;
+          busy = true;
+          refresh.classList.add('is-busy');
+          if (sync) {
+            sync.classList.add('syncing');
+            sync.innerHTML = '<span class="dot"></span>Syncing…';
+          }
+          
+          const svg = refresh.querySelector('svg');
+          const anim = svg.animate(
+            [{transform:'rotate(0deg)'},{transform:'rotate(720deg)'}],
+            {duration:1050, easing:'cubic-bezier(.45,0,.15,1)'}
+          );
+          
+          const settle = () => {
+            busy = false;
+            refresh.classList.remove('is-busy');
+            if (sync) {
+              sync.classList.remove('syncing');
+              sync.innerHTML = '<span class="dot"></span>Synced just now';
+            }
+            window.zoraToast('Revenue data refreshed', {
+              desc: 'Pipeline, forecast & 24 lead scores updated.',
+              type: 'ok'
+            });
+          };
+          anim.onfinish = settle;
+          anim.oncancel = settle;
+        });
+      }
+    })();
+  </script>
+
+  <!-- Ask Zora FAB + copilot panel -->
+  <style>
+    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:20px;height:20px}
+    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
+    .zcopilot.open{transform:none}
+    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
+    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
+    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
+    .zcop-orb svg{width:17px;height:17px;position:relative}
+    .zcop-id{flex:1;min-width:0;position:relative}
+    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
+    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
+    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
+    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
+    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
+    .zcop-x svg{width:16px;height:16px}
+    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
+    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
+    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
+    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
+    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
+    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
+    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
+    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
+    .zchip .zchip-ic svg{width:15px;height:15px}
+    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
+    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
+    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
+    .zcop-input:focus{outline:none}
+    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
+    .zcop-send:hover{background:var(--accent-deep)}
+    .zcop-send:active{transform:scale(.94)}
+    .zcop-send svg{width:16px;height:16px}
+    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+  </style>
+
+  <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
+    <span class="zfab-spark">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+    </span>
+    <span class="zfab-label">Ask Zora</span>
+  </button>
+
+  <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
+    <div class="zcop-head">
+      <div class="zcop-orb">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+      </div>
+      <div class="zcop-id">
+        <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
+        <div class="zcop-sub">Your coaching intelligence layer</div>
+      </div>
+      <button class="zcop-x" id="zcop-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="zcop-body" id="zcop-body">
+      <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
+      <div class="zchips">
+        <button class="zchip" data-q="Show me leads most likely to convert this week">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+          Show leads most likely to convert this week
+        </button>
+        <button class="zchip" data-q="What's driving my revenue risk right now?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span>
+          What's driving my revenue risk right now?
+        </button>
+        <button class="zchip" data-q="Draft a follow-up for leads that went cold">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span>
+          Draft a follow-up for cold leads
+        </button>
+      </div>
+    </div>
+    <div class="zcop-foot">
+      <input class="zcop-input" id="zcop-input" placeholder="Ask about your pipeline or revenue…" autocomplete="off"/>
+      <button class="zcop-send" id="zcop-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const fab = document.getElementById('zfab');
+    const panel = document.getElementById('zcopilot');
+    const closeBtn = document.getElementById('zcop-close');
+    const body = document.getElementById('zcop-body');
+    const input = document.getElementById('zcop-input');
+    const sendBtn = document.getElementById('zcop-send');
+    if (!fab || !panel) return;
+
+    function openPanel() { panel.classList.add('open'); fab.classList.add('hide'); setTimeout(() => input && input.focus(), 200); }
+    function closePanel() { panel.classList.remove('open'); fab.classList.remove('hide'); }
+
+    fab.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
+
+    function addBubble(text, role) {
+      const b = document.createElement('div'); b.className = 'zbubble ' + role; b.textContent = text;
+      body.appendChild(b); body.scrollTop = body.scrollHeight; return b;
+    }
+    function showTyping() {
+      const t = document.createElement('div'); t.className = 'zbubble ai';
+      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+      body.appendChild(t); body.scrollTop = body.scrollHeight; return t;
+    }
+    const REPLIES = ["Scanning your pipeline data now.", "Pulling lead scores and revenue signals.", "Analysing conversion patterns across the board.", "Here's what the data shows."];
+    function sendMessage(text) {
+      if (!text) return;
+      addBubble(text, 'me');
+      if (input) input.value = '';
+      const typing = showTyping();
+      setTimeout(() => { typing.remove(); addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai'); }, 900);
+    }
+    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+    body && body.addEventListener('click', e => { const chip = e.target.closest('.zchip'); if (!chip) return; sendMessage(chip.dataset.q || chip.textContent.trim()); });
+  })();
+  </script>
+</body>
+</html>

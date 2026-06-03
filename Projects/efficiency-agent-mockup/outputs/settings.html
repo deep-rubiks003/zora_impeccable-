@@ -58,7 +58,19 @@
       max-width: 1120px;
       margin: 0 auto;
       width: 100%;
+      transition: grid-template-columns .26s ease, gap .26s ease;
     }
+
+    /* collapsed settings nav */
+    .slayout.snav-collapsed { grid-template-columns: 58px 1fr; gap:22px; }
+    .slayout.snav-collapsed .sindex-head { flex-direction:column; padding:0 0 14px; gap:0; }
+    .slayout.snav-collapsed .sih-l { display:none; }
+    .slayout.snav-collapsed .snav-toggle svg { transform:rotate(180deg); }
+    .slayout.snav-collapsed .sgrp-l { display:none; }
+    .slayout.snav-collapsed .sgrp { margin-bottom:10px; padding-top:10px; border-top:1px solid var(--line); }
+    .slayout.snav-collapsed .sgrp:first-of-type { border-top:0; padding-top:0; }
+    .slayout.snav-collapsed .sidx { justify-content:center; padding:10px 0; gap:0; }
+    .slayout.snav-collapsed .sidx .sidx-t { display:none; }
 
     .sindex {
       position: sticky;
@@ -705,7 +717,7 @@
         </svg>
         <span>Home</span>
       </div>
-      <div class="nav-item" onclick="window.location.href='reco-card.html'">
+      <div class="nav-item" onclick="window.location.href='growth.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
           <polyline points="17 6 23 6 23 12"></polyline>
@@ -807,24 +819,28 @@
 
         <!-- INDEX SIDEBAR (Middle-Left) -->
         <aside class="sindex">
+          <div class="sindex-head" style="display:flex; align-items:center; gap:8px; padding:0 4px 14px;">
+            <span class="sih-l" style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-weight:800; flex:1; min-width:0; white-space:nowrap; overflow:hidden;">Settings</span>
+            <button class="snav-toggle" id="snavToggle" title="Collapse menu" aria-label="Collapse menu" style="width:30px; height:30px; flex:none; border:1px solid var(--line); background:var(--paper-2); color:var(--ink-4); border-radius:8px; display:flex; align-items:center; justify-content:center; transition:color .14s, border-color .14s, background .14s; cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px; transition:transform .26s;"><path d="M15 6l-6 6 6 6"/></svg></button>
+          </div>
           <div class="sgrp">
             <div class="sgrp-l">Account</div>
             <div class="sidx active" data-p="profile">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
-              </svg>Profile &amp; Account
+              </svg><span class="sidx-t">Profile &amp; Account</span>
             </div>
             <div class="sidx" data-p="team">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M16 7a4 4 0 1 0-8 0M2 21v-1a5 5 0 0 1 10 0v1M17 14a5 5 0 0 1 5 5v1" />
-              </svg>Team &amp; Roles
+              </svg><span class="sidx-t">Team &amp; Roles</span>
             </div>
             <div class="sidx" data-p="security">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="4" y="10" width="16" height="11" rx="2" />
                 <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-              </svg>Security
+              </svg><span class="sidx-t">Security</span>
             </div>
           </div>
           <div class="sgrp">
@@ -832,13 +848,13 @@
             <div class="sidx" data-p="business">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6" />
-              </svg>Business &amp; Services
+              </svg><span class="sidx-t">Business &amp; Services</span>
             </div>
             <div class="sidx" data-p="billing">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="5" width="20" height="14" rx="2" />
                 <path d="M2 10h20" />
-              </svg>Billing &amp; Plan
+              </svg><span class="sidx-t">Billing &amp; Plan</span>
             </div>
           </div>
           <div class="sgrp">
@@ -846,13 +862,13 @@
             <div class="sidx" data-p="agents">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" />
-              </svg>AI Agents
+              </svg><span class="sidx-t">AI Agents</span>
             </div>
             <div class="sidx" data-p="notifications">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                 <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" />
-              </svg>Notifications
+              </svg><span class="sidx-t">Notifications</span>
             </div>
           </div>
           <div class="sgrp">
@@ -861,7 +877,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" />
                 <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
-              </svg>Integrations
+              </svg><span class="sidx-t">Integrations</span>
             </div>
           </div>
         </aside>
@@ -1731,6 +1747,18 @@
       history.replaceState(null, '', '#' + i.dataset.p);
     }));
 
+    /* ---- collapse settings nav (persisted) ---- */
+    (function(){
+      const layout=document.querySelector('.slayout'), tog=document.getElementById('snavToggle'), KEY='zora-settings-nav-collapsed';
+      if(!layout||!tog) return;
+      if(localStorage.getItem(KEY)==='1') layout.classList.add('snav-collapsed');
+      tog.addEventListener('click',()=>{
+        const c=layout.classList.toggle('snav-collapsed');
+        tog.title=c?'Expand menu':'Collapse menu';
+        try{ localStorage.setItem(KEY, c?'1':'0'); }catch(e){}
+      });
+    })();
+
     // toggles switch activation
     document.querySelectorAll('.tog').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
 
@@ -1781,12 +1809,134 @@
     });
   </script>
 
-  <!-- Floating Collapsible Zora Button at right edge middle -->
-  <button id="zora-floating-trigger" style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 1200; background: var(--accent); color: white; border: 0; padding: 12px; border-radius: 12px 0 0 12px; box-shadow: -2px 4px 12px rgba(122, 84, 135, 0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;" title="Ask Zora" onclick="window.location.href='copilot.html'">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-    </svg>
+  <!-- Ask Zora FAB + copilot panel -->
+  <style>
+    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:20px;height:20px}
+    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
+    .zcopilot.open{transform:none}
+    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
+    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
+    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
+    .zcop-orb svg{width:17px;height:17px;position:relative}
+    .zcop-id{flex:1;min-width:0;position:relative}
+    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
+    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
+    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
+    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
+    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
+    .zcop-x svg{width:16px;height:16px}
+    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
+    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
+    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
+    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
+    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
+    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
+    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
+    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
+    .zchip .zchip-ic svg{width:15px;height:15px}
+    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
+    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
+    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
+    .zcop-input:focus{outline:none}
+    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
+    .zcop-send:hover{background:var(--accent-deep)}
+    .zcop-send:active{transform:scale(.94)}
+    .zcop-send svg{width:16px;height:16px}
+    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+  </style>
+
+  <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
+    <span class="zfab-spark">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+    </span>
+    <span class="zfab-label">Ask Zora</span>
   </button>
+
+  <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
+    <div class="zcop-head">
+      <div class="zcop-orb">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+      </div>
+      <div class="zcop-id">
+        <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
+        <div class="zcop-sub">Your coaching intelligence layer</div>
+      </div>
+      <button class="zcop-x" id="zcop-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="zcop-body" id="zcop-body">
+      <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
+      <div class="zchips">
+        <button class="zchip" data-q="Which settings affect client notifications?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 1 21 12a10 10 0 0 1-1.93 7.07M4.93 4.93A10 10 0 0 0 3 12a10 10 0 0 0 1.93 7.07"/></svg></span>
+          Which settings affect client notifications?
+        </button>
+        <button class="zchip" data-q="How do I connect my calendar for consult scheduling?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg></span>
+          How do I connect my calendar?
+        </button>
+        <button class="zchip" data-q="What integrations does Zora support?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+          What integrations does Zora support?
+        </button>
+      </div>
+    </div>
+    <div class="zcop-foot">
+      <input class="zcop-input" id="zcop-input" placeholder="Ask about settings or integrations…" autocomplete="off"/>
+      <button class="zcop-send" id="zcop-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const fab = document.getElementById('zfab');
+    const panel = document.getElementById('zcopilot');
+    const closeBtn = document.getElementById('zcop-close');
+    const body = document.getElementById('zcop-body');
+    const input = document.getElementById('zcop-input');
+    const sendBtn = document.getElementById('zcop-send');
+    if (!fab || !panel) return;
+
+    function openPanel() { panel.classList.add('open'); fab.classList.add('hide'); setTimeout(() => input && input.focus(), 200); }
+    function closePanel() { panel.classList.remove('open'); fab.classList.remove('hide'); }
+
+    fab.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
+
+    function addBubble(text, role) {
+      const b = document.createElement('div'); b.className = 'zbubble ' + role; b.textContent = text;
+      body.appendChild(b); body.scrollTop = body.scrollHeight; return b;
+    }
+    function showTyping() {
+      const t = document.createElement('div'); t.className = 'zbubble ai';
+      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+      body.appendChild(t); body.scrollTop = body.scrollHeight; return t;
+    }
+    const REPLIES = ["Let me look that up for you.", "Here's what I found in the settings documentation.", "Checking your current configuration now.", "Good question — here's how that works."];
+    function sendMessage(text) {
+      if (!text) return;
+      addBubble(text, 'me');
+      if (input) input.value = '';
+      const typing = showTyping();
+      setTimeout(() => { typing.remove(); addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai'); }, 900);
+    }
+    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+    body && body.addEventListener('click', e => { const chip = e.target.closest('.zchip'); if (!chip) return; sendMessage(chip.dataset.q || chip.textContent.trim()); });
+  })();
+  </script>
 </body>
 
 </html>

@@ -256,7 +256,7 @@
         </svg>
         <span>Home</span>
       </div>
-      <div class="nav-item" onclick="window.location.href='reco-card.html'">
+      <div class="nav-item" onclick="window.location.href='growth.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
           <polyline points="17 6 23 6 23 12"></polyline>
@@ -312,7 +312,7 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="crumbs">
-        <strong>Efficiency Agent</strong>
+        <strong>Home</strong>
         <span class="sep">/</span>
         <span id="crumb-tail">Overview</span>
       </div>
@@ -1659,88 +1659,164 @@
 
 
 
-  <!-- Floating Collapsible Zora Button at right edge middle -->
-  <button id="zora-floating-trigger" style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 1200; background: var(--accent); color: white; border: 0; padding: 12px 6px; border-radius: 8px 0 0 8px; box-shadow: -2px 4px 12px rgba(122, 84, 135, 0.35); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.15s;" title="Ask Zora">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
-    </svg>
-    <span style="writing-mode: vertical-rl; text-orientation: mixed; font-family: var(--font-geist); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ask Zora</span>
+  <!-- Ask Zora FAB + copilot panel -->
+  <style>
+    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:20px;height:20px}
+    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
+    .zcopilot.open{transform:none}
+    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
+    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
+    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
+    .zcop-orb svg{width:17px;height:17px;position:relative}
+    .zcop-id{flex:1;min-width:0;position:relative}
+    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
+    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
+    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
+    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
+    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
+    .zcop-x svg{width:16px;height:16px}
+    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
+    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
+    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
+    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
+    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
+    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
+    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
+    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
+    .zchip .zchip-ic svg{width:15px;height:15px}
+    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
+    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
+    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
+    .zcop-input:focus{outline:none}
+    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
+    .zcop-send:hover{background:var(--accent-deep)}
+    .zcop-send:active{transform:scale(.94)}
+    .zcop-send svg{width:16px;height:16px}
+    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+  </style>
+
+  <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
+    <span class="zfab-spark">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+    </span>
+    <span class="zfab-label">Ask Zora</span>
   </button>
 
-  <!-- Small AI Chat Box Widget -->
-  <div id="zora-floating-chat" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%) translateX(360px); width: 340px; height: 460px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 40px rgba(122, 84, 135, 0.15); z-index: 1200; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); pointer-events: none; opacity: 0;">
-    <div style="padding: 14px 16px; background: var(--accent-soft); border-bottom: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: white; font-weight: 800; font-size: 11px;">Z</span>
-        <span style="font-family: var(--font-geist); font-size: 13.5px; font-weight: 700; color: var(--accent-deep);">Ask Zora</span>
+  <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
+    <div class="zcop-head">
+      <div class="zcop-orb">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
       </div>
-      <button id="zora-floating-chat-close" style="background: transparent; border: 0; color: var(--ink-4); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <div class="zcop-id">
+        <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
+        <div class="zcop-sub">Your coaching intelligence layer</div>
+      </div>
+      <button class="zcop-x" id="zcop-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <div id="zora-floating-chat-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-dm-sans); font-size: 12.5px;">
-      <div style="background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;">
-        Hey! I'm Zora. How can I assist you with your coaching practice today?
+    <div class="zcop-body" id="zcop-body">
+      <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
+      <div class="zchips">
+        <button class="zchip" data-q="Show me clients at risk this week">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          Show me clients at risk this week
+        </button>
+        <button class="zchip" data-q="Draft a check-in message for low-adherence clients">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span>
+          Draft a check-in for low-adherence clients
+        </button>
+        <button class="zchip" data-q="What's my revenue forecast for next 30 days?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+          What's my revenue forecast for next 30 days?
+        </button>
       </div>
     </div>
-    <div style="padding: 10px; border-top: 1px solid var(--line-soft); display: flex; gap: 8px; background: white;">
-      <input id="zora-floating-chat-input" placeholder="Type a message..." style="flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-family: var(--font-dm-sans); outline: none;" />
-      <button id="zora-floating-chat-send" style="background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: var(--font-geist);">Send</button>
+    <div class="zcop-foot">
+      <input class="zcop-input" id="zcop-input" placeholder="Ask anything about your clients…" autocomplete="off"/>
+      <button class="zcop-send" id="zcop-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </button>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const trigger = document.getElementById('zora-floating-trigger');
-      const chat = document.getElementById('zora-floating-chat');
-      const closeBtn = document.getElementById('zora-floating-chat-close');
-      const input = document.getElementById('zora-floating-chat-input');
-      const sendBtn = document.getElementById('zora-floating-chat-send');
-      const messagesContainer = document.getElementById('zora-floating-chat-messages');
+  (function() {
+    const fab = document.getElementById('zfab');
+    const panel = document.getElementById('zcopilot');
+    const closeBtn = document.getElementById('zcop-close');
+    const body = document.getElementById('zcop-body');
+    const input = document.getElementById('zcop-input');
+    const sendBtn = document.getElementById('zcop-send');
+    if (!fab || !panel) return;
 
-      if (!trigger || !chat || !closeBtn) return;
+    function openPanel() {
+      panel.classList.add('open');
+      fab.classList.add('hide');
+      setTimeout(() => input && input.focus(), 200);
+    }
+    function closePanel() {
+      panel.classList.remove('open');
+      fab.classList.remove('hide');
+    }
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        chat.style.transform = 'translateY(-50%) translateX(0)';
-        chat.style.pointerEvents = 'auto';
-        chat.style.opacity = '1';
-        trigger.style.transform = 'translateY(-50%) translateX(50px)';
-        trigger.style.opacity = '0';
-        setTimeout(() => input.focus(), 150);
-      });
+    fab.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
 
-      closeBtn.addEventListener('click', () => {
-        chat.style.transform = 'translateY(-50%) translateX(360px)';
-        chat.style.pointerEvents = 'none';
-        chat.style.opacity = '0';
-        trigger.style.transform = 'translateY(-50%) translateX(0)';
-        trigger.style.opacity = '1';
-      });
+    function addBubble(text, role) {
+      const b = document.createElement('div');
+      b.className = 'zbubble ' + role;
+      b.textContent = text;
+      body.appendChild(b);
+      body.scrollTop = body.scrollHeight;
+      return b;
+    }
 
-      function sendMessage() {
-        const text = input.value.trim();
-        if (!text) return;
+    function showTyping() {
+      const t = document.createElement('div');
+      t.className = 'zbubble ai';
+      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+      body.appendChild(t);
+      body.scrollTop = body.scrollHeight;
+      return t;
+    }
 
-        const userMsg = document.createElement('div');
-        userMsg.style.cssText = 'background: var(--accent-soft); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-end; max-width: 85%;';
-        userMsg.textContent = text;
-        messagesContainer.appendChild(userMsg);
-        input.value = '';
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    const REPLIES = [
+      "On it — pulling the latest signals now.",
+      "Great question. Let me check your client data.",
+      "Analysing patterns across your roster…",
+      "Here's what I found based on recent activity.",
+    ];
 
-        setTimeout(() => {
-          const aiMsg = document.createElement('div');
-          aiMsg.style.cssText = 'background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;';
-          aiMsg.textContent = "I've received your request! Staging analysis and syncing updates.";
-          messagesContainer.appendChild(aiMsg);
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 800);
-      }
+    function sendMessage(text) {
+      if (!text) return;
+      addBubble(text, 'me');
+      if (input) input.value = '';
+      const typing = showTyping();
+      setTimeout(() => {
+        typing.remove();
+        addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai');
+      }, 900);
+    }
 
-      sendBtn.addEventListener('click', sendMessage);
-      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+
+    body && body.addEventListener('click', e => {
+      const chip = e.target.closest('.zchip');
+      if (!chip) return;
+      sendMessage(chip.dataset.q || chip.textContent.trim());
     });
+  })();
   </script>
 
   <!-- Payments Due: slide-in panel -->

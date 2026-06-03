@@ -121,15 +121,22 @@
        Rebuilt to match the dashboard AI action cards: severity tag, signal
        pairs, read-first suggestion, one primary action. No side-stripe. */
     .iv-card {
-      background: var(--paper-2);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px 20px;
+      background: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: none;
+      border-radius: 0;
+      padding: 0 0 4px;
       margin-bottom: var(--space-lg);
-      box-shadow: var(--shadow-sm);
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       gap: 14px;
+    }
+    [data-theme="dark"] .iv-card {
+      background: none;
+      border-color: transparent;
+      box-shadow: none;
     }
 
     .iv-head {
@@ -229,18 +236,30 @@
     }
 
     .iv-suggestion {
-      background: var(--accent-soft);
-      border: 1px solid color-mix(in oklab, var(--accent) 14%, transparent);
+      background: rgba(122,84,135,0.10);
+      border: 1px solid rgba(122,84,135,0.18);
       border-radius: 12px;
       padding: 13px 15px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      /* Inset highlight to separate from card bg */
+      box-shadow: 0 1px 0 rgba(255,255,255,.30) inset;
+    }
+    [data-theme="dark"] .iv-suggestion {
+      background: rgba(122,84,135,0.16);
+      border-color: rgba(162,114,175,0.22);
+      box-shadow: 0 1px 0 rgba(255,255,255,.05) inset;
     }
 
     .iv-card--ok .iv-suggestion {
-      background: color-mix(in oklab, var(--ok) 8%, transparent);
-      border-color: color-mix(in oklab, var(--ok) 22%, transparent);
+      background: rgba(46,204,113,0.09);
+      border-color: rgba(46,204,113,0.22);
+      box-shadow: 0 1px 0 rgba(255,255,255,.28) inset;
+    }
+    [data-theme="dark"] .iv-card--ok .iv-suggestion {
+      background: rgba(46,204,113,0.12);
+      border-color: rgba(46,204,113,0.20);
     }
 
     .iv-suggestion-head {
@@ -360,8 +379,218 @@
       color: var(--accent);
     }
 
+    /* ===== Signal context ? button ===========================
+       Sits in the inline-day-card header. Triggers a fixed-position
+       glass tooltip that escapes overflow:hidden and floats above
+       the action rail. */
+    .recovery-ctx-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid color-mix(in oklab, var(--accent) 30%, var(--line));
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      font-family: var(--font-geist);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 140ms var(--ease-out), border-color 140ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .recovery-ctx-btn:hover,
+    .recovery-ctx-btn.is-open {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      transform: scale(1.1);
+    }
+    .recovery-ctx-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Wrapper only needs to exist for keyboard focus fallback */
+    .recovery-ctx-wrap {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* ===== Fixed-position glass tooltip =====
+       Positioned by JS via inline top/left. Floats above everything
+       including the right action rail (z-index 3000). */
+    .ctx-glass-tip {
+      position: fixed;
+      z-index: 3000;
+      width: 248px;
+      /* True glass: very low alpha so the blur reads, tinted slightly
+         toward the brand purple rather than neutral white */
+      background: color-mix(in srgb, rgba(122,84,135,0.08) 100%, rgba(255,255,255,0.22));
+      backdrop-filter: blur(28px) saturate(200%) brightness(1.06);
+      -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.06);
+      border: 1px solid rgba(255,255,255,0.28);
+      border-bottom-color: rgba(255,255,255,0.12);
+      border-radius: 13px;
+      padding: 12px 14px 10px;
+      /* Layered shadows for lift: ambient + umbra + top highlight */
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.50) inset,
+        0 28px 56px -10px rgba(26,26,46,.32),
+        0 6px 18px -2px rgba(26,26,46,.14);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px) scale(.97);
+      transition: opacity 200ms cubic-bezier(.23,1,.32,1), transform 200ms cubic-bezier(.23,1,.32,1);
+      user-select: none;
+      /* Force text to read against the blurred background */
+      color: var(--ink);
+    }
+    /* Dark mode: deep semi-transparent with stronger shadow */
+    [data-theme="dark"] .ctx-glass-tip {
+      background: rgba(28,20,42,0.38);
+      border-color: rgba(255,255,255,.10);
+      border-bottom-color: rgba(0,0,0,.18);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.06) inset,
+        0 28px 56px -10px rgba(0,0,0,.60),
+        0 6px 18px -2px rgba(0,0,0,.30);
+    }
+    .ctx-glass-tip.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    /* Caret: small diamond notch. Left driven by --caret-x set by JS. */
+    .ctx-glass-tip::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: var(--caret-x, 20px);
+      width: 9px;
+      height: 9px;
+      background: rgba(255,255,255,0.32);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-top: 1px solid rgba(255,255,255,0.28);
+      border-left: 1px solid rgba(255,255,255,0.28);
+      transform: rotate(45deg);
+    }
+    [data-theme="dark"] .ctx-glass-tip::before {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,.10);
+    }
+    .ctx-glass-tip-head {
+      font-family: var(--font-geist);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.22);
+    }
+    [data-theme="dark"] .ctx-glass-tip-head {
+      border-bottom-color: rgba(255,255,255,.08);
+    }
+    .ctx-glass-signal {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 0;
+    }
+    .ctx-glass-signal + .ctx-glass-signal {
+      border-top: 1px solid rgba(255,255,255,0.16);
+    }
+    [data-theme="dark"] .ctx-glass-signal + .ctx-glass-signal {
+      border-top-color: rgba(255,255,255,.06);
+    }
+    .ctx-glass-signal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .ctx-glass-signal-dot.flagged { background: var(--bad); }
+    .ctx-glass-signal-dot.ok      { background: var(--ok);  }
+    .ctx-glass-signal-dot.warn    { background: oklch(0.75 0.13 75); }
+    .ctx-glass-signal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+    .ctx-glass-signal-label {
+      font-family: var(--font-geist);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .ctx-glass-signal-val {
+      font-family: var(--font-dm-sans);
+      font-size: 11px;
+      color: var(--ink-3);
+      line-height: 1.35;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ctx-glass-tip { transition: opacity 100ms linear; transform: none; }
+      .ctx-glass-tip.is-visible { transform: none; }
+    }
+
+    /* ===== Recovery list — distilled, label-only rows ===== */
+    .recovery-list {
+      columns: 2;
+      column-gap: 14px;
+      column-rule: 1px solid var(--line-soft);
+    }
+    .recovery-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--line-soft);
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+    }
+    .recovery-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .recovery-item:first-child { padding-top: 0; }
+    .recovery-item-ico {
+      flex-shrink: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.45;
+      margin-top: 1px;
+    }
+    .recovery-item-label {
+      font-family: var(--font-dm-sans);
+      font-size: 12px;
+      font-weight: 450;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .recovery-focus-banner {
+      background: var(--accent-soft);
+      border: 1px solid color-mix(in oklab, var(--accent) 18%, transparent);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      font-family: var(--font-dm-sans);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-deep);
+      line-height: 1.35;
+    }
+    [data-theme="dark"] .recovery-focus-banner { color: var(--accent); }
+
     /* "From <source>" footer inside each week-strip day card (Training /
-       Nutrition / Habits): names the signal streams that drove that area's
+       Nutrition / Recovery): names the signal streams that drove that area's
        recommendation. Pinned to the card bottom so all three align. */
     .reco-card-src {
       display: flex;
@@ -514,6 +743,221 @@
       }
     }
 
+    /* ===== Behavioral Signals — borderless graph strip ===== */
+    .bsig-section {
+      padding-bottom: 4px;
+    }
+
+    .bsig-graphs {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0;
+      align-items: start;
+    }
+
+    .bsig-divider {
+      width: 1px;
+      background: var(--line-soft);
+      margin: 4px 20px 0;
+      align-self: stretch;
+    }
+
+    .bsig-graph-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .bsig-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .bsig-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-4);
+      letter-spacing: 0.01em;
+    }
+
+    .bsig-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .bsig-value {
+      font-family: var(--font-geist);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .bsig-delta {
+      font-size: 11px;
+      color: var(--ink-4);
+      white-space: nowrap;
+    }
+
+    .bsig-delta.bad { color: var(--bad); }
+    .bsig-delta.ok  { color: var(--ok); }
+
+    .bsig-graph-wrap {
+      position: relative;
+      width: 100%;
+      margin-top: 10px;
+      height: 64px;
+    }
+
+    .bsig-svg {
+      display: block;
+      width: 100%;
+      height: 64px;
+      overflow: visible;
+      cursor: crosshair;
+    }
+
+    /* Crosshair: vertical line that tracks the pointer */
+    .bsig-crosshair {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--ink-4);
+      opacity: 0.3;
+      pointer-events: none;
+      transform: translateX(-0.5px);
+    }
+
+    .bsig-crosshair.is-visible {
+      opacity: 0.4;
+    }
+
+    /* Inline value tooltip that follows the crosshair */
+    .bsig-tip {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-geist-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 80ms ease-out;
+    }
+
+    .bsig-tip.is-visible {
+      opacity: 1;
+    }
+
+    .bsig-sub {
+      font-size: 10.5px;
+      color: var(--ink-4);
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    /* Narrative: plain text, no box */
+    .bsig-narrative {
+      font-size: 12px;
+      color: var(--ink-3);
+      line-height: 1.55;
+      margin: 14px 0 0;
+      text-wrap: pretty;
+    }
+
+    /* Sparkline path animation on draw */
+    @keyframes bsig-draw {
+      from { stroke-dashoffset: 1; }
+      to   { stroke-dashoffset: 0; }
+    }
+
+    .bsig-line-path {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      fill: none;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .bsig-area-path {
+      fill-opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bsig-line-path { animation: none !important; }
+      .bsig-tip { transition: none; }
+    }
+
+    @media (max-width: 640px) {
+      .bsig-graphs {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .bsig-divider { display: none; }
+    }
+
+    /* ===== HRV segmented toggle (current / with-changes) ===== */
+    /* Two-option pill where each option is a real button — no absolute-thumb
+       tricks that fight natural text width. The active indicator is a sliding
+       highlight rendered via ::before on the active option. */
+    .hrv-seg {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      background: var(--paper-3);
+      padding: 2px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .hrv-seg-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 9px;
+      border-radius: 99px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-geist, sans-serif);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--ink-4);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color .18s, background .2s cubic-bezier(.23,1,.32,1), box-shadow .18s;
+      line-height: 1;
+    }
+    .hrv-seg-btn.is-active {
+      background: var(--paper-2);
+      color: var(--ink);
+      box-shadow: 0 1px 4px rgba(26,26,46,.13);
+    }
+    .hrv-seg-btn.is-active.is-proj {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      box-shadow: 0 1px 4px color-mix(in oklab,var(--accent) 22%,transparent);
+    }
+    .hrv-seg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      .hrv-seg-btn { transition: none; }
+    }
+
     /* Tabs & Grid Layout */
     .detail-grid-container {
       display: grid;
@@ -553,9 +997,9 @@
 
     /* Hero Intervention Card */
     .risk-hero-card {
-      background: #ffffff;
+      background: var(--paper-2);
       border: 1px solid var(--line);
-      border-left: 4px solid var(--bad);
+      border-top: 3px solid var(--bad);
       border-radius: 16px;
       padding: 24px;
       margin-bottom: var(--space-lg);
@@ -566,7 +1010,7 @@
     }
 
     .risk-hero-card.healthy {
-      border-left-color: var(--ok);
+      border-top-color: var(--ok);
     }
 
     .risk-hero-top {
@@ -803,36 +1247,98 @@
     }
 
     /* Adherence Heatmap grid */
+    /* ===== Adherence Heatmap ===== */
+    .adherence-heatmap-wrap {
+      width: 100%;
+    }
+    .adherence-heatmap-grid {
+      display: grid;
+      /* Week label col + 7 day cols */
+      grid-template-columns: 22px repeat(7, 1fr);
+      gap: 3px;
+      width: 100%;
+    }
+    .hm-corner { /* empty top-left corner */
+      grid-column: 1;
+    }
+    .hm-day-label {
+      font-family: var(--font-geist, sans-serif);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      text-align: center;
+      padding-bottom: 3px;
+      white-space: nowrap;
+    }
+    .hm-week-label {
+      font-family: var(--font-geist-mono, 'Geist Mono', monospace);
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--ink-4);
+      display: flex;
+      align-items: center;
+      padding-right: 4px;
+      white-space: nowrap;
+    }
     .heatmap-cell {
       aspect-ratio: 1;
       border-radius: 4px;
-      transition: transform 0.1s ease;
+      transition: transform .12s ease, box-shadow .12s ease;
       position: relative;
+      cursor: default;
     }
-
     .heatmap-cell:hover {
-      transform: scale(1.15);
+      transform: scale(1.18);
       z-index: 2;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,.18);
     }
-
+    /* Brightness reduced ~20% from vivid — using oklch to stay in gamut */
     .heatmap-cell.good {
-      background: #2ecc71;
+      background: oklch(0.68 0.14 145); /* muted green */
     }
-
     .heatmap-cell.warn {
-      background: #f1c40f;
+      background: oklch(0.75 0.13 75);  /* muted amber */
     }
-
     .heatmap-cell.bad {
-      background: #e74c3c;
+      background: oklch(0.62 0.16 25);  /* muted red */
     }
-
-    .heatmap-cell.empty {
+    .heatmap-cell.rest {
       background: var(--paper-3);
       border: 1px solid var(--line-soft);
     }
+    .heatmap-cell.empty {
+      background: color-mix(in oklab, var(--paper-3) 80%, transparent);
+      border: 1px dashed var(--line-soft);
+      opacity: .5;
+    }
+    /* Tooltip via title — enhanced with aria-label for screen readers */
+    .hm-legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .hm-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-dm-sans, sans-serif);
+      font-size: 10.5px;
+      color: var(--ink-3);
+    }
+    .hm-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .hm-legend-dot.good { background: oklch(0.68 0.14 145); }
+    .hm-legend-dot.warn { background: oklch(0.75 0.13 75); }
+    .hm-legend-dot.bad  { background: oklch(0.62 0.16 25); }
+    .hm-legend-dot.rest { background: var(--paper-3); border: 1px solid var(--line); }
 
     /* Fix suggestions styling */
     .fix-row {
@@ -1526,8 +2032,53 @@
       }
     }
 
-    /* Detail (View B): the raw signals as quiet per-source line lists. */
+    /* Detail (View B): glass panel — same material as the ? tooltip.
+       The glass + mask live on ::before so they never clip child text. */
+    .signals-detail {
+      position: relative;
+      /* No background on the element itself — ::before carries the glass */
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 20px 0 24px;
+    }
+    /* Glass layer: sits behind all content, masked at all four edges */
+    .signals-detail::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: color-mix(in srgb, rgba(122,84,135,0.07) 100%, rgba(255,255,255,0.22));
+      backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+      -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+      box-shadow: 0 8px 32px -6px rgba(26,26,46,.10);
+      /* Fade all four edges — mask only applies to this pseudo-element,
+         never touches the text children above it */
+      -webkit-mask-image:
+        linear-gradient(to right,  transparent 0%, black 6%, black 94%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+      -webkit-mask-composite: destination-in;
+      mask-image:
+        linear-gradient(to right,  transparent 0%, black 6%, black 94%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+      mask-composite: intersect;
+      pointer-events: none;
+    }
+    [data-theme="dark"] .signals-detail::before {
+      background: rgba(28,20,42,0.32);
+      box-shadow: 0 8px 32px -6px rgba(0,0,0,.28);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .signals-detail::before {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: color-mix(in srgb, var(--paper-3) 55%, transparent);
+      }
+    }
+    /* Inner content sits above the glass layer */
     .signals-detail-inner {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 4px 32px;
@@ -1637,7 +2188,11 @@
   <aside class="sidebar">
     <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="brand-mark">Z</div>
+        <div class="brand-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
+          </svg>
+        </div>
         <div class="brand-text">
           <div class="brand-name">ZORA</div>
           <div class="brand-sub">COACH OS</div>
@@ -1653,14 +2208,14 @@
     </div>
 
     <div class="nav-section">
-      <div class="nav-item" onclick="window.location.href='index.html'">
+      <div class="nav-item active" onclick="window.location.href='index.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
         <span>Home</span>
       </div>
-      <div class="nav-item active" onclick="window.location.href='reco-card.html'">
+      <div class="nav-item" onclick="window.location.href='growth.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
           <polyline points="17 6 23 6 23 12"></polyline>
@@ -1714,7 +2269,7 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="crumbs" style="font-size: 12.5px;">
-        <a href="index.html" class="back-crumb" title="Back to Dashboard Overview"
+        <a href="index.html" class="back-crumb" title="Back to Home"
           style="display: flex; align-items: center; gap: 5px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
             style="vertical-align: middle;">
@@ -1723,21 +2278,13 @@
             <rect x="14" y="12" width="7" height="9" rx="1"></rect>
             <rect x="3" y="16" width="7" height="5" rx="1"></rect>
           </svg>
-          <span>Dashboard Overview</span>
+          <span>Home</span>
         </a>
         <span class="sep">/</span>
-        <span id="crumb-tail">Client Optimization</span>
+        <span id="crumb-tail">Client</span>
       </div>
 
-      <button onclick="window.location.href='index.html?roster=open'" style="margin-right: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; color: var(--ink-3); font-family: var(--font-geist); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-4);">
-          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-          <line x1="2" y1="10" x2="22" y2="10"></line>
-        </svg>
-        <span>Payments Due</span>
-      </button>
-
-      <input class="search" placeholder="Search members, plans, signals…" />
+<input class="search" placeholder="Search members, plans, signals…" />
 
       <button class="icon-btn" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1908,8 +2455,8 @@
                     <span class="dial-why">declining 3 days</span>
                   </div>
 
-                  <div class="dial" data-state="bad" data-pct="30" role="listitem"
-                    aria-label="Sleep poor, average 5.4 hours, below 7 hours for 4 nights">
+                  <div class="dial" data-state="bad" data-pct="25" role="listitem"
+                    aria-label="Sleep poor, average 4.2 hours, below 7 hours for 5 nights">
                     <div class="dial-gauge">
                       <svg class="dial-svg" viewBox="0 0 72 46" aria-hidden="true">
                         <path class="dial-track" d="M 6 40 A 30 30 0 0 1 66 40" />
@@ -1918,7 +2465,7 @@
                       <span class="dial-value dial-value--word">Poor</span>
                     </div>
                     <span class="dial-name">Sleep</span>
-                    <span class="dial-why">5.4 h, below 7 h &times;4</span>
+                    <span class="dial-why">4.2 h, below 7 h &times;5</span>
                   </div>
 
                   <div class="dial" data-state="warn" data-pct="67" role="listitem"
@@ -1965,8 +2512,8 @@
                       <div class="sig" data-state="warn"><span class="sig-lbl">Resting HR</span><span
                           class="sig-note">+8 vs average</span><span class="sig-val">68<span
                             class="sig-unit">bpm</span></span></div>
-                      <div class="sig" data-state="bad"><span class="sig-lbl">Sleep</span><span class="sig-note">4
-                          nights low</span><span class="sig-val">5.4<span class="sig-unit">h</span></span></div>
+                      <div class="sig" data-state="bad"><span class="sig-lbl">Sleep</span><span class="sig-note">5
+                          nights low</span><span class="sig-val">4.2<span class="sig-unit">h</span></span></div>
                       <div class="sig" data-state="ok"><span class="sig-lbl">Steps / day</span><span class="sig-note">on
                           range</span><span class="sig-val">7.8<span class="sig-unit">k</span></span></div>
                       <div class="sig" data-state="ok"><span class="sig-lbl">Active calories</span><span
@@ -2023,10 +2570,8 @@
                 <div class="rec-h1-row" style="margin-bottom: 20px;">
                   <h3 class="rec-h1" style="margin: 0;">
                     <span class="ai-sparkle-inline">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.8" style="vertical-align: middle;">
-                        <path
-                          d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align: middle;">
+                        <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
                       </svg>
                     </span>
                     Zora's Recommendation
@@ -2061,23 +2606,49 @@
                     <!-- Rendered dynamically by javascript -->
                   </div>
 
-                  <!-- Inline Day Details Panel (Seamless Schedule Destination) -->
-                  <div class="inline-day-details" id="inline-day-details" style="display: none;"></div>
-
                   <p class="week-strip-empty" id="week-strip-empty" hidden>No adjustments needed this week.</p>
-                </div>
 
-                <!-- Bottom CTA Actions -->
-                <div class="rec-actions">
-                  <button class="btn-primary" id="btn-approve">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    Approve &amp; Send to Client
-                  </button>
-                  <button class="btn-secondary" id="btn-edit-ai">Edit with AI</button>
-                  <button class="btn-ghost" id="btn-regenerate">Regenerate Draft</button>
+                  <!-- Master-detail panel: left tab rail + card pane + right actions -->
+                  <div class="sched-detail-shell" id="sched-detail-shell" style="display: none;">
+
+                    <!-- Left: vertical category tab rail -->
+                    <nav class="sched-tab-rail" aria-label="Schedule category">
+                      <button class="sched-tab-btn is-active" data-tab="training" type="button" aria-expanded="true">
+                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6.5h2a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-2M6 6.5H4A1.5 1.5 0 0 0 2.5 8v8A1.5 1.5 0 0 0 4 17.5h2M6.5 12h11M6 9v6M18 9v6"/></svg>
+                        Training
+                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
+                      <button class="sched-tab-btn" data-tab="nutrition" type="button" aria-expanded="false">
+                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v3M9 3v2M15 3v2M3 11h18"/><path d="M4 11a8 8 0 0 0 16 0z"/></svg>
+                        Nutrition
+                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
+                      <button class="sched-tab-btn" data-tab="recovery" type="button" aria-expanded="false">
+                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.34 7a9.97 9.97 0 0 1 .659-1.017C5.24 4.246 7.35 3 9.5 3c1.89 0 3.63.88 4.5 2.25C14.87 3.88 16.61 3 18.5 3c2.15 0 4.26 1.246 5.5 2.983.3.41.543.853.728 1.317"/><path d="M20 10H4"/><path d="M20 10c0 6.627-8 11-8 11S4 16.627 4 10"/><path d="m8 10 2 3 4-6 2 3"/></svg>
+                        Recovery
+                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
+                    </nav>
+
+                    <!-- Centre: active category card content -->
+                    <div class="sched-card-pane" id="sched-card-pane">
+                      <!-- Populated by renderInlineDayDetails() -->
+                      <div class="inline-day-details" id="inline-day-details"></div>
+                    </div>
+
+                    <!-- Right: action buttons column -->
+                    <div class="sched-actions-col">
+                      <button class="btn-primary" id="btn-approve">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Approve &amp; Send
+                      </button>
+                      <button class="btn-secondary" id="btn-edit-ai">Edit with AI</button>
+                      <button class="btn-ghost" id="btn-regenerate">Regenerate</button>
+                    </div>
+
+                  </div><!-- /sched-detail-shell -->
                 </div>
               </div>
             </div>
@@ -2119,10 +2690,8 @@
               <div class="planfit-gate" id="planfit-gate">
                 <button class="planfit-run" id="planfit-run" type="button">
                   <span class="ai-sparkle-inline" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.8">
-                      <path
-                        d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                      <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
                     </svg>
                   </span>
                   <span class="planfit-run-label">Run plan analysis</span>
@@ -2142,81 +2711,97 @@
               <div class="planfit-detail" id="planfit-detail" hidden>
 
                 <!-- Behavioral signals (moved here from a standalone card) -->
-                <div class="planfit-reveal-item"
+                <div class="planfit-reveal-item bsig-section"
                   style="margin-top: var(--space-md); border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
-                  <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 12px;">Behavioral
-                    Signals &amp; Wearable Trends</div>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
-                    <!-- Sentiment Mini-Chart -->
-                    <div
-                      style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
-                      <div
-                        style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">
-                        Message Sentiment</div>
-                      <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <span style="font-size: 18px; font-weight: 700; color: var(--ink);"
-                          id="sentiment-value">Neutral</span>
-                        <span style="font-size: 11px; color: var(--ink-4);" id="sentiment-delta">Stable (7d)</span>
+                  <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 16px;">Behavioral Signals &amp; Wearable Trends</div>
+
+                  <!-- Three graphs, no boxes — label+value+graph each in their own column -->
+                  <div class="bsig-graphs">
+
+                    <!-- Message Sentiment -->
+                    <div class="bsig-graph-col" data-graph-id="sentiment">
+                      <div class="bsig-meta">
+                        <span class="bsig-label">Message Sentiment</span>
+                        <span class="bsig-delta" id="sentiment-delta">Stable (7d)</span>
                       </div>
-                      <svg id="sentiment-chart-svg" viewBox="0 0 180 50" width="100%" height="50"
-                        style="display: block; overflow: visible;"></svg>
-                    </div>
-                    <!-- Motivation Mini-Chart -->
-                    <div
-                      style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
-                      <div
-                        style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">
-                        Motivation (RPE)</div>
-                      <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <span style="font-size: 18px; font-weight: 700; color: var(--ink);"
-                          id="motivation-value">4.2/10</span>
-                        <span style="font-size: 11px; color: var(--bad);" id="motivation-delta">▼ -18%</span>
+                      <div class="bsig-value-row">
+                        <span class="bsig-value" id="sentiment-value">Neutral</span>
                       </div>
-                      <svg id="motivation-chart-svg" viewBox="0 0 180 50" width="100%" height="50"
-                        style="display: block; overflow: visible;"></svg>
-                    </div>
-                    <!-- Completion Mini-Chart -->
-                    <div
-                      style="border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px;">
-                      <div
-                        style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ink-4); letter-spacing: 0.05em;">
-                        Completion Drift</div>
-                      <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <span style="font-size: 18px; font-weight: 700; color: var(--ink);"
-                          id="completion-value">52%</span>
-                        <span style="font-size: 11px; color: var(--bad);" id="completion-delta">▼ -20%</span>
+                      <div class="bsig-graph-wrap">
+                        <svg id="sentiment-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none" aria-label="Message sentiment trend"></svg>
+                        <div class="bsig-crosshair" id="sentiment-crosshair" hidden></div>
+                        <div class="bsig-tip" id="sentiment-tip" hidden></div>
                       </div>
-                      <svg id="completion-chart-svg" viewBox="0 0 180 50" width="100%" height="50"
-                        style="display: block; overflow: visible;"></svg>
                     </div>
+
+                    <div class="bsig-divider"></div>
+
+                    <!-- HRV Trend -->
+                    <div class="bsig-graph-col" id="hrv-card" data-graph-id="hrv">
+                      <div class="bsig-meta">
+                        <span class="bsig-label">HRV Trend</span>
+                        <!-- HRV segmented toggle -->
+                        <div class="hrv-seg" id="hrv-seg" role="group" aria-label="HRV view">
+                          <button class="hrv-seg-btn is-active" id="hrv-btn-current" type="button" aria-pressed="true">Current</button>
+                          <button class="hrv-seg-btn is-proj" id="hrv-btn-proj" type="button" aria-pressed="false">With changes</button>
+                        </div>
+                      </div>
+                      <div class="bsig-value-row">
+                        <span class="bsig-value" id="hrv-card-value">18 ms</span>
+                        <span class="bsig-delta" id="hrv-card-delta">▼ -52%</span>
+                      </div>
+                      <div class="bsig-graph-wrap">
+                        <div style="position: relative; width: 100%; height: 100%;">
+                          <svg id="hrv-current-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
+                            style="transition: opacity .28s cubic-bezier(.16,1,.3,1);" aria-label="HRV current trend"></svg>
+                          <svg id="hrv-projected-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
+                            style="position: absolute; inset: 0; opacity: 0; transition: opacity .28s cubic-bezier(.16,1,.3,1);" aria-label="HRV projected trend"></svg>
+                        </div>
+                        <div class="bsig-crosshair" id="hrv-crosshair" hidden></div>
+                        <div class="bsig-tip" id="hrv-tip" hidden></div>
+                      </div>
+                      <div class="bsig-sub" id="hrv-card-sub">52% below rolling baseline</div>
+                    </div>
+
+                    <div class="bsig-divider"></div>
+
+                    <!-- Completion Drift -->
+                    <div class="bsig-graph-col" data-graph-id="completion">
+                      <div class="bsig-meta">
+                        <span class="bsig-label">Completion Drift</span>
+                        <span class="bsig-delta bad" id="completion-delta">▼ -20%</span>
+                      </div>
+                      <div class="bsig-value-row">
+                        <span class="bsig-value" id="completion-value">52%</span>
+                      </div>
+                      <div class="bsig-graph-wrap">
+                        <svg id="completion-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none" aria-label="Completion trend"></svg>
+                        <div class="bsig-crosshair" id="completion-crosshair" hidden></div>
+                        <div class="bsig-tip" id="completion-tip" hidden></div>
+                      </div>
+                    </div>
+
                   </div>
-                  <div
-                    style="font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 12px; padding: 10px; background: var(--paper-3); border-radius: 6px;"
-                    id="behavior-narrative"></div>
+
+                  <!-- Narrative — borderless, just ink text -->
+                  <p class="bsig-narrative" id="behavior-narrative"></p>
                 </div>
 
                 <!-- Adherence Heatmap + Suggested Adjustments, side by side -->
                 <div class="planfit-reveal-item"
                   style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
                   <!-- Adherence Heatmap -->
-                  <div>
-                    <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px;">Adherence
-                      Heatmap (6 Weeks)</div>
-                    <div id="adherence-heatmap"
-                      style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 280px; margin: 0 auto;">
+                  <div class="adherence-heatmap-wrap">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 10px;">Adherence Heatmap <span style="font-weight:400;color:var(--ink-4);">· 6 weeks</span></div>
+                    <div class="adherence-heatmap-grid" id="adherence-heatmap" aria-label="Adherence heatmap grid">
+                      <!-- Populated by renderHeatmap() — header row + week rows -->
                     </div>
-                    <div
-                      style="display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-4); margin-top: 8px; max-width: 280px; margin-left: auto; margin-right: auto;">
-                      <span>Mon</span>
-                      <span>Tue</span>
-                      <span>Wed</span>
-                      <span style="color: var(--bad); font-weight: 600;">Thu*</span>
-                      <span>Fri</span>
-                      <span style="color: var(--bad); font-weight: 600;">Sat*</span>
-                      <span>Sun</span>
-                    </div>
-                    <div style="font-size: 10.5px; color: var(--ink-4); margin-top: 6px; text-align: center;">
-                      * Red column highlight indicates recurring Thursday &amp; Saturday workout skips.
+                    <!-- Legend -->
+                    <div class="hm-legend">
+                      <span class="hm-legend-item"><span class="hm-legend-dot good"></span>Completed</span>
+                      <span class="hm-legend-item"><span class="hm-legend-dot warn"></span>Partial</span>
+                      <span class="hm-legend-item"><span class="hm-legend-dot bad"></span>Skipped</span>
+                      <span class="hm-legend-item"><span class="hm-legend-dot rest"></span>Rest</span>
                     </div>
                   </div>
 
@@ -2340,11 +2925,11 @@
         avatarClass: "av-1",
         phase: "Week 8 · Half-Marathon",
         program: "Half-Marathon · Week 8",
-        vitals: { recovery: 58, engagement: 92, riskText: "Low Risk", riskClass: "risk-low", active: "2h ago" },
+        vitals: { recovery: 58, engagement: 54, riskText: "Medium Risk", riskClass: "risk-medium", active: "2h ago" },
         metrics: {
           sleep: "42",
           sleepTrend: "▼ -45% vs baseline",
-          sleepSub: "3.2 hrs · 12% REM · 8% Deep sleep",
+          sleepSub: "4.2 hrs · 11% REM · 8% Deep sleep",
           sleepTrendClass: "down",
           hrv: "18",
           hrvTrend: "▼ -52% 7d change",
@@ -2355,7 +2940,8 @@
           rhrSub: "Elevated (+12% above average)",
           rhrTrendClass: "up"
         },
-        aiNarrative: "Sarah's acute training load has increased by <span class=\"hl\">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class=\"hl\">42/100</span>. HRV has plunged <span class=\"hl\">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. Zora recommends a mandatory active recovery shift to prevent injury.",
+        aiNarrative: "Sarah's acute training load has increased by <span class=\"hl\">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class=\"hl\">42/100</span> (averaging 4.2 h). HRV has plunged <span class=\"hl\">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. Zora recommends a mandatory active recovery shift to prevent injury.",
+        verdictText: "Fatigue accumulation risk — deload this week to prevent injury.",
         weekPlan: [
           { name: "Mon", type: "Threshold intervals", detail: "6 × 1 km at 4:10/km", originalType: "Threshold intervals", originalDetail: "6 × 1 km", edited: false },
           { name: "Tue", type: "Strength", detail: "Full lower body focus", originalType: "Strength", originalDetail: "Full session", edited: false },
@@ -2365,15 +2951,15 @@
           { name: "Sat", type: "Long run", detail: "14 km progression", originalType: "Long run", originalDetail: "14 km", edited: false },
           { name: "Sun", type: "Easy run", detail: "5 km recovery jog", originalType: "Easy run", originalDetail: "5 km", edited: false }
         ],
-        churnRisk: 15,
-        churnRiskLabel: "Low Churn Risk",
-        churnRiskClass: "risk-low",
-        isAtRisk: false,
+        churnRisk: 42,
+        churnRiskLabel: "Medium Churn Risk",
+        churnRiskClass: "risk-medium",
+        isAtRisk: true,
         riskText: "Sarah is at risk of fatigue-induced disengagement",
-        reasoningChips: ["Sleep Deficit (3.2 hrs)", "HRV 18ms (-52%)", "Volume +35% WoW"],
+        reasoningChips: ["Sleep Deficit (4.2 hrs)", "HRV 18ms (-52%)", "Volume +35% WoW"],
         recoBreakdown: {
           sources: {
-            wearable: { reading: "HRV 52% below baseline, sleep 3.2 hrs", flagged: true },
+            wearable: { reading: "HRV 52% below baseline, sleep 4.2 hrs", flagged: true },
             chat: { reading: "Tone turned anxious, mentions of fatigue", flagged: true },
             engagement: { reading: "App opens steady, completion holding", flagged: false }
           },
@@ -2383,13 +2969,13 @@
             { area: "habits", title: "Protect a 10pm sleep window", detail: "Three nights minimum to rebuild HRV before load returns.", sources: ["wearable", "chat"] }
           ]
         },
-        draftMsg: "Hey Sarah, I saw your sleep has been rough this week and HRV is down. I've adjusted your training plan to a deload week to help you recover. Let's focus on mobility and recovery runs. How is your knee feeling?",
+        draftMsg: "Hey Sarah, your sleep has been averaging around 4 hours this week and HRV is down. I've adjusted your plan to a deload week to help you recover. Let's focus on mobility and easy runs. How is your knee feeling?",
         suggestions: [
           { icon: "📋", text: "Plan tweak: Reduce weekly volume by 30%" },
           { icon: "📞", text: "Accountability: Send travel-friendly recovery options" }
         ],
         predictedImpact: "+24% recovery acceleration",
-        whyContent: "Sarah's sleep has dropped to 3.2 hrs and HRV is 52% below her rolling baseline. Acute training load has increased by 35% WoW. Left unchanged, she faces a 4.2x higher injury risk and severe exhaustion crash within 3 days.",
+        whyContent: "Sarah's sleep has dropped to 4.2 hrs and HRV is 52% below her rolling baseline. Acute training load has increased by 35% WoW. Left unchanged, she faces a significantly higher injury risk and a hard fatigue crash within 3 to 4 days.",
         timelineData: {
           appOpens: [5, 4, 5, 6, 5, 4, 5, 5, 4, 4, 5, 5, 5, 4, 5, 5, 4, 4, 5, 4, 2, 1, 2, 1, 0, 1, 0, 0, 1, 0],
           messages: [2, 0, 1, 0, 2, 0, 1, 1, 0, 0, 2, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -2401,6 +2987,10 @@
           sentiment: [0.7, 0.75, 0.68, 0.5, 0.45],
           motivation: [7, 6.5, 5, 4.5, 4.2],
           completion: [90, 85, 80, 75, 65, 52],
+          hrv: [36, 30, 26, 22, 20, 18, 18],
+          hrvProjected: [18, 20, 24, 29, 33, 37, 40],
+          hrvValue: "18 ms", hrvDelta: "▼ -52%", hrvDeltaClass: "bad", hrvSub: "52% below rolling baseline",
+          hrvProjValue: "40 ms", hrvProjDelta: "▲ +122% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected recovery after deload",
           sentimentValue: "Anxious",
           sentimentDelta: "▼ -22% vs baseline",
           motivationValue: "4.2/10",
@@ -2436,7 +3026,7 @@
         ],
         chatHistory: [
           { sender: "system-zora", text: "Zora detected: Sleep score 42, HRV 18ms. Exhaustion threat high." },
-          { sender: "coach", text: "Hey Sarah, saw you got 3.2h sleep and your HRV is down. How's the knee feeling?" },
+          { sender: "coach", text: "Hey Sarah, saw you've been averaging around 4 hours of sleep and HRV is down. How's the knee feeling?" },
           { sender: "client", text: "My knee feels super tight today, and I only got 4 hours of sleep. Feels like I'm hitting a wall." }
         ],
         nutrition: {
@@ -2456,7 +3046,7 @@
         avatarClass: "av-2",
         phase: "Week 6 · Strength",
         program: "Strength · Week 6",
-        vitals: { recovery: 74, engagement: 40, riskText: "High Churn Risk", riskClass: "risk-high", active: "4d ago" },
+        vitals: { recovery: 74, engagement: 18, riskText: "High Churn Risk", riskClass: "risk-high", active: "4d ago" },
         metrics: {
           sleep: "62",
           sleepTrend: "▼ -10% vs baseline",
@@ -2472,6 +3062,7 @@
           rhrTrendClass: "up"
         },
         aiNarrative: "Marcus's app opens have dropped to <span class=\"hl\">zero for 6 consecutive days</span>. Workouts completed have fallen to <span class=\"hl\">40%</span> and he did not respond to the <span class=\"hl\">last two automated check-ins</span>. Zora recommends scaling back work to <span class=\"hl\">3 strength sessions</span> to prevent disengagement.",
+        verdictText: "Disengagement pattern — re-engagement window is open now.",
         weekPlan: [
           { name: "Mon", type: "Strength", detail: "Squat + Deadlift heavy focus", originalType: "Strength", originalDetail: "Squat + Deadlift heavy focus", edited: false },
           { name: "Tue", type: "Strength", detail: "Bench + Row hypertrophy", originalType: "Strength", originalDetail: "Bench + Row hypertrophy", edited: false },
@@ -2505,6 +3096,10 @@
           sentiment: [0.6, 0.5, 0.4, 0.4, 0.3],
           motivation: [5, 5, 4.5, 4.2, 4.0],
           completion: [80, 75, 60, 50, 45, 40],
+          hrv: [50, 46, 42, 38, 35, 33, 32],
+          hrvProjected: [32, 35, 38, 41, 44, 46, 48],
+          hrvValue: "32 ms", hrvDelta: "▼ -22%", hrvDeltaClass: "bad", hrvSub: "Below trained baseline · trending down",
+          hrvProjValue: "48 ms", hrvProjDelta: "▲ +50% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected with re-engagement protocol",
           sentimentValue: "Withdrawn",
           sentimentDelta: "▼ -40% 14d change",
           motivationValue: "4.0/10",
@@ -2563,7 +3158,8 @@
           rhrSub: "Elevated (+6%)",
           rhrTrendClass: "up"
         },
-        aiNarrative: "Aman's cumulative muscle soreness has reached <span class=\"hl\">8/10</span>. His HRV is down <span class=\"hl\">18%</span> from baseline. Adherence has begun to slip (<span class=\"hl\">2 workouts skipped</span> this week) as physical strain exceeded his recovery capacity. Zora recommends a recovery deload week.",
+        aiNarrative: "Alex's cumulative muscle soreness has reached <span class=\"hl\">8/10</span>. His HRV is down <span class=\"hl\">18%</span> from baseline. Adherence has begun to slip (<span class=\"hl\">2 workouts skipped</span> this week) as physical strain exceeded his recovery capacity. Zora recommends a recovery deload week.",
+        verdictText: "Physical strain at peak — a deload week protects the training block.",
         weekPlan: [
           { name: "Mon", type: "Strength", detail: "Push A heavy focus", originalType: "Strength", originalDetail: "Push A heavy focus", edited: false },
           { name: "Tue", type: "Strength", detail: "Pull A heavy focus", originalType: "Strength", originalDetail: "Pull A heavy focus", edited: false },
@@ -2577,33 +3173,37 @@
         churnRiskLabel: "Medium Churn Risk",
         churnRiskClass: "risk-medium",
         isAtRisk: true,
-        riskText: "Aman is experiencing muscle fatigue & plan-fit strain",
+        riskText: "Alex is experiencing muscle fatigue & plan-fit strain",
         reasoningChips: ["HRV -18% deviation", "Soreness 8/10 logs", "2 skips in 7 days"],
-        draftMsg: "Hey Aman, I noticed soreness has been running pretty high at 8/10 this week. I've scaled back our volume for the upcoming week to give your body a chance to absorb the work. Let's focus on recovery. How's that sounding?",
+        draftMsg: "Hey Alex, I noticed soreness has been running pretty high at 8/10 this week. I've scaled back our volume for the upcoming week to give your body a chance to absorb the work. Let's focus on recovery. How's that sounding?",
         suggestions: [
           { icon: "📋", text: "Plan tweak: Reduce intensity by 30%" },
           { icon: "📞", text: "Accountability: Schedule 15-min recovery check-in" }
         ],
         predictedImpact: "+20% fatigue reduction",
-        whyContent: "Aman's cumulative muscle soreness has reached 8/10. His HRV is down 18% from baseline. Adherence has begun to slip (2 workouts skipped this week) as physical strain exceeded his recovery capacity.",
+        whyContent: "Alex's cumulative muscle soreness has reached 8/10. His HRV is down 18% from baseline. Adherence has begun to slip (2 workouts skipped this week) as physical strain exceeded his recovery capacity.",
         timelineData: {
           appOpens: [4, 4, 5, 5, 4, 3, 4, 4, 3, 2, 3, 4, 4, 3, 4, 3, 2, 2, 3, 2, 2, 1, 2, 1, 0, 1, 1, 0, 1, 0],
           messages: [0, 1, 0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
           checkins: [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0],
           wearables: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          summary: "Aman logs his symptoms regularly, but high soreness correlates with a drop in app opens."
+          summary: "Alex logs his symptoms regularly, but high soreness correlates with a drop in app opens."
         },
         behavioralSignals: {
           sentiment: [0.7, 0.72, 0.65, 0.60, 0.58],
           motivation: [6, 5.8, 5.5, 5.0, 5.5],
           completion: [85, 80, 78, 75, 70, 68],
+          hrv: [56, 52, 48, 45, 43, 42, 42],
+          hrvProjected: [42, 45, 49, 52, 55, 57, 58],
+          hrvValue: "42 ms", hrvDelta: "▼ -18%", hrvDeltaClass: "warn", hrvSub: "Training fatigue accumulated",
+          hrvProjValue: "58 ms", hrvProjDelta: "▲ +38% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected after deload week",
           sentimentValue: "Frustrated",
           sentimentDelta: "▼ -12% vs baseline",
           motivationValue: "5.5/10",
           motivationDelta: "▼ -18% 7d deviation",
           completionValue: "68%",
           completionDelta: "▼ -15% drift",
-          narrative: "Aman has reported significant soreness (8/10) in his daily logs. Adherence has started to suffer."
+          narrative: "Alex has reported significant soreness (8/10) in his daily logs. Adherence has started to suffer."
         },
         planFit: {
           score: 65,
@@ -2639,7 +3239,7 @@
         avatarClass: "av-4",
         phase: "Week 4 · Nutrition focus",
         program: "Nutrition focus · Week 4",
-        vitals: { recovery: 78, engagement: 82, riskText: "Medium Churn Risk", riskClass: "risk-medium", active: "1d ago" },
+        vitals: { recovery: 78, engagement: 82, riskText: "Low Risk", riskClass: "risk-low", active: "1d ago" },
         metrics: {
           sleep: "78",
           sleepTrend: "▲ +5% vs baseline",
@@ -2654,7 +3254,8 @@
           rhrSub: "Ideal",
           rhrTrendClass: "down"
         },
-        aiNarrative: "Meera has logged consistent workouts but her logged protein intake is <span class=\"hl\">38% below</span> target (average <span class=\"hl\">62g vs 100g target</span>). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
+        aiNarrative: "Megan has logged consistent workouts but her logged protein intake is <span class=\"hl\">36% below</span> target (average <span class=\"hl\">64g vs 100g target</span>). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
+        verdictText: "Training is strong — close the protein gap to hold progress.",
         weekPlan: [
           { name: "Mon", type: "Easy run", detail: "6 km recovery pace", originalType: "Easy run", originalDetail: "6 km recovery pace", edited: false },
           { name: "Tue", type: "Strength", detail: "Full body conditioning", originalType: "Strength", originalDetail: "Full body conditioning", edited: false },
@@ -2664,19 +3265,19 @@
           { name: "Sat", type: "Long run", detail: "10 km progression", originalType: "Long run", originalDetail: "10 km progression", edited: false },
           { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
-        churnRisk: 38,
-        churnRiskLabel: "Medium Churn Risk",
-        churnRiskClass: "risk-medium",
+        churnRisk: 22,
+        churnRiskLabel: "Low Churn Risk",
+        churnRiskClass: "risk-low",
         isAtRisk: true,
-        riskText: "Meera is experiencing nutrition drift & protein shortfall",
-        reasoningChips: ["Protein 62% of target", "Meal timing score 54", "App opens stable"],
-        draftMsg: "Hey Meera, looking at your logs, you're tracking close to 62% of your protein target. A quick addition of Greek yogurt or a protein shake after your Tuesday workouts would close the gap. Let's lock that in?",
+        riskText: "Megan is experiencing nutrition drift & protein shortfall",
+        reasoningChips: ["Protein 64% of target", "Meal timing score 54", "App opens stable"],
+        draftMsg: "Hey Megan, looking at your logs, you're tracking close to 62% of your protein target. A quick addition of Greek yogurt or a protein shake after your Tuesday workouts would close the gap. Let's lock that in?",
         suggestions: [
           { icon: "📋", text: "Plan tweak: Add daily protein meal check-in" },
           { icon: "📞", text: "Accountability: Send meal-prep guide" }
         ],
         predictedImpact: "+25% nutrition compliance",
-        whyContent: "Meera has logged consistent workouts but her logged protein intake is 38% below target (average 62g vs 100g target). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
+        whyContent: "Megan has logged consistent workouts but her logged protein intake is 36% below target (average 64g vs 100g target). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
         timelineData: {
           appOpens: [5, 5, 6, 6, 5, 4, 5, 6, 5, 5, 6, 5, 6, 5, 5, 6, 5, 5, 6, 6, 5, 4, 5, 6, 5, 5, 5, 4, 5, 5],
           messages: [2, 0, 1, 1, 2, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 2, 0, 1, 1, 0, 0, 1, 0, 0, 0],
@@ -2688,13 +3289,17 @@
           sentiment: [0.8, 0.8, 0.78, 0.75, 0.75],
           motivation: [7.5, 7.5, 7.2, 7.0, 7.2],
           completion: [90, 88, 92, 85, 88, 85],
+          hrv: [64, 66, 68, 67, 69, 68, 68],
+          hrvProjected: [68, 69, 70, 70, 71, 71, 72],
+          hrvValue: "68 ms", hrvDelta: "▲ +12%", hrvDeltaClass: "ok", hrvSub: "Stable · within normal range",
+          hrvProjValue: "72 ms", hrvProjDelta: "▲ +6% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected with nutrition fix",
           sentimentValue: "Stable",
           sentimentDelta: "Stable (7d)",
           motivationValue: "7.2/10",
           motivationDelta: "▼ -4% 7d deviation",
           completionValue: "85%",
           completionDelta: "▼ -5% WoW",
-          narrative: "Meera's check-in metrics are solid, but nutritional logging reveals a recurring deficiency in protein intake."
+          narrative: "Megan's check-in metrics are solid, but nutritional logging reveals a recurring deficiency in protein intake."
         },
         planFit: {
           score: 72,
@@ -2723,11 +3328,11 @@
           { sender: "client", text: "Struggling a bit with meeting the protein target, but otherwise good!" }
         ],
         nutrition: {
-          summary: "Protein is the one gap: 62 g logged against a 100 g target. Training and recovery are otherwise solid.",
+          summary: "Protein is the one gap: 64 g logged against a 100 g target. Training and recovery are otherwise solid.",
           targets: [
-            { label: "Protein", value: "62", unit: "g/day", meta: "38 g under 100 g target", state: "bad" },
+            { label: "Protein", value: "64", unit: "g/day", meta: "36 g under 100 g target", state: "bad" },
             { label: "Meals logged", value: "7", unit: "/7 days", meta: "consistent logging", state: "ok" },
-            { label: "Goal adherence", value: "62", unit: "%", meta: "limited by protein", state: "warn" }
+            { label: "Goal adherence", value: "64", unit: "%", meta: "limited by protein", state: "warn" }
           ],
           note: "Suggested fix: a high-protein breakfast and a post-Tuesday-workout shake closes most of the gap without adding meals."
         }
@@ -2755,6 +3360,7 @@
           rhrTrendClass: "down"
         },
         aiNarrative: "Paige is in an optimal training adaptation window. HRV is elevated <span class=\"hl\">15% above</span> baseline, sleep is consistent, and adherence is near-perfect (<span class=\"hl\">94%</span>). She is highly receptive to positive reinforcement.",
+        verdictText: "All signals green — a great time to introduce progressive overload.",
         weekPlan: [
           { name: "Mon", type: "Strength", detail: "Strength endurance session", originalType: "Strength", originalDetail: "Strength endurance session", edited: false },
           { name: "Tue", type: "Easy run", detail: "8 km base pace", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
@@ -2785,6 +3391,10 @@
           sentiment: [0.85, 0.9, 0.88, 0.92, 0.95],
           motivation: [8.0, 8.2, 8.5, 8.3, 8.5],
           completion: [92, 94, 95, 93, 94, 94],
+          hrv: [67, 68, 70, 69, 71, 72, 71],
+          hrvProjected: [71, 72, 73, 74, 74, 75, 76],
+          hrvValue: "71 ms", hrvDelta: "▲ +15%", hrvDeltaClass: "ok", hrvSub: "Optimal · elevated above baseline",
+          hrvProjValue: "76 ms", hrvProjDelta: "▲ +7% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected with progressive overload",
           sentimentValue: "Positive",
           sentimentDelta: "▲ +12% vs average",
           motivationValue: "8.5/10",
@@ -2862,7 +3472,7 @@
           diastolic: [96, 95, 94, 96, 93, 95, 94, 92, 94, 93, 91, 94, 92, 94],
           target: { systolic: 140, diastolic: 90 }
         },
-        aiNarrative: "Raj's blood pressure has averaged <span class=\"hl\">142/90</span> over the last 14 days, with today's reading at <span class=\"hl\">148/94</span>. Sodium intake is over target on most days and he missed <span class=\"hl\">2 doses</span> this week. Zora recommends a sodium cut and a <span class=\"hl\">3-day recheck</span> before any medication change.",
+        aiNarrative: "Ryan's blood pressure has averaged <span class=\"hl\">142/90</span> over the last 14 days, with today's reading at <span class=\"hl\">148/94</span>. Sodium intake is over target on most days and he missed <span class=\"hl\">2 doses</span> this week. Zora recommends a sodium cut and a <span class=\"hl\">3-day recheck</span> before any medication change.",
         weekPlan: [
           { name: "Mon", type: "Morning + evening BP", detail: "Log both readings", originalType: "Morning + evening BP", originalDetail: "Log both readings", edited: false },
           { name: "Tue", type: "30 min walk", detail: "Brisk, post-dinner", originalType: "30 min walk", originalDetail: "Brisk, post-dinner", edited: false },
@@ -2873,21 +3483,57 @@
           { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
         churnRisk: 0, churnRiskLabel: "Elevated", churnRiskClass: "risk-high", isAtRisk: true,
-        riskText: "Raj's BP is above target and trending up",
+        riskText: "Ryan's BP is above target and trending up",
         reasoningChips: ["BP 148/94", "Sodium over 1.5 g", "2 missed doses"],
-        draftMsg: "Hi Raj, your readings have crept up this week and a couple of doses were missed. Let's tighten sodium below 1.5 g a day and recheck in 3 days before we touch the medication. I'll send a few low-sodium swaps.",
+        behavioralSignals: {
+          sentiment: [0.8, 0.78, 0.75, 0.70, 0.68],
+          motivation: [6.5, 6.0, 5.8, 5.5, 5.2],
+          completion: [85, 80, 80, 75, 70, 60],
+          hrv: [58, 55, 52, 50, 48, 47, 46],
+          hrvProjected: [46, 48, 51, 53, 55, 56, 57],
+          hrvValue: "46 ms", hrvDelta: "▼ -12%", hrvDeltaClass: "warn", hrvSub: "Mild stress response · monitor closely",
+          hrvProjValue: "57 ms", hrvProjDelta: "▲ +24% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected with BP plan adherence",
+          sentimentValue: "Concerned",
+          sentimentDelta: "▼ -15% vs baseline",
+          motivationValue: "5.2/10",
+          motivationDelta: "▼ -20% 7d deviation",
+          completionValue: "60%",
+          completionDelta: "▼ -25% drift",
+          narrative: "Ryan expresses worry about his blood pressure readings. Adherence has dipped due to missed morning logging sessions."
+        },
+        planFit: {
+          score: 58,
+          scores: { complexity: 10, progressivity: 10, recovery: 12, enjoyment: 14, goalFit: 12 },
+          heatmap: [
+            2, 2, 2, 2, 2, 2, 2,
+            2, 2, 2, 2, 2, 0, 2,
+            2, 2, 1, 2, 2, 0, 2,
+            2, 2, 2, 2, 1, 0, 1,
+            1, 2, 0, 2, 1, 0, 2,
+            1, 1, 0, 0, 0, 0, 1
+          ],
+          fatigueChart: {
+            volume: [50, 55, 60, 65, 70, 75, 80],
+            recovery: [70, 68, 65, 62, 58, 54, 50]
+          },
+          adjustments: [
+            { id: 1, title: "Limit Evening Sodium", desc: "Add low-sodium alternative dinner checklist", applied: false, planChanges: [] },
+            { id: 2, title: "Add Med Check-In", desc: "Set morning reminder push at 8:00 AM", applied: false, planChanges: [] }
+          ]
+        },
+        draftMsg: "Hi Ryan, your readings have crept up this week and a couple of doses were missed. Let's tighten sodium below 1.5 g a day and recheck in 3 days before we touch the medication. I'll send a few low-sodium swaps.",
         suggestions: [
           { icon: "🧂", text: "Diet: cut sodium below 1.5 g/day" },
           { icon: "💊", text: "Adherence: set a dose reminder" }
         ],
         predictedImpact: "−8/−5 mmHg projected in 2 weeks",
-        whyContent: "Raj's BP has averaged 142/90 with today at 148/94. Sodium is over target most days and 2 doses were missed. A sodium cut plus consistent dosing typically lowers BP before any medication change is needed.",
+        whyContent: "Ryan's BP has averaged 142/90 with today at 148/94. Sodium is over target most days and 2 doses were missed. A sodium cut plus consistent dosing typically lowers BP before any medication change is needed.",
         history: [
           { date: "12 May 2026", title: "Medication review", detail: "Confirmed current dose; flagged adherence gaps.", outcome: "Neutral", outcomeClass: "neutral" }
         ],
         chatHistory: [
           { sender: "system-zora", text: "Zora detected: BP 148/94, above the 140/90 target, sodium over range." },
-          { sender: "coach", text: "Hi Raj, readings are up a bit and I saw two missed doses. Let's tighten sodium and recheck in 3 days." },
+          { sender: "coach", text: "Hi Ryan, readings are up a bit and I saw two missed doses. Let's tighten sodium and recheck in 3 days." },
           { sender: "client", text: "Got it. Weekend takeout was probably the salt. I'll be stricter and set a reminder for the meds." }
         ]
       },
@@ -2942,6 +3588,42 @@
         churnRisk: 0, churnRiskLabel: "Watch", churnRiskClass: "risk-medium", isAtRisk: true,
         riskText: "Lena's time-in-range is below target",
         reasoningChips: ["Avg glucose 162", "TIR 54%", "Post-dinner spikes"],
+        behavioralSignals: {
+          sentiment: [0.75, 0.78, 0.72, 0.68, 0.65],
+          motivation: [6.8, 6.5, 6.2, 5.8, 5.4],
+          completion: [80, 78, 75, 70, 65, 54],
+          hrv: [62, 60, 58, 55, 53, 52, 52],
+          hrvProjected: [52, 54, 56, 58, 60, 61, 62],
+          hrvValue: "52 ms", hrvDelta: "▼ -10%", hrvDeltaClass: "warn", hrvSub: "Slightly below baseline · diet linked",
+          hrvProjValue: "62 ms", hrvProjDelta: "▲ +19% est.", hrvProjDeltaClass: "ok", hrvProjSub: "Projected with glucose stabilisation",
+          sentimentValue: "Neutral",
+          sentimentDelta: "▼ -12% vs baseline",
+          motivationValue: "5.4/10",
+          motivationDelta: "▼ -22% 7d deviation",
+          completionValue: "54%",
+          completionDelta: "▼ -30% drift",
+          narrative: "Lena's messages suggest difficulty managing evening meal carbs. Active post-dinner walks are frequently skipped."
+        },
+        planFit: {
+          score: 56,
+          scores: { complexity: 8, progressivity: 10, recovery: 10, enjoyment: 14, goalFit: 14 },
+          heatmap: [
+            2, 2, 2, 2, 2, 2, 2,
+            2, 2, 2, 2, 2, 0, 2,
+            2, 2, 1, 2, 2, 0, 2,
+            2, 2, 2, 2, 1, 0, 1,
+            1, 2, 0, 2, 1, 0, 2,
+            1, 1, 0, 0, 0, 0, 1
+          ],
+          fatigueChart: {
+            volume: [55, 60, 65, 70, 75, 80, 85],
+            recovery: [72, 70, 66, 62, 58, 54, 52]
+          },
+          adjustments: [
+            { id: 1, title: "Post-Dinner Walk Tweak", desc: "Shift post-dinner walk to 15 min at easy pace", applied: false, planChanges: [{ day: "Tue", type: "15 min post-dinner walk", detail: "Blunt the evening spike", originalType: "30 min walk", originalDetail: "Brisk, post-dinner" }, { day: "Thu", type: "15 min post-dinner walk", detail: "Blunt the evening spike", originalType: "30 min walk", originalDetail: "Brisk, post-dinner" }] },
+            { id: 2, title: "Carb Shifting Push", desc: "Introduce mid-afternoon snack check-in to reduce dinner size", applied: false, planChanges: [] }
+          ]
+        },
         draftMsg: "Hi Lena, your numbers point to evening spikes, time-in-range is at 54% against a 70% goal. Let's move more of your carbs to earlier in the day and add a short walk after dinner this week before we consider any dose change.",
         suggestions: [
           { icon: "🍽️", text: "Diet: shift carbs to earlier meals" },
@@ -3011,26 +3693,111 @@
     // acute picture (recent fatigue); longer windows average toward steadier
     // numbers. Order matches the four .dial nodes: Recovery, Sleep, Completion,
     // Protein. value/unit render the focal number; word=true uses a word label.
-    const DIAL_RANGES = {
-      '7': [
-        { name: 'Recovery', value: '61', unit: '/100', pct: 61, state: 'bad', why: 'declining 3 days' },
-        { name: 'Sleep', value: 'Poor', word: true, pct: 30, state: 'bad', why: '5.4 h, below 7 h ×4' },
-        { name: 'Completion', value: '67', unit: '%', pct: 67, state: 'warn', why: 'skipped 2 of 6' },
-        { name: 'Protein', value: '58', unit: '%', pct: 58, state: 'bad', why: '40 g/day under' }
-      ],
-      '14': [
-        { name: 'Recovery', value: '66', unit: '/100', pct: 66, state: 'warn', why: 'dipped this week' },
-        { name: 'Sleep', value: 'Fair', word: true, pct: 48, state: 'warn', why: '6.1 h avg, 4 low nights' },
-        { name: 'Completion', value: '74', unit: '%', pct: 74, state: 'warn', why: 'skipped 3 of 12' },
-        { name: 'Protein', value: '63', unit: '%', pct: 63, state: 'warn', why: '30 g/day under' }
-      ],
-      '30': [
-        { name: 'Recovery', value: '72', unit: '/100', pct: 72, state: 'ok', why: 'steady, recent dip' },
-        { name: 'Sleep', value: 'Fair', word: true, pct: 56, state: 'warn', why: '6.4 h avg over 30 d' },
-        { name: 'Completion', value: '81', unit: '%', pct: 81, state: 'ok', why: 'on plan most weeks' },
-        { name: 'Protein', value: '69', unit: '%', pct: 69, state: 'warn', why: '22 g/day under' }
-      ]
+    // Per-client dial ranges so each client's verdict reflects their own data.
+    const CLIENT_DIAL_RANGES = {
+      'sarah-k': {
+        '7':  [
+          { name: 'Recovery', value: '61', unit: '/100', pct: 61, state: 'bad', why: 'declining 3 days' },
+          { name: 'Sleep', value: 'Poor', word: true, pct: 25, state: 'bad', why: '4.2 h, below 7 h ×5' },
+          { name: 'Completion', value: '67', unit: '%', pct: 67, state: 'warn', why: 'skipped 2 of 6' },
+          { name: 'Protein', value: '58', unit: '%', pct: 58, state: 'bad', why: '40 g/day under' }
+        ],
+        '14': [
+          { name: 'Recovery', value: '66', unit: '/100', pct: 66, state: 'warn', why: 'dipped this week' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 45, state: 'warn', why: '5.8 h avg, 5 low nights' },
+          { name: 'Completion', value: '74', unit: '%', pct: 74, state: 'warn', why: 'skipped 3 of 12' },
+          { name: 'Protein', value: '63', unit: '%', pct: 63, state: 'warn', why: '30 g/day under' }
+        ],
+        '30': [
+          { name: 'Recovery', value: '72', unit: '/100', pct: 72, state: 'ok', why: 'steady, recent dip' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 56, state: 'warn', why: '6.4 h avg over 30 d' },
+          { name: 'Completion', value: '81', unit: '%', pct: 81, state: 'ok', why: 'on plan most weeks' },
+          { name: 'Protein', value: '69', unit: '%', pct: 69, state: 'warn', why: '22 g/day under' }
+        ]
+      },
+      'marcus-t': {
+        '7':  [
+          { name: 'Recovery', value: '74', unit: '/100', pct: 74, state: 'ok', why: 'physical recovery intact' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 47, state: 'warn', why: '5.8 h avg this week' },
+          { name: 'Completion', value: '40', unit: '%', pct: 40, state: 'bad', why: '3 sessions missed' },
+          { name: 'Engagement', value: '18', unit: '%', pct: 18, state: 'bad', why: 'zero opens 6 days' }
+        ],
+        '14': [
+          { name: 'Recovery', value: '76', unit: '/100', pct: 76, state: 'ok', why: 'stable' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 52, state: 'warn', why: '6.2 h avg over 14d' },
+          { name: 'Completion', value: '55', unit: '%', pct: 55, state: 'warn', why: '5 sessions missed' },
+          { name: 'Engagement', value: '35', unit: '%', pct: 35, state: 'bad', why: 'declining for 2 weeks' }
+        ],
+        '30': [
+          { name: 'Recovery', value: '78', unit: '/100', pct: 78, state: 'ok', why: 'consistent' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 56, state: 'warn', why: '6.4 h avg over 30d' },
+          { name: 'Completion', value: '68', unit: '%', pct: 68, state: 'warn', why: 'declined last 2 weeks' },
+          { name: 'Engagement', value: '52', unit: '%', pct: 52, state: 'warn', why: 'recent collapse' }
+        ]
+      },
+      'aman-khanna': {
+        '7':  [
+          { name: 'Recovery', value: '58', unit: '/100', pct: 58, state: 'bad', why: 'fatigue accumulated' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 48, state: 'warn', why: '6.1 h avg this week' },
+          { name: 'Completion', value: '68', unit: '%', pct: 68, state: 'warn', why: 'skipped 2 sessions' },
+          { name: 'Soreness', value: '8', unit: '/10', pct: 80, state: 'bad', why: 'peak level logged' }
+        ],
+        '14': [
+          { name: 'Recovery', value: '64', unit: '/100', pct: 64, state: 'warn', why: 'building fatigue' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 52, state: 'warn', why: '6.3 h avg over 14d' },
+          { name: 'Completion', value: '76', unit: '%', pct: 76, state: 'warn', why: '3 sessions missed' },
+          { name: 'Soreness', value: '6', unit: '/10', pct: 60, state: 'warn', why: 'elevated for 2 weeks' }
+        ],
+        '30': [
+          { name: 'Recovery', value: '72', unit: '/100', pct: 72, state: 'ok', why: 'mostly stable, recent dip' },
+          { name: 'Sleep', value: 'Fair', word: true, pct: 58, state: 'warn', why: '6.5 h avg over 30d' },
+          { name: 'Completion', value: '82', unit: '%', pct: 82, state: 'ok', why: 'dipped last week' },
+          { name: 'Soreness', value: '4', unit: '/10', pct: 40, state: 'ok', why: 'typical level' }
+        ]
+      },
+      'meera-joshi': {
+        '7':  [
+          { name: 'Recovery', value: '78', unit: '/100', pct: 78, state: 'ok', why: 'stable and healthy' },
+          { name: 'Sleep', value: 'Good', word: true, pct: 72, state: 'ok', why: '7.2 h avg, on target' },
+          { name: 'Completion', value: '85', unit: '%', pct: 85, state: 'ok', why: 'on plan this week' },
+          { name: 'Protein', value: '64', unit: '%', pct: 64, state: 'bad', why: '36 g/day under target' }
+        ],
+        '14': [
+          { name: 'Recovery', value: '79', unit: '/100', pct: 79, state: 'ok', why: 'consistent' },
+          { name: 'Sleep', value: 'Good', word: true, pct: 74, state: 'ok', why: '7.3 h avg over 14d' },
+          { name: 'Completion', value: '87', unit: '%', pct: 87, state: 'ok', why: 'above target' },
+          { name: 'Protein', value: '67', unit: '%', pct: 67, state: 'warn', why: '33 g/day under target' }
+        ],
+        '30': [
+          { name: 'Recovery', value: '80', unit: '/100', pct: 80, state: 'ok', why: 'strong baseline' },
+          { name: 'Sleep', value: 'Good', word: true, pct: 76, state: 'ok', why: '7.4 h avg over 30d' },
+          { name: 'Completion', value: '88', unit: '%', pct: 88, state: 'ok', why: 'consistent' },
+          { name: 'Protein', value: '70', unit: '%', pct: 70, state: 'warn', why: '30 g/day under target' }
+        ]
+      },
+      'priya-i': {
+        '7':  [
+          { name: 'Recovery', value: '94', unit: '/100', pct: 94, state: 'ok', why: 'optimal this week' },
+          { name: 'Sleep', value: 'Great', word: true, pct: 86, state: 'ok', why: '7.8 h avg, well above 7 h' },
+          { name: 'Completion', value: '94', unit: '%', pct: 94, state: 'ok', why: 'near perfect' },
+          { name: 'Protein', value: '91', unit: '%', pct: 91, state: 'ok', why: 'on target' }
+        ],
+        '14': [
+          { name: 'Recovery', value: '93', unit: '/100', pct: 93, state: 'ok', why: 'excellent streak' },
+          { name: 'Sleep', value: 'Great', word: true, pct: 84, state: 'ok', why: '7.7 h avg over 14d' },
+          { name: 'Completion', value: '93', unit: '%', pct: 93, state: 'ok', why: 'consistent' },
+          { name: 'Protein', value: '92', unit: '%', pct: 92, state: 'ok', why: 'on target' }
+        ],
+        '30': [
+          { name: 'Recovery', value: '92', unit: '/100', pct: 92, state: 'ok', why: 'strong 30-day baseline' },
+          { name: 'Sleep', value: 'Great', word: true, pct: 82, state: 'ok', why: '7.6 h avg over 30d' },
+          { name: 'Completion', value: '92', unit: '%', pct: 92, state: 'ok', why: 'on track all month' },
+          { name: 'Protein', value: '90', unit: '%', pct: 90, state: 'ok', why: 'consistently on target' }
+        ]
+      }
     };
+    // Fallback for clients without a specific entry (Sarah's data = safe default)
+    const DIAL_RANGES = CLIENT_DIAL_RANGES['sarah-k'];
     // Total signals scale with the window so the ratio reads honestly.
     const RANGE_TOTAL = { '7': 15, '14': 28, '30': 60 };
     let currentRange = '7';
@@ -3079,7 +3846,8 @@
           data = cd;
         }
       } else {
-        data = DIAL_RANGES[range];
+        const clientRanges = CLIENT_DIAL_RANGES[window.clientKey] || DIAL_RANGES;
+        data = clientRanges[range] || DIAL_RANGES[range];
       }
 
       if (!data) return;
@@ -3173,7 +3941,7 @@
 
       const recoEl = document.getElementById('verdict-conclusion');
       if (recoEl && window.client) {
-        recoEl.textContent = window.client.careReco || window.client.aiNarrative.split('.').slice(-2, -1)[0] || 'Monitor client metrics closely.';
+        recoEl.textContent = window.client.careReco || window.client.verdictText || window.client.aiNarrative.replace(/<[^>]+>/g, '').split('.').slice(-2, -1)[0] || 'Monitor client metrics closely.';
       }
     }
 
@@ -4005,7 +4773,7 @@
 
       // 5. Render active client
       function renderClientCore(c) {
-        document.getElementById('crumb-tail').textContent = `${c.name} Optimization`;
+        document.getElementById('crumb-tail').textContent = c.name;
 
         // Header strip
         const avatarEl = document.getElementById('strip-avatar');
@@ -4159,7 +4927,7 @@
 
       // ===== Nutrition slide-in: this week, day by day (plan <-> macros) =====
       // Per-client week. Each day: planned meals + macros (protein vs target).
-      // Authored to match each client's story (Sarah/Meera run a protein gap).
+      // Authored to match each client's story (Sarah/Megan run a protein gap).
       const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       function macroState(p, target) {
         const r = p / target;
@@ -4382,18 +5150,103 @@
       // the recurring daily targets. A '*' day-state flag marks an at-risk focus.
       const HABITS = {
         'sarah-k': {
-          daily: ['Lights out by 10:00 pm (target 7.5 h)', '8,000 steps', 'Hydrate 2.5 L', '10 min mobility', 'Log how you feel'],
-          focus: 'Sleep is the priority this week.'
+          daily: [
+            { label: 'Sleep by 10 pm' },
+            { label: 'Hydrate 2.5 L by 8 pm' },
+            { label: '10 min breathwork before bed' },
+            { label: '15 min foam roll, quads + calves' },
+            { label: '6,000 easy steps only' },
+            { label: 'Cold shower 90 s post-workout' },
+            { label: 'Log RPE + mood after sessions' },
+            { label: 'No NSAIDs without coach approval' }
+          ],
+          focus: 'Sleep first — HRV cannot recover without it.',
+          context: [
+            { label: 'HRV', val: '18 ms — 52% below baseline', state: 'flagged' },
+            { label: 'Sleep score', val: '42 / 100, avg 4.2 h this week', state: 'flagged' },
+            { label: 'Chat signals', val: 'Knee tightness + fatigue mentions', state: 'warn' },
+            { label: 'Training load', val: '+35% week-over-week volume', state: 'warn' }
+          ]
         },
         'meera-joshi': {
-          daily: ['Sleep 7.5 h', '7,000 steps', 'Hydrate 2.5 L', 'Stretch 8 min', 'Log every meal'],
-          focus: 'Meal logging is the priority this week.'
+          daily: [
+            { label: 'Sleep 7.5 h, consistent window' },
+            { label: '8 min evening stretch' },
+            { label: 'Hydrate 2.5 L by 7 pm' },
+            { label: '7,000 steps — any time' },
+            { label: 'Log every meal' },
+            { label: '5 min breathing after lunch' },
+            { label: 'Warm shower 3× this week' }
+          ],
+          focus: 'Log meals daily — protein gap closes faster with data.',
+          context: [
+            { label: 'HRV', val: '68 ms — within normal range', state: 'ok' },
+            { label: 'Sleep score', val: '78 / 100 — stable', state: 'ok' },
+            { label: 'Protein intake', val: '64 g/day vs 100 g target', state: 'flagged' },
+            { label: 'Meal logging', val: '3 of 7 days logged this week', state: 'warn' }
+          ]
+        },
+        'marcus-t': {
+          daily: [
+            { label: 'Sleep 7 h minimum' },
+            { label: '10 min mobility, hips + shoulders' },
+            { label: 'Hydrate 2 L before evening' },
+            { label: '5 min breathwork on waking' },
+            { label: '5,000 steps on rest days' },
+            { label: 'Log one sentence after sessions' },
+            { label: 'Cold finish to shower, training days' }
+          ],
+          focus: 'Re-engagement is the priority signal this week.',
+          context: [
+            { label: 'HRV', val: '32 ms — below trained baseline', state: 'warn' },
+            { label: 'Sleep score', val: '62 / 100 — moderate deficit', state: 'warn' },
+            { label: 'Session completion', val: '3 missed sessions this week', state: 'flagged' },
+            { label: 'Churn risk', val: 'Elevated — re-engagement window open', state: 'flagged' }
+          ]
+        },
+        'aman-khanna': {
+          daily: [
+            { label: 'Sleep 8 h — deload needs it' },
+            { label: '20 min foam roll, full lower body' },
+            { label: 'Hydrate 3 L today' },
+            { label: '10 min stretch after each session' },
+            { label: '8,000 easy steps' },
+            { label: 'Cold shower or ice bath 3× this week' },
+            { label: 'Rate soreness each morning (1–10)' },
+            { label: 'Magnesium 400 mg before bed' }
+          ],
+          focus: 'Soreness first — deload works when inflammation clears.',
+          context: [
+            { label: 'HRV', val: '42 ms — training fatigue accumulated', state: 'warn' },
+            { label: 'Sleep score', val: '58 / 100 — sleep quality declining', state: 'warn' },
+            { label: 'Soreness index', val: '8/10 — highest in 4 weeks', state: 'flagged' },
+            { label: 'Training load', val: 'Deload week triggered by cumulative load', state: 'warn' }
+          ]
         }
       };
+      function recoveryContextFor(c) {
+        const hb = HABITS[window.clientKey];
+        if (!hb || !hb.context) {
+          // fallback context from wearable signals
+          return [
+            { label: 'HRV trend', val: 'See wearable signals', state: 'ok' },
+            { label: 'Sleep', val: 'See wearable signals', state: 'ok' }
+          ];
+        }
+        return hb.context;
+      }
       function habitsFor(c) {
         return HABITS[window.clientKey] || {
-          daily: ['Sleep 7.5 h', '8,000 steps', 'Hydrate 2.5 L', '10 min mobility', 'Daily check-in'],
-          focus: ''
+          daily: [
+            { label: 'Sleep 7.5 h' },
+            { label: '8,000 easy steps' },
+            { label: 'Hydrate 2.5 L by 8 pm' },
+            { label: '10 min mobility' },
+            { label: '5 min breathwork before bed' },
+            { label: 'Daily check-in, mood + energy' }
+          ],
+          focus: '',
+          context: []
         };
       }
 
@@ -4497,7 +5350,7 @@
             }
           ];
         } else {
-          // Default fitness client
+          // Fitness clients: derive wearable signals from client metrics, training/nutrition from per-client data
           const m = c.metrics || {};
           const hrv = m.hrv || "58";
           const hrvNote = m.hrvSub || "normal";
@@ -4513,6 +5366,87 @@
           const sleepState = sleepHours >= 7 ? "ok" : sleepHours >= 6 ? "warn" : "bad";
           const sleepNote = sleepHours >= 7 ? "on target" : sleepHours >= 6 ? "slightly low" : "poor · below 7 h";
 
+          // Per-client training signals
+          const trainingSignals = {
+            'sarah-k': [
+              { label: "Workouts done", val: "4", unit: "/6", note: "skipped 2", state: "bad" },
+              { label: "Completion", val: "67", unit: "%", note: "below 85% target", state: "bad" },
+              { label: "Avg RPE", val: "8.2", unit: "/10", note: "high exertion", state: "warn" },
+              { label: "Soreness", val: "7", unit: "/10", note: "rising 3 days", state: "warn" },
+              { label: "Avg duration", val: "52", unit: "min", note: "close to plan", state: "ok" }
+            ],
+            'marcus-t': [
+              { label: "Workouts done", val: "2", unit: "/5", note: "skipped 3", state: "bad" },
+              { label: "Completion", val: "40", unit: "%", note: "well below 85% target", state: "bad" },
+              { label: "Avg RPE", val: "6.5", unit: "/10", note: "lower — sessions shortened", state: "warn" },
+              { label: "Soreness", val: "4", unit: "/10", note: "stable, not the issue", state: "ok" },
+              { label: "Avg duration", val: "38", unit: "min", note: "cut short most days", state: "warn" }
+            ],
+            'aman-khanna': [
+              { label: "Workouts done", val: "5", unit: "/7", note: "skipped 2", state: "warn" },
+              { label: "Completion", val: "68", unit: "%", note: "below 85% target", state: "warn" },
+              { label: "Avg RPE", val: "8.8", unit: "/10", note: "very high exertion", state: "bad" },
+              { label: "Soreness", val: "8", unit: "/10", note: "peak logged", state: "bad" },
+              { label: "Avg duration", val: "55", unit: "min", note: "on plan", state: "ok" }
+            ],
+            'meera-joshi': [
+              { label: "Workouts done", val: "6", unit: "/7", note: "on target", state: "ok" },
+              { label: "Completion", val: "85", unit: "%", note: "meeting target", state: "ok" },
+              { label: "Avg RPE", val: "6.2", unit: "/10", note: "appropriate for base training", state: "ok" },
+              { label: "Soreness", val: "3", unit: "/10", note: "minimal", state: "ok" },
+              { label: "Avg duration", val: "48", unit: "min", note: "on plan", state: "ok" }
+            ],
+            'priya-i': [
+              { label: "Workouts done", val: "7", unit: "/7", note: "all sessions logged", state: "ok" },
+              { label: "Completion", val: "94", unit: "%", note: "above target", state: "ok" },
+              { label: "Avg RPE", val: "6.8", unit: "/10", note: "well controlled", state: "ok" },
+              { label: "Soreness", val: "2", unit: "/10", note: "minimal", state: "ok" },
+              { label: "Avg duration", val: "56", unit: "min", note: "close to plan", state: "ok" }
+            ]
+          };
+          // Per-client nutrition & behavior signals
+          const nutritionSignals = {
+            'sarah-k': [
+              { label: "Protein adherence", val: "58", unit: "%", note: "40 g/day under", state: "bad" },
+              { label: "Meal consistency", val: "54", unit: "", note: "irregular timing", state: "warn" },
+              { label: "App opens", val: "2", unit: "/day", note: "dropped from 5 this week", state: "bad" },
+              { label: "Check-ins", val: "3", unit: "/7", note: "2 missed", state: "warn" },
+              { label: "Message replies", val: "0", unit: "/4", note: "no reply 4 days", state: "bad" }
+            ],
+            'marcus-t': [
+              { label: "Protein adherence", val: "72", unit: "%", note: "adequate, not flagged", state: "ok" },
+              { label: "Meal consistency", val: "48", unit: "", note: "very irregular", state: "bad" },
+              { label: "App opens", val: "0", unit: "/day", note: "zero for 6 days", state: "bad" },
+              { label: "Check-ins", val: "0", unit: "/7", note: "all missed this week", state: "bad" },
+              { label: "Message replies", val: "0", unit: "/3", note: "no reply in 6 days", state: "bad" }
+            ],
+            'aman-khanna': [
+              { label: "Protein adherence", val: "76", unit: "%", note: "slightly under, not critical", state: "ok" },
+              { label: "Meal consistency", val: "68", unit: "", note: "mostly regular", state: "ok" },
+              { label: "App opens", val: "3", unit: "/day", note: "declining with soreness", state: "warn" },
+              { label: "Check-ins", val: "5", unit: "/7", note: "1 missed, soreness logged", state: "ok" },
+              { label: "Message replies", val: "4", unit: "/5", note: "responsive", state: "ok" }
+            ],
+            'meera-joshi': [
+              { label: "Protein adherence", val: "64", unit: "%", note: "36 g/day under 100 g target", state: "bad" },
+              { label: "Meal consistency", val: "72", unit: "", note: "generally on time", state: "ok" },
+              { label: "App opens", val: "5", unit: "/day", note: "stable", state: "ok" },
+              { label: "Check-ins", val: "6", unit: "/7", note: "one missed", state: "ok" },
+              { label: "Message replies", val: "4", unit: "/5", note: "responsive", state: "ok" }
+            ],
+            'priya-i': [
+              { label: "Protein adherence", val: "91", unit: "%", note: "on target", state: "ok" },
+              { label: "Meal consistency", val: "84", unit: "", note: "consistent windows", state: "ok" },
+              { label: "App opens", val: "7", unit: "/day", note: "highly active", state: "ok" },
+              { label: "Check-ins", val: "7", unit: "/7", note: "all completed", state: "ok" },
+              { label: "Message replies", val: "8", unit: "/8", note: "replies same day", state: "ok" }
+            ]
+          };
+
+          const ck = window.clientKey;
+          const tSigs = trainingSignals[ck] || trainingSignals['sarah-k'];
+          const nSigs = nutritionSignals[ck] || nutritionSignals['sarah-k'];
+
           return [
             {
               source: "Wearable",
@@ -4521,31 +5455,19 @@
                 { label: "HRV (7d)", val: hrv, unit: "ms", note: hrvNote, state: hrvState },
                 { label: "Resting HR", val: rhr, unit: "bpm", note: rhrNote, state: rhrState },
                 { label: "Sleep", val: String(sleepHours), unit: "h", note: sleepNote, state: sleepState },
-                { label: "Steps / day", val: "7.8", unit: "k", note: "on range", state: "ok" },
-                { label: "Active calories", val: "410", unit: "kcal", note: "steady", state: "ok" }
+                { label: "Steps / day", val: ck === 'priya-i' ? "9.2" : ck === 'meera-joshi' ? "8.4" : ck === 'marcus-t' ? "5.1" : "7.8", unit: "k", note: ck === 'marcus-t' ? "below average" : "on range", state: ck === 'marcus-t' ? "warn" : "ok" },
+                { label: "Active calories", val: ck === 'priya-i' ? "520" : ck === 'meera-joshi' ? "440" : ck === 'marcus-t' ? "280" : "410", unit: "kcal", note: ck === 'marcus-t' ? "significantly down" : "steady", state: ck === 'marcus-t' ? "warn" : "ok" }
               ]
             },
             {
               source: "Training",
               id: "sig-training",
-              items: [
-                { label: "Workouts done", val: "4", unit: "/6", note: "skipped 2", state: "bad" },
-                { label: "Completion", val: "67", unit: "%", note: "below 85% target", state: "bad" },
-                { label: "Avg RPE", val: "8.2", unit: "/10", note: "high exertion", state: "warn" },
-                { label: "Soreness", val: "7", unit: "/10", note: "rising 3 days", state: "warn" },
-                { label: "Avg duration", val: "52", unit: "min", note: "close to plan", state: "ok" }
-              ]
+              items: tSigs
             },
             {
               source: "Nutrition & behavior",
               id: "sig-nutrition",
-              items: [
-                { label: "Protein adherence", val: "58", unit: "%", note: "40g/day under", state: "bad" },
-                { label: "Meal consistency", val: "54", unit: "", note: "irregular timing", state: "warn" },
-                { label: "App opens", val: "5", unit: "/day", note: "stable", state: "ok" },
-                { label: "Check-ins", val: "3", unit: "/7", note: "2 missed", state: "warn" },
-                { label: "Message replies", val: "0", unit: "/4", note: "no reply 4 days", state: "bad" }
-              ]
+              items: nSigs
             }
           ];
         }
@@ -5025,6 +5947,7 @@
         return js === 0 ? 6 : js - 1;
       })();
       let inlineEditing = false;
+      let activeSchedTab = 'training'; // 'training' | 'nutrition' | 'recovery'
 
       // Render the 7-day week as a horizontal strip. Each day carries both its
       // original and Zora's recommended workout; which set shows is governed by
@@ -5046,6 +5969,13 @@
           window.activeClientName = client.name;
           selectedDayIndex = currentDayIdx;
           inlineEditing = false;
+          activeSchedTab = 'training'; // reset to Training on client switch
+          // Sync the tab rail UI to match
+          document.querySelectorAll('.sched-tab-btn').forEach(btn => {
+            const isActive = btn.dataset.tab === 'training';
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+          });
         }
 
         const plan = client.weekPlan || [];
@@ -5114,10 +6044,10 @@
 
         updateScheduleCount();
 
-        // Ensure the details panel is visible and rendered
-        const detailsPanel = document.getElementById('inline-day-details');
-        if (detailsPanel) {
-          detailsPanel.style.display = 'block';
+        // Show the master-detail shell and render the active tab
+        const shell = document.getElementById('sched-detail-shell');
+        if (shell) {
+          shell.style.display = 'grid';
           renderInlineDayDetails(client);
         }
       }
@@ -5125,7 +6055,8 @@
       // SVG icons for inline day details
       const INLINE_ICON_TRAIN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6.5h2a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-2M6 6.5H4A1.5 1.5 0 0 0 2.5 8v8A1.5 1.5 0 0 0 4 17.5h2M6.5 12h11M6 9v6M18 9v6"/></svg>`;
       const INLINE_ICON_FOOD = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M9 3v2M15 3v2M3 11h18"/><path d="M4 11a8 8 0 0 0 16 0z"/></svg>`;
-      const INLINE_ICON_HABIT = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`;
+      // Recovery icon: a heart with a pulse line through it
+      const INLINE_ICON_HABIT = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.34 7a9.97 9.97 0 0 1 .659-1.017C5.24 4.246 7.35 3 9.5 3c1.89 0 3.63.88 4.5 2.25C14.87 3.88 16.61 3 18.5 3c2.15 0 4.26 1.246 5.5 2.983.3.41.543.853.728 1.317"/><path d="M20 10H4"/><path d="M20 10c0 6.627-8 11-8 11S4 16.627 4 10"/><path d="m8 10 2 3 4-6 2 3"/></svg>`;
 
       function renderInlineDayDetails(client) {
         const container = document.getElementById('inline-day-details');
@@ -5187,18 +6118,56 @@
         <button class="inline-day-edit-toggle" onclick="window.openNutritionFromInline()">View full meal plan →</button>
       `;
 
-        // Habits Block HTML
+        // Shared helper: build the context button HTML. The glass tooltip
+        // is a singleton #ctx-glass-tip moved by JS on hover/focus.
+        function buildCtxTooltip(signals) {
+          if (!signals || !signals.length) return '';
+          // Encode signals as JSON on the button so the tooltip controller
+          // can read them without a second lookup.
+          const encoded = encodeURIComponent(JSON.stringify(signals));
+          return `<span class="recovery-ctx-wrap">
+            <button class="recovery-ctx-btn ctx-tip-trigger" type="button"
+              aria-label="Why this recommendation?"
+              data-ctx-signals="${encoded}">?</button>
+          </span>`;
+        }
+
+        // Training context: pull from recoBreakdown sources that feed training
+        const recoData = buildRecoBreakdown(client);
+        const trainingReco = (recoData.recommendations || []).find(r => r.area === 'training') || {};
+        const trainingCtxSignals = (trainingReco.sources || []).map(key => {
+          const src = recoData.sources[key] || {};
+          return { label: RECO_SOURCES[key] ? RECO_SOURCES[key].label : key, val: src.reading || '', state: src.flagged ? 'flagged' : 'ok' };
+        });
+        if (trainingReco.title) trainingCtxSignals.unshift({ label: 'Zora recommends', val: trainingReco.detail || trainingReco.title, state: 'ok' });
+        const trainingCtxHTML = buildCtxTooltip(trainingCtxSignals);
+
+        // Nutrition context: pull from recoBreakdown sources that feed nutrition
+        const nutritionReco = (recoData.recommendations || []).find(r => r.area === 'nutrition') || {};
+        const nutritionCtxSignals = (nutritionReco.sources || []).map(key => {
+          const src = recoData.sources[key] || {};
+          return { label: RECO_SOURCES[key] ? RECO_SOURCES[key].label : key, val: src.reading || '', state: src.flagged ? 'flagged' : 'ok' };
+        });
+        if (nutritionReco.title) nutritionCtxSignals.unshift({ label: 'Zora recommends', val: nutritionReco.detail || nutritionReco.title, state: 'ok' });
+        const nutritionCtxHTML = buildCtxTooltip(nutritionCtxSignals);
+
+        // Recovery Block HTML
         const hb = habitsFor(client);
-        const habitsList = hb.daily.map(h => `
-        <div class="inline-day-item" style="padding: 6px 10px; font-size: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="color: var(--ok); font-weight: bold;">✓</span>
-          <span>${esc(h)}</span>
-        </div>
-      `).join('');
+        const recoveryCtxSignals = recoveryContextFor(client);
+        const recoveryCtxHTML = buildCtxTooltip(recoveryCtxSignals);
+
+        const recoveryList = hb.daily.map(h => {
+          const label = typeof h === 'string' ? h : h.label;
+          return `<div class="recovery-item">
+            <span class="recovery-item-ico" aria-hidden="true"></span>
+            <span class="recovery-item-label">${esc(label)}</span>
+          </div>`;
+        }).join('');
+
         const habitsHTML = `
-        ${hb.focus ? `<div style="font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 6px;">Focus: ${esc(hb.focus)}</div>` : ''}
-        <div style="display: flex; flex-direction: column;">
-          ${habitsList}
+        ${hb.focus ? `<div class="recovery-focus-banner">${esc(hb.focus)}</div>` : ''}
+        <div class="recovery-list">
+          ${recoveryList}
         </div>
       `;
 
@@ -5210,35 +6179,97 @@
 
         const cardClass = 'inline-day-card' + (isRecoView ? ' overdrive-sweep' : '');
 
-        container.innerHTML = `
-        <div class="inline-day-grid">
-          <div class="${cardClass}" style="--card-index: 0;">
-            <div class="inline-day-card-title">
-              <span class="inline-day-card-ico">${INLINE_ICON_TRAIN}</span>
-              <span>Training</span>
-            </div>
-            ${trainingHTML}
-            ${trainSrc}
-          </div>
-          <div class="${cardClass}" style="--card-index: 1;">
-            <div class="inline-day-card-title">
-              <span class="inline-day-card-ico">${INLINE_ICON_FOOD}</span>
-              <span>Nutrition</span>
-            </div>
-            ${nutritionHTML}
-            ${nutriSrc}
-          </div>
-          <div class="${cardClass}" style="--card-index: 2;">
-            <div class="inline-day-card-title">
-              <span class="inline-day-card-ico">${INLINE_ICON_HABIT}</span>
-              <span>Daily Habits</span>
-            </div>
-            ${habitsHTML}
-            ${habitSrc}
-          </div>
-        </div>
-      `;
+        // Build each panel's full HTML — only the active tab is rendered into the pane
+        const panels = {
+          training: `
+            <div class="${cardClass}" style="--card-index: 0;">
+              <div class="inline-day-card-title" style="justify-content: space-between;">
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <span class="inline-day-card-ico">${INLINE_ICON_TRAIN}</span>
+                  <span>Training</span>
+                </span>
+                ${isRecoView ? trainingCtxHTML : ''}
+              </div>
+              ${trainingHTML}
+              ${trainSrc}
+            </div>`,
+          nutrition: `
+            <div class="${cardClass}" style="--card-index: 0;">
+              <div class="inline-day-card-title" style="justify-content: space-between;">
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <span class="inline-day-card-ico">${INLINE_ICON_FOOD}</span>
+                  <span>Nutrition</span>
+                </span>
+                ${isRecoView ? nutritionCtxHTML : ''}
+              </div>
+              ${nutritionHTML}
+              ${nutriSrc}
+            </div>`,
+          recovery: `
+            <div class="${cardClass}" style="--card-index: 0;">
+              <div class="inline-day-card-title" style="justify-content: space-between;">
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <span class="inline-day-card-ico">${INLINE_ICON_HABIT}</span>
+                  <span>Recovery</span>
+                </span>
+                ${isRecoView ? recoveryCtxHTML : ''}
+              </div>
+              ${habitsHTML}
+              ${habitSrc}
+            </div>`
+        };
+
+        container.innerHTML = panels[activeSchedTab] || panels.training;
       }
+
+      // ===== Schedule tab rail wiring =====
+      // Handles desktop tab switching with crossfade and mobile accordion.
+      (function initSchedTabs() {
+        const rail = document.querySelector('.sched-tab-rail');
+        if (!rail) return;
+
+        const pane = document.getElementById('sched-card-pane');
+        const isMobile = () => window.innerWidth < 768;
+
+        function switchTab(tab, skipAnimation) {
+          activeSchedTab = tab;
+
+          // Update active state and aria-expanded on all tab buttons
+          rail.querySelectorAll('.sched-tab-btn').forEach(btn => {
+            const isActive = btn.dataset.tab === tab;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+          });
+
+          if (!pane) { renderInlineDayDetails(window.client); return; }
+
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (skipAnimation || reduce) {
+            renderInlineDayDetails(window.client);
+            return;
+          }
+
+          // Crossfade: fade out → swap content → fade in
+          pane.classList.add('is-switching');
+          setTimeout(() => {
+            renderInlineDayDetails(window.client);
+            // Force reflow before removing class so transition fires
+            void pane.offsetWidth;
+            pane.classList.remove('is-switching');
+          }, 170);
+        }
+
+        rail.addEventListener('click', e => {
+          const btn = e.target.closest('.sched-tab-btn');
+          if (!btn) return;
+          const tab = btn.dataset.tab;
+          if (!tab || tab === activeSchedTab) return;
+          switchTab(tab);
+        });
+
+        // Expose so day-click can re-render without resetting the tab
+        window.__schedSwitchTab = switchTab;
+      })();
 
       function startInlineEdit() {
         const toggle = document.getElementById('week-toggle');
@@ -5568,97 +6599,211 @@
           }
         }
       }
+      // Resolve a CSS color variable to a hex/rgb for SVG gradient stops
+      function resolveColor(cssVar) {
+        // For named CSS var references, return a concrete fallback the browser
+        // can use inside SVG defs (which don't inherit cascade the same way).
+        if (cssVar === 'var(--accent)') return '#7a5487';
+        if (cssVar === 'var(--ok)')     return '#22c55e';
+        if (cssVar === 'var(--bad)')    return '#e74c3c';
+        if (cssVar === 'var(--warn)')   return '#e67e22';
+        return cssVar;
+      }
+
+      // Smooth cubic-bezier path through a set of points
+      function smoothPath(pts) {
+        if (pts.length < 2) return '';
+        let d = `M ${pts[0].x},${pts[0].y}`;
+        for (let i = 1; i < pts.length; i++) {
+          const prev = pts[i - 1];
+          const curr = pts[i];
+          const cpx = (prev.x + curr.x) / 2;
+          d += ` C ${cpx},${prev.y} ${cpx},${curr.y} ${curr.x},${curr.y}`;
+        }
+        return d;
+      }
+
       function drawSparkline(svgId, dataPoints, color) {
         const svg = document.getElementById(svgId);
-        if (!svg) return;
+        if (!svg || !dataPoints || dataPoints.length < 2) return;
         svg.innerHTML = '';
 
-        const width = 180;
-        const height = 50;
-        const pad = 6;
-
-        if (!dataPoints || dataPoints.length === 0) return;
-
+        const W = 200, H = 64, padX = 4, padY = 6;
         const min = Math.min(...dataPoints);
         const max = Math.max(...dataPoints);
         const range = max - min || 1;
 
-        const points = dataPoints.map((val, idx) => {
-          const x = pad + (idx * (width - 2 * pad)) / (dataPoints.length - 1);
-          const y = height - pad - ((val - min) * (height - 2 * pad)) / range;
-          return { x, y, val };
-        });
+        const pts = dataPoints.map((val, i) => ({
+          x: padX + (i / (dataPoints.length - 1)) * (W - 2 * padX),
+          y: H - padY - ((val - min) / range) * (H - 2 * padY),
+          val
+        }));
 
-        // Construct path
-        let d = "M " + points[0].x + " " + points[0].y;
-        for (let i = 1; i < points.length; i++) {
-          d += " L " + points[i].x + " " + points[i].y;
-        }
+        const resolvedColor = resolveColor(color);
+        const gradId = svgId + '-grad';
 
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", d);
-        path.setAttribute("class", "sparkline-path");
-        path.setAttribute("stroke", color);
-        svg.appendChild(path);
+        // SVG defs: gradient for area fill
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        grad.setAttribute('id', gradId);
+        grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+        grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+        const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop1.setAttribute('offset', '0%');
+        stop1.setAttribute('stop-color', resolvedColor);
+        stop1.setAttribute('stop-opacity', '0.18');
+        const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop2.setAttribute('offset', '100%');
+        stop2.setAttribute('stop-color', resolvedColor);
+        stop2.setAttribute('stop-opacity', '0');
+        grad.appendChild(stop1);
+        grad.appendChild(stop2);
+        defs.appendChild(grad);
+        svg.appendChild(defs);
 
-        // Draw gradient area underneath
-        let dArea = d + " L " + points[points.length - 1].x + " " + height + " L " + points[0].x + " " + height + " Z";
-        const area = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        area.setAttribute("d", dArea);
-        area.setAttribute("fill", color.includes('accent') ? 'rgba(122, 84, 135, 0.08)' : 'rgba(46, 204, 113, 0.08)');
+        // Area fill (under the line, no border)
+        const linePath = smoothPath(pts);
+        const areaD = linePath +
+          ` L ${pts[pts.length - 1].x},${H} L ${pts[0].x},${H} Z`;
+        const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        area.setAttribute('d', areaD);
+        area.setAttribute('class', 'bsig-area-path');
+        area.setAttribute('fill', `url(#${gradId})`);
         svg.appendChild(area);
 
-        // Draw dots on hover, and highlight the last point
-        points.forEach((pt, idx) => {
-          const isLast = idx === points.length - 1;
-          const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          dot.setAttribute("cx", pt.x);
-          dot.setAttribute("cy", pt.y);
-          dot.setAttribute("r", isLast ? 4 : 2);
-          dot.setAttribute("fill", isLast ? color : "transparent");
-          dot.setAttribute("stroke", isLast ? "#ffffff" : "transparent");
-          dot.setAttribute("stroke-width", isLast ? "1.5" : "0");
+        // Line
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        line.setAttribute('d', linePath);
+        line.setAttribute('class', 'bsig-line-path');
+        line.setAttribute('stroke', resolvedColor);
+        // Animated draw — use pathLength trick
+        line.setAttribute('pathLength', '1');
+        line.style.strokeDasharray = '1';
+        line.style.strokeDashoffset = '1';
+        line.style.animation = 'bsig-draw 800ms cubic-bezier(.16,1,.3,1) forwards';
+        svg.appendChild(line);
 
-          // Add title tooltip
-          const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-          title.textContent = "Value: " + pt.val;
-          dot.appendChild(title);
+        // Terminal dot (last point = current value)
+        const lastPt = pts[pts.length - 1];
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', lastPt.x);
+        dot.setAttribute('cy', lastPt.y);
+        dot.setAttribute('r', '3.5');
+        dot.setAttribute('fill', resolvedColor);
+        dot.setAttribute('stroke', 'var(--paper)');
+        dot.setAttribute('stroke-width', '2');
+        dot.style.vectorEffect = 'non-scaling-stroke';
+        svg.appendChild(dot);
 
-          svg.appendChild(dot);
-        });
+        // Store data for hover
+        svg._bsigPts = pts;
+        svg._bsigColor = resolvedColor;
+
+        // Wire up interactive hover
+        wireBsigHover(svg, svgId, pts, (pt) => String(Math.round(pt.val)));
       }
+
       function drawSparkbar(svgId, dataPoints, color) {
         const svg = document.getElementById(svgId);
-        if (!svg) return;
+        if (!svg || !dataPoints || dataPoints.length === 0) return;
         svg.innerHTML = '';
 
-        const width = 180;
-        const height = 50;
-        const pad = 4;
-        const barCount = dataPoints.length;
-        const barWidth = (width - (barCount - 1) * pad) / barCount;
-
+        const W = 200, H = 64, gap = 3;
+        const resolvedColor = resolveColor(color);
+        const count = dataPoints.length;
+        const barW = (W - (count - 1) * gap) / count;
         const max = Math.max(...dataPoints, 100);
 
-        dataPoints.forEach((val, idx) => {
-          const barHeight = (val / max) * (height - 8);
-          const x = idx * (barWidth + pad);
-          const y = height - barHeight - 4;
+        dataPoints.forEach((val, i) => {
+          const bH = (val / max) * (H - 6);
+          const x = i * (barW + gap);
+          const y = H - bH;
 
-          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          rect.setAttribute("x", x);
-          rect.setAttribute("y", y);
-          rect.setAttribute("width", barWidth);
-          rect.setAttribute("height", barHeight);
-          rect.setAttribute("rx", "2");
-          rect.setAttribute("fill", color);
-          rect.setAttribute("class", "sparkbar-rect");
+          // Color by value: below 65 → bad, 65–80 → warn, above → ok
+          const barColor = val < 65
+            ? resolveColor('var(--bad)')
+            : val < 80 ? resolveColor('var(--warn)') : resolveColor('var(--ok)');
 
-          const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-          title.textContent = "Week " + (idx + 1) + ": " + val + "% completion";
-          rect.appendChild(title);
-
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', x);
+          rect.setAttribute('y', y);
+          rect.setAttribute('width', barW);
+          rect.setAttribute('height', bH);
+          rect.setAttribute('rx', '3');
+          rect.setAttribute('fill', barColor);
+          rect.setAttribute('opacity', '0.85');
+          rect.setAttribute('data-val', val);
+          rect.style.transition = 'opacity 120ms ease-out';
           svg.appendChild(rect);
+        });
+
+        // Store point data as centroids for crosshair
+        const pts = dataPoints.map((val, i) => ({
+          x: i * (barW + gap) + barW / 2,
+          y: H - (val / max) * (H - 6),
+          val
+        }));
+        svg._bsigPts = pts;
+
+        wireBsigHover(svg, svgId, pts, (pt) => pt.val + '%');
+      }
+
+      // Shared hover wiring: crosshair + tooltip on the graph wrap element
+      function wireBsigHover(svg, svgId, pts, formatVal) {
+        const wrap = svg.closest('.bsig-graph-wrap');
+        if (!wrap) return;
+
+        const col = svg.closest('.bsig-graph-col');
+        const graphId = col && col.dataset.graphId;
+        if (!graphId) return;
+
+        // Only wire once per wrap (HRV has two SVGs in same wrap)
+        if (wrap._bsigWired) return;
+        wrap._bsigWired = true;
+        wrap._bsigActivePts = pts; // updated by applyHrvView for the toggle case
+
+        const crosshair = document.getElementById(graphId + '-crosshair');
+        const tip = document.getElementById(graphId + '-tip');
+        if (!crosshair || !tip) return;
+
+        const W = 200;
+
+        function getClosestPt(mouseX, wrapWidth) {
+          const activePts = wrap._bsigActivePts || pts;
+          // Map mouse X from element space to SVG viewBox space
+          const svgX = (mouseX / wrapWidth) * W;
+          let best = activePts[0], bestDist = Infinity;
+          activePts.forEach(pt => {
+            const d = Math.abs(pt.x - svgX);
+            if (d < bestDist) { bestDist = d; best = pt; }
+          });
+          return { pt: best, pxX: (best.x / W) * wrapWidth };
+        }
+
+        wrap.addEventListener('pointermove', (e) => {
+          const rect = wrap.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const { pt, pxX } = getClosestPt(mouseX, rect.width);
+
+          crosshair.style.left = pxX + 'px';
+          crosshair.removeAttribute('hidden');
+          crosshair.classList.add('is-visible');
+
+          tip.textContent = formatVal(pt);
+          tip.style.left = pxX + 'px';
+          tip.removeAttribute('hidden');
+          // Keep tip inside bounds
+          const tipW = tip.offsetWidth;
+          const clampedLeft = Math.max(tipW / 2, Math.min(pxX, rect.width - tipW / 2));
+          tip.style.left = clampedLeft + 'px';
+          tip.classList.add('is-visible');
+        });
+
+        wrap.addEventListener('pointerleave', () => {
+          crosshair.setAttribute('hidden', '');
+          crosshair.classList.remove('is-visible');
+          tip.classList.remove('is-visible');
+          setTimeout(() => { if (!tip.classList.contains('is-visible')) tip.setAttribute('hidden', ''); }, 100);
         });
       }
       function drawFatigueChart(svgId, fatigueData) {
@@ -5900,30 +7045,54 @@
         if (!grid) return;
         grid.innerHTML = '';
 
-        c.planFit.heatmap.forEach((val, idx) => {
-          const cell = document.createElement('div');
-          let status = 'empty';
-          if (val === 2) status = 'good';
-          else if (val === 1) status = 'warn';
-          else if (val === 0) status = 'bad';
+        if (!c.planFit || !c.planFit.heatmap) {
+          grid.innerHTML = '<div style="font-size:12px; color:var(--ink-4); font-style:italic; grid-column: 1 / -1; text-align: center; padding: 12px 0;">No adherence history available.</div>';
+          return;
+        }
 
-          cell.className = `heatmap-cell ${status}`;
+        const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const LABELS = { 2: 'Completed', 1: 'Partial', 0: 'Skipped', '-1': 'Rest' };
+        const STATUS  = { 2: 'good',     1: 'warn',    0: 'bad',     '-1': 'rest' };
 
-          // Add tooltip
-          const col = idx % 7;
-          const week = Math.floor(idx / 7) + 1;
-          const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-          const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
-
-          let label = 'Rest Day';
-          if (val === 2) label = 'Completed Workout';
-          else if (val === 1) label = 'Modified/Partial Workout';
-          else if (val === 0) label = 'Skipped Workout';
-
-          tooltip.textContent = `Week ${week}, ${days[col]}: ${label}`;
-          cell.appendChild(tooltip);
-          grid.appendChild(cell);
+        // Header row: empty corner + 7 day labels
+        const corner = document.createElement('div');
+        corner.className = 'hm-corner';
+        grid.appendChild(corner);
+        DAYS.forEach(d => {
+          const lbl = document.createElement('div');
+          lbl.className = 'hm-day-label';
+          lbl.textContent = d.slice(0, 2);
+          grid.appendChild(lbl);
         });
+
+        // Data rows: week label + 7 cells
+        const totalCells = c.planFit.heatmap.length;
+        const numWeeks = Math.ceil(totalCells / 7);
+        for (let w = 0; w < numWeeks; w++) {
+          // Week label
+          const wLbl = document.createElement('div');
+          wLbl.className = 'hm-week-label';
+          wLbl.textContent = 'W' + (w + 1);
+          grid.appendChild(wLbl);
+
+          for (let d = 0; d < 7; d++) {
+            const idx = w * 7 + d;
+            const cell = document.createElement('div');
+            if (idx >= totalCells) {
+              cell.className = 'heatmap-cell empty';
+              grid.appendChild(cell);
+              continue;
+            }
+            const val = c.planFit.heatmap[idx];
+            const key = String(val);
+            const status = STATUS[key] || 'rest';
+            const labelText = LABELS[key] || 'Rest';
+            cell.className = `heatmap-cell ${status}`;
+            cell.title = `Week ${w + 1}, ${DAYS[d]}: ${labelText}`;
+            cell.setAttribute('aria-label', `Week ${w + 1} ${DAYS[d]}: ${labelText}`);
+            grid.appendChild(cell);
+          }
+        }
       }
 
       function renderSuggestions(c) {
@@ -5931,8 +7100,8 @@
         if (!list) return;
         list.innerHTML = '';
 
-        if (!c.planFit.adjustments || c.planFit.adjustments.length === 0) {
-          list.innerHTML = '<div style="font-size:12.5px; color:var(--ink-4); font-style:italic;">No adjustments pending. Plan fit is optimal.</div>';
+        if (!c.planFit || !c.planFit.adjustments || c.planFit.adjustments.length === 0) {
+          list.innerHTML = '<div style="font-size:12.5px; color:var(--ink-4); font-style:italic; padding: 12px 0;">No adjustments pending. Plan fit is optimal.</div>';
           return;
         }
 
@@ -5971,24 +7140,33 @@
         // (see armPlanFitGate). Only the score + bar render eagerly below.
 
         // Plan fit score and bar
-        document.getElementById('plan-quality-score').innerHTML = `${c.planFit.score}<span style="font-size: 11px; color: var(--ink-4);">/100</span>`;
+        const scoreEl = document.getElementById('plan-quality-score');
         const qBar = document.getElementById('plan-quality-bar');
-        qBar.innerHTML = '';
-        const sc = c.planFit.scores;
-        const total = sc.complexity + sc.progressivity + sc.recovery + sc.enjoyment + sc.goalFit;
-        const segments = [
-          { val: sc.complexity, cls: 'c1' },
-          { val: sc.progressivity, cls: 'c2' },
-          { val: sc.recovery, cls: 'c3' },
-          { val: sc.enjoyment, cls: 'c4' },
-          { val: sc.goalFit, cls: 'c5' }
-        ];
-        segments.forEach(seg => {
-          const segEl = document.createElement('div');
-          segEl.className = `qbar-seg ${seg.cls}`;
-          segEl.style.width = `${(seg.val / total) * 100}%`;
-          qBar.appendChild(segEl);
-        });
+        
+        if (scoreEl && qBar) {
+          if (c.planFit) {
+            scoreEl.innerHTML = `${c.planFit.score}<span style="font-size: 11px; color: var(--ink-4);">/100</span>`;
+            qBar.innerHTML = '';
+            const sc = c.planFit.scores;
+            const total = sc.complexity + sc.progressivity + sc.recovery + sc.enjoyment + sc.goalFit;
+            const segments = [
+              { val: sc.complexity, cls: 'c1' },
+              { val: sc.progressivity, cls: 'c2' },
+              { val: sc.recovery, cls: 'c3' },
+              { val: sc.enjoyment, cls: 'c4' },
+              { val: sc.goalFit, cls: 'c5' }
+            ];
+            segments.forEach(seg => {
+              const segEl = document.createElement('div');
+              segEl.className = `qbar-seg ${seg.cls}`;
+              segEl.style.width = `${(seg.val / total) * 100}%`;
+              qBar.appendChild(segEl);
+            });
+          } else {
+            scoreEl.innerHTML = `N/A`;
+            qBar.innerHTML = '<div style="height: 100%; background: var(--line-soft);"></div>';
+          }
+        }
 
         // The heatmap, fatigue curve, and suggestions are deferred: they render
         // on demand when the coach runs the analysis (see armPlanFitGate). Only
@@ -6009,40 +7187,117 @@
         const detail = document.getElementById('planfit-detail');
         if (!gate || !runBtn || !working || !detail) return;
 
-        // Reset to resting state for this client.
+        // Reset to resting state for this client (unless already revealed — see below).
         if (window.__planFitTimers) window.__planFitTimers.forEach(clearTimeout);
         if (window.__planFitCopyTimer) clearInterval(window.__planFitCopyTimer);
         window.__planFitTimers = [];
-        gate.hidden = false;
-        runBtn.hidden = false;
-        runBtn.disabled = false;
-        working.hidden = true;
-        working.classList.remove('is-fading');
-        detail.hidden = true;
-        detail.classList.remove('is-revealed');
+
+        const alreadyRevealed = window.__planFitRevealed === window.clientKey;
+
+        if (!alreadyRevealed) {
+          gate.hidden = false;
+          runBtn.hidden = false;
+          runBtn.disabled = false;
+          working.hidden = true;
+          working.classList.remove('is-fading');
+          detail.hidden = true;
+          detail.classList.remove('is-revealed');
+        }
 
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         function drawDetail() {
+          // Reset hover-wired flags so re-draws get fresh listeners
+          document.querySelectorAll('.bsig-graph-wrap').forEach(w => { w._bsigWired = false; });
+
           // Behavioral signals (sparklines + values + narrative).
-          drawSparkline('sentiment-chart-svg', c.behavioralSignals.sentiment, 'var(--accent)');
-          drawSparkline('motivation-chart-svg', c.behavioralSignals.motivation, '#e67e22');
-          drawSparkbar('completion-chart-svg', c.behavioralSignals.completion, 'var(--accent)');
+          if (c.behavioralSignals) {
+            const bs = c.behavioralSignals;
+            drawSparkline('sentiment-chart-svg', bs.sentiment, 'var(--accent)');
+            drawSparkbar('completion-chart-svg', bs.completion, 'var(--accent)');
 
-          document.getElementById('sentiment-value').textContent = c.behavioralSignals.sentimentValue;
-          document.getElementById('sentiment-delta').textContent = c.behavioralSignals.sentimentDelta;
+            document.getElementById('sentiment-value').textContent = bs.sentimentValue;
+            document.getElementById('sentiment-delta').textContent = bs.sentimentDelta;
 
-          document.getElementById('motivation-value').textContent = c.behavioralSignals.motivationValue;
-          const motDelta = document.getElementById('motivation-delta');
-          motDelta.textContent = c.behavioralSignals.motivationDelta;
-          motDelta.className = c.behavioralSignals.motivationDelta.includes('▼') ? 'bad' : 'ok';
+            document.getElementById('completion-value').textContent = bs.completionValue;
+            const compDelta = document.getElementById('completion-delta');
+            compDelta.textContent = bs.completionDelta;
+            compDelta.className = 'bsig-delta ' + (bs.completionDelta.includes('▼') ? 'bad' : 'ok');
 
-          document.getElementById('completion-value').textContent = c.behavioralSignals.completionValue;
-          const compDelta = document.getElementById('completion-delta');
-          compDelta.textContent = c.behavioralSignals.completionDelta;
-          compDelta.className = c.behavioralSignals.completionDelta.includes('▼') ? 'bad' : 'ok';
+            document.getElementById('behavior-narrative').textContent = bs.narrative;
 
-          document.getElementById('behavior-narrative').textContent = c.behavioralSignals.narrative;
+            // HRV card — draw both sparklines and wire the segmented toggle
+            const hrvCurrent = document.getElementById('hrv-current-svg');
+            const hrvProjectedSvg = document.getElementById('hrv-projected-svg');
+            const btnCurrent = document.getElementById('hrv-btn-current');
+            const btnProj = document.getElementById('hrv-btn-proj');
+            const hrvVal = document.getElementById('hrv-card-value');
+            const hrvDelta = document.getElementById('hrv-card-delta');
+            const hrvSub = document.getElementById('hrv-card-sub');
+
+            // Color for current state
+            const hrvColor = bs.hrvDeltaClass === 'bad' ? 'var(--bad)' : bs.hrvDeltaClass === 'warn' ? '#e67e22' : 'var(--ok)';
+
+            if (bs.hrv && bs.hrv.length) drawSparkline('hrv-current-svg', bs.hrv, hrvColor);
+            if (bs.hrvProjected && bs.hrvProjected.length) drawSparkline('hrv-projected-svg', bs.hrvProjected, 'var(--ok)');
+
+            function applyHrvView(projected) {
+              // Crossfade SVGs
+              if (hrvCurrent) hrvCurrent.style.opacity = projected ? '0' : '1';
+              if (hrvProjectedSvg) hrvProjectedSvg.style.opacity = projected ? '1' : '0';
+              // Update readout
+              if (hrvVal) hrvVal.textContent = projected ? (bs.hrvProjValue || '—') : (bs.hrvValue || '—');
+              if (hrvDelta) {
+                hrvDelta.textContent = projected ? (bs.hrvProjDelta || '') : (bs.hrvDelta || '');
+                hrvDelta.style.color = projected ? 'var(--ok)'
+                  : (bs.hrvDeltaClass === 'bad' ? 'var(--bad)' : bs.hrvDeltaClass === 'warn' ? '#e67e22' : 'var(--ok)');
+              }
+              if (hrvSub) hrvSub.textContent = projected ? (bs.hrvProjSub || '') : (bs.hrvSub || '');
+              // Toggle button states
+              if (btnCurrent) {
+                btnCurrent.classList.toggle('is-active', !projected);
+                btnCurrent.setAttribute('aria-pressed', projected ? 'false' : 'true');
+              }
+              if (btnProj) {
+                btnProj.classList.toggle('is-active', projected);
+                btnProj.setAttribute('aria-pressed', projected ? 'true' : 'false');
+              }
+              // Update hover to use the now-visible SVG's data points
+              const activeSvg = projected ? hrvProjectedSvg : hrvCurrent;
+              if (activeSvg && activeSvg._bsigPts) {
+                const wrap = activeSvg.closest('.bsig-graph-wrap');
+                if (wrap) wrap._bsigActivePts = activeSvg._bsigPts;
+              }
+            }
+
+            // Init to current view
+            applyHrvView(false);
+
+            // Wire buttons — remove old handlers first (client switch safety)
+            [btnCurrent, btnProj].forEach(btn => {
+              if (!btn) return;
+              const old = btn.__hrvHandler;
+              if (old) btn.removeEventListener('click', old);
+            });
+            if (btnCurrent) {
+              const h = () => applyHrvView(false);
+              btnCurrent.__hrvHandler = h;
+              btnCurrent.addEventListener('click', h);
+            }
+            if (btnProj) {
+              const h = () => applyHrvView(true);
+              btnProj.__hrvHandler = h;
+              btnProj.addEventListener('click', h);
+            }
+          } else {
+            document.getElementById('sentiment-value').textContent = "N/A";
+            document.getElementById('sentiment-delta').textContent = "No data";
+            document.getElementById('hrv-card-value').textContent = "N/A";
+            document.getElementById('hrv-card-delta').textContent = "No data";
+            document.getElementById('completion-value').textContent = "N/A";
+            document.getElementById('completion-delta').textContent = "No data";
+            document.getElementById('behavior-narrative').textContent = "No behavioral signals logged for this program stage.";
+          }
 
           renderHeatmap(c);
           renderSuggestions(c);
@@ -6056,9 +7311,20 @@
           working.classList.remove('is-fading');
           gate.hidden = true;
           detail.hidden = false;
+          window.__planFitRevealed = window.clientKey;
           drawDetail();
           // Trigger the staggered float-in on the next frame.
           requestAnimationFrame(() => detail.classList.add('is-revealed'));
+        }
+
+        // If the analysis was already revealed (e.g. after Confirm & Apply re-renders
+        // the tab), re-draw suggestions in-place and stay in the revealed state.
+        if (alreadyRevealed) {
+          gate.hidden = true;
+          working.hidden = true;
+          detail.hidden = false;
+          detail.classList.add('is-revealed');
+          drawDetail();
         }
 
         runBtn.onclick = function () {
@@ -6119,7 +7385,7 @@
           '<div class="iv-head">' +
           '<div class="iv-titles">' +
           '<div class="iv-eyebrow"><span class="ai-sparkle-inline" aria-hidden="true">' +
-          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>' +
           '</span>Zora suggests</div>' +
           '<div class="iv-headline-row">' +
           '<h3 class="iv-headline">' + (isHealthy ? (client.first + ' is on track this week') : (client.riskText || (client.first + ' may disengage soon'))) + '</h3>' +
@@ -8128,7 +9394,7 @@
         'sarah-k': { inputs: ['deload week', 'volume −30%', 'sleep priority', 'friday rest'], signals: ['HRV 18 ms', 'sleep 42/100'] },
         'marcus-t': { inputs: ['hold week', 'send check-in', 'no plan push'], signals: ['idle 4 days', 'no replies'] },
         'aman-khanna': { inputs: ['deload', 'volume −30%', 'low intensity', 'two heavy → one'], signals: ['HRV −18%', 'soreness 8/10'] },
-        'meera-joshi': { inputs: ['hold training', 'protein 1.6 g/kg', 'tuesday meal nudge'], signals: ['protein 62%', 'meal score 54'] },
+        'meera-joshi': { inputs: ['hold training', 'protein 1.6 g/kg', 'tuesday meal nudge'], signals: ['protein 64%', 'meal score 54'] },
         'priya-i': { inputs: ['continue base', 'one strides session'], signals: ['HRV 71 ms', 'sleep 7.8 h'] }
       };
 
@@ -8309,88 +9575,261 @@
     });
   </script>
 
-  <!-- Floating Collapsible Zora Button at right edge middle -->
-  <button id="zora-floating-trigger" style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 1200; background: var(--accent); color: white; border: 0; padding: 12px 6px; border-radius: 8px 0 0 8px; box-shadow: -2px 4px 12px rgba(122, 84, 135, 0.35); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.15s;" title="Ask Zora">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
-    </svg>
-    <span style="writing-mode: vertical-rl; text-orientation: mixed; font-family: var(--font-geist); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ask Zora</span>
+  <!-- Ask Zora FAB + copilot panel -->
+  <style>
+    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:20px;height:20px}
+    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
+    .zcopilot.open{transform:none}
+    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
+    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
+    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
+    .zcop-orb svg{width:17px;height:17px;position:relative}
+    .zcop-id{flex:1;min-width:0;position:relative}
+    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
+    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
+    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
+    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
+    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
+    .zcop-x svg{width:16px;height:16px}
+    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
+    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
+    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
+    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
+    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
+    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
+    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
+    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
+    .zchip .zchip-ic svg{width:15px;height:15px}
+    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
+    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
+    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
+    .zcop-input:focus{outline:none}
+    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
+    .zcop-send:hover{background:var(--accent-deep)}
+    .zcop-send:active{transform:scale(.94)}
+    .zcop-send svg{width:16px;height:16px}
+    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+  </style>
+
+  <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
+    <span class="zfab-spark">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+    </span>
+    <span class="zfab-label">Ask Zora</span>
   </button>
 
-  <!-- Small AI Chat Box Widget -->
-  <div id="zora-floating-chat" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%) translateX(360px); width: 340px; height: 460px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 40px rgba(122, 84, 135, 0.15); z-index: 1200; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); pointer-events: none; opacity: 0;">
-    <div style="padding: 14px 16px; background: var(--accent-soft); border-bottom: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: white; font-weight: 800; font-size: 11px;">Z</span>
-        <span style="font-family: var(--font-geist); font-size: 13.5px; font-weight: 700; color: var(--accent-deep);">Ask Zora</span>
+  <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
+    <div class="zcop-head">
+      <div class="zcop-orb">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
       </div>
-      <button id="zora-floating-chat-close" style="background: transparent; border: 0; color: var(--ink-4); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <div class="zcop-id">
+        <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
+        <div class="zcop-sub">Your coaching intelligence layer</div>
+      </div>
+      <button class="zcop-x" id="zcop-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <div id="zora-floating-chat-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-dm-sans); font-size: 12.5px;">
-      <div style="background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;">
-        Hey! I'm Zora. How can I assist you with your coaching practice today?
+    <div class="zcop-body" id="zcop-body">
+      <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
+      <div class="zchips">
+        <button class="zchip" data-q="Explain this client's training recommendation">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+          Explain this client's training recommendation
+        </button>
+        <button class="zchip" data-q="What signals drove these nutrition changes?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></span>
+          What signals drove these nutrition changes?
+        </button>
+        <button class="zchip" data-q="Draft a message about this week's plan for my client">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span>
+          Draft a message about this week's plan
+        </button>
       </div>
     </div>
-    <div style="padding: 10px; border-top: 1px solid var(--line-soft); display: flex; gap: 8px; background: white;">
-      <input id="zora-floating-chat-input" placeholder="Type a message..." style="flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-family: var(--font-dm-sans); outline: none;" />
-      <button id="zora-floating-chat-send" style="background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: var(--font-geist);">Send</button>
+    <div class="zcop-foot">
+      <input class="zcop-input" id="zcop-input" placeholder="Ask about this client's plan…" autocomplete="off"/>
+      <button class="zcop-send" id="zcop-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </button>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const trigger = document.getElementById('zora-floating-trigger');
-      const chat = document.getElementById('zora-floating-chat');
-      const closeBtn = document.getElementById('zora-floating-chat-close');
-      const input = document.getElementById('zora-floating-chat-input');
-      const sendBtn = document.getElementById('zora-floating-chat-send');
-      const messagesContainer = document.getElementById('zora-floating-chat-messages');
+  (function() {
+    const fab = document.getElementById('zfab');
+    const panel = document.getElementById('zcopilot');
+    const closeBtn = document.getElementById('zcop-close');
+    const body = document.getElementById('zcop-body');
+    const input = document.getElementById('zcop-input');
+    const sendBtn = document.getElementById('zcop-send');
+    if (!fab || !panel) return;
 
-      if (!trigger || !chat || !closeBtn) return;
+    function openPanel() { panel.classList.add('open'); fab.classList.add('hide'); setTimeout(() => input && input.focus(), 200); }
+    function closePanel() { panel.classList.remove('open'); fab.classList.remove('hide'); }
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        chat.style.transform = 'translateY(-50%) translateX(0)';
-        chat.style.pointerEvents = 'auto';
-        chat.style.opacity = '1';
-        trigger.style.transform = 'translateY(-50%) translateX(50px)';
-        trigger.style.opacity = '0';
-        setTimeout(() => input.focus(), 150);
-      });
+    fab.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
 
-      closeBtn.addEventListener('click', () => {
-        chat.style.transform = 'translateY(-50%) translateX(360px)';
-        chat.style.pointerEvents = 'none';
-        chat.style.opacity = '0';
-        trigger.style.transform = 'translateY(-50%) translateX(0)';
-        trigger.style.opacity = '1';
-      });
+    function addBubble(text, role) {
+      const b = document.createElement('div');
+      b.className = 'zbubble ' + role;
+      b.textContent = text;
+      body.appendChild(b);
+      body.scrollTop = body.scrollHeight;
+      return b;
+    }
+    function showTyping() {
+      const t = document.createElement('div');
+      t.className = 'zbubble ai';
+      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+      body.appendChild(t);
+      body.scrollTop = body.scrollHeight;
+      return t;
+    }
+    const REPLIES = ["Analysing the client signals now.", "Pulling context from the latest session data.", "Here's what I found based on their recent trends.", "On it — checking wearable data and session logs."];
+    function sendMessage(text) {
+      if (!text) return;
+      addBubble(text, 'me');
+      if (input) input.value = '';
+      const typing = showTyping();
+      setTimeout(() => { typing.remove(); addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai'); }, 900);
+    }
+    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+    body && body.addEventListener('click', e => { const chip = e.target.closest('.zchip'); if (!chip) return; sendMessage(chip.dataset.q || chip.textContent.trim()); });
+  })();
+  </script>
 
-      function sendMessage() {
-        const text = input.value.trim();
-        if (!text) return;
+  <!-- ===== Singleton glass tooltip for context ? buttons =====
+       A single element repositioned by JS. position:fixed escapes
+       overflow:hidden on .inline-day-card and floats above the action rail. -->
+  <div class="ctx-glass-tip" id="ctx-glass-tip" role="tooltip" aria-live="polite" hidden>
+    <div class="ctx-glass-tip-head">Based on signals</div>
+    <div id="ctx-glass-tip-body"></div>
+  </div>
 
-        const userMsg = document.createElement('div');
-        userMsg.style.cssText = 'background: var(--accent-soft); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-end; max-width: 85%;';
-        userMsg.textContent = text;
-        messagesContainer.appendChild(userMsg);
-        input.value = '';
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  <script>
+  (function() {
+    const tip = document.getElementById('ctx-glass-tip');
+    const tipBody = document.getElementById('ctx-glass-tip-body');
+    if (!tip || !tipBody) return;
 
-        setTimeout(() => {
-          const aiMsg = document.createElement('div');
-          aiMsg.style.cssText = 'background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;';
-          aiMsg.textContent = "I've received your request! Staging analysis and syncing updates.";
-          messagesContainer.appendChild(aiMsg);
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 800);
+    let activeBtn = null;
+    let hideTimer = null;
+
+    function showTip(btn) {
+      clearTimeout(hideTimer);
+      if (activeBtn && activeBtn !== btn) {
+        activeBtn.classList.remove('is-open');
       }
+      activeBtn = btn;
+      btn.classList.add('is-open');
 
-      sendBtn.addEventListener('click', sendMessage);
-      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+      // Parse signals from data attribute
+      let signals = [];
+      try { signals = JSON.parse(decodeURIComponent(btn.dataset.ctxSignals || '[]')); } catch(e) {}
+
+      // Build inner HTML
+      tipBody.innerHTML = signals.map(s => {
+        const dotCls = s.state === 'flagged' ? 'flagged' : s.state === 'warn' ? 'warn' : 'ok';
+        return `<div class="ctx-glass-signal">
+          <span class="ctx-glass-signal-dot ${dotCls}" aria-hidden="true"></span>
+          <span class="ctx-glass-signal-body">
+            <span class="ctx-glass-signal-label">${s.label || ''}</span>
+            <span class="ctx-glass-signal-val">${s.val || ''}</span>
+          </span>
+        </div>`;
+      }).join('');
+
+      // Position: below the button, left-aligned, clamped to viewport
+      tip.hidden = false;
+      tip.classList.remove('is-visible');
+
+      requestAnimationFrame(() => {
+        const rect = btn.getBoundingClientRect();
+        const TIP_W = 256;
+        const GAP = 8;
+
+        let left = rect.left;
+        let top = rect.bottom + GAP;
+
+        // Clamp right edge
+        if (left + TIP_W > window.innerWidth - 12) {
+          left = window.innerWidth - TIP_W - 12;
+        }
+        // Clamp bottom edge — show above if no room below
+        const tipH = tip.offsetHeight || 160;
+        if (top + tipH > window.innerHeight - 12) {
+          top = rect.top - GAP - tipH;
+        }
+
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+
+        // Align caret to button horizontal center, clamped inside the tip
+        const caretX = Math.max(10, Math.min(rect.left + rect.width / 2 - left - 4, TIP_W - 20));
+        tip.style.setProperty('--caret-x', caretX + 'px');
+
+        requestAnimationFrame(() => tip.classList.add('is-visible'));
+      });
+    }
+
+    function hideTip(immediate) {
+      clearTimeout(hideTimer);
+      const delay = immediate ? 0 : 120;
+      hideTimer = setTimeout(() => {
+        tip.classList.remove('is-visible');
+        if (activeBtn) { activeBtn.classList.remove('is-open'); activeBtn = null; }
+        // Remove from DOM after transition
+        setTimeout(() => { if (!tip.classList.contains('is-visible')) tip.hidden = true; }, 200);
+      }, delay);
+    }
+
+    // Event delegation — works for dynamically rendered buttons
+    document.addEventListener('mouseover', e => {
+      const btn = e.target.closest('.ctx-tip-trigger');
+      if (btn) showTip(btn);
     });
+    document.addEventListener('mouseout', e => {
+      const btn = e.target.closest('.ctx-tip-trigger');
+      const toEl = e.relatedTarget;
+      if (btn && (!toEl || (!toEl.closest('.ctx-tip-trigger') && !toEl.closest('#ctx-glass-tip')))) {
+        hideTip(false);
+      }
+    });
+    tip.addEventListener('mouseover', () => clearTimeout(hideTimer));
+    tip.addEventListener('mouseout', e => {
+      if (!e.relatedTarget || !e.relatedTarget.closest('#ctx-glass-tip') && !e.relatedTarget.closest('.ctx-tip-trigger')) {
+        hideTip(false);
+      }
+    });
+
+    // Focus/blur for keyboard accessibility
+    document.addEventListener('focusin', e => {
+      const btn = e.target.closest('.ctx-tip-trigger');
+      if (btn) showTip(btn);
+    });
+    document.addEventListener('focusout', e => {
+      const btn = e.target.closest('.ctx-tip-trigger');
+      if (btn) hideTip(true);
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && activeBtn) { hideTip(true); activeBtn.blur(); }
+    });
+  })();
   </script>
 </body>
 
