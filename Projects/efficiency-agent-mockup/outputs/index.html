@@ -10,7 +10,208 @@
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="design-tokens.css">
+  <link rel="stylesheet" href="design-tokens.css?v=1">
+  <style>
+    /* ===== Collapsible context rail + denser roster ===== */
+
+    /* Header actions group: View full roster + Context dropdown + close. */
+    .roster-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Context dropdown trigger reuses the .sort-trigger-btn look; the dropdown
+       rows show a count badge on the right. */
+    .ctx-dropdown {
+      width: 220px;
+    }
+
+    .ctx-item {
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ctx-item span:first-child {
+      white-space: nowrap;
+    }
+
+    .ctx-item-count {
+      flex-shrink: 0;
+      min-width: 20px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-4);
+      background: var(--paper-3);
+      border-radius: 99px;
+      padding: 1px 7px;
+    }
+
+    .ctx-item.active .ctx-item-count {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Close button: only present while a panel is open. 28px control with a
+       compliant tap buffer. */
+    .ctx-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: var(--ink-3);
+      cursor: pointer;
+      position: relative;
+      transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+    }
+
+    .ctx-close::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+    }
+
+    .ctx-close:hover {
+      color: var(--bad);
+      border-color: color-mix(in oklab, var(--bad) 40%, var(--line));
+      background: color-mix(in oklab, var(--bad) 8%, var(--paper-2));
+    }
+
+    .ctx-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .ctx-close[hidden] {
+      display: none !important;
+    }
+
+    /* Collapsed by default: roster spans full width, no rail column. The grid
+       packs to ~4 across on desktop. */
+    .grid-2col {
+      grid-template-columns: 1fr;
+      transition: grid-template-columns 360ms var(--ease-out);
+    }
+
+    .roster-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .client-card {
+      padding: 15px;
+      gap: 12px;
+    }
+
+    /* A panel is open: the rail returns as a right column. The grid keeps its
+       auto-fill rule, so the narrower left column naturally reflows to ~3 up. */
+    .grid-2col.has-panel {
+      grid-template-columns: 1fr 300px;
+    }
+
+    /* Rail + panel reveal. The rail slides down/in; the active panel fades. */
+    .ambient-rail[hidden] {
+      display: none !important;
+    }
+
+    .ambient-rail {
+      animation: ctx-rail-in 360ms var(--ease-out);
+    }
+
+    @keyframes ctx-rail-in {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .ctx-panel[hidden] {
+      display: none !important;
+    }
+
+    .ctx-panel {
+      animation: ctx-panel-in 300ms var(--ease-out);
+    }
+
+    @keyframes ctx-panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (max-width: 1024px) {
+
+      /* On narrow widths the rail stacks under the grid instead of beside it. */
+      .grid-2col.has-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .grid-2col,
+      .ambient-rail,
+      .ctx-panel {
+        transition: none;
+        animation: none;
+      }
+    }
+
+    /* Quick Action Buttons in Client List modal */
+    .qa-btn-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+    }
+    .qa-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: var(--ink-3);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+    .qa-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      transform: translateY(-1px);
+    }
+    .qa-btn:active {
+      transform: scale(0.92);
+    }
+    .qa-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+    .rmt-vitals,
+    .rmr-vitals {
+      justify-self: center !important;
+      text-align: center !important;
+    }
+  </style>
   <script>
     // Pre-paint theme boot — avoids flash of incorrect theme
     (function () {
@@ -30,51 +231,78 @@
 
   <!-- =================== SIDEBAR =================== -->
   <aside class="sidebar">
-    <div class="brand"
-      style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 0;">
+    <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
       <div style="display: flex; align-items: center; gap: 10px;">
         <div class="brand-mark">Z</div>
         <div class="brand-text">
           <div class="brand-name">ZORA</div>
-          <div class="brand-sub">Coach Console</div>
+          <div class="brand-sub">COACH OS</div>
         </div>
       </div>
       <button class="sidebar-toggle-btn" id="sidebar-toggle"
-        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;"
-        title="Collapse Sidebar">
+        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.25s;"
+        title="Expand Sidebar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"></polyline>
+          <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </button>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Today</div>
-      <div class="nav-item active"><span class="dot"></span> Efficiency Agent <span class="nav-badge">2</span></div>
-      <div class="nav-item"><span class="dot"></span> Quality Agent <span class="nav-badge">3</span></div>
-      <div class="nav-item"><span class="dot"></span> AI Action Center</div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Roster</div>
-      <div class="nav-item" id="nav-all-members" style="cursor: pointer;"><span class="dot"></span> All Members</div>
-      <div class="nav-item" id="nav-at-risk" style="cursor: pointer;"><span class="dot"></span> At-Risk</div>
-      <div class="nav-item" id="nav-plans-due" style="cursor: pointer;"><span class="dot"></span> Plans Due</div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Workspace</div>
-      <div class="nav-item"><span class="dot"></span> Messages</div>
-      <div class="nav-item"><span class="dot"></span> Reports</div>
-      <div class="nav-item"><span class="dot"></span> Settings</div>
-    </div>
-
-    <div class="coach-card">
-      <div class="avatar">RS</div>
-      <div class="coach-info">
-        <div class="coach-name">Riya Sharma</div>
-        <div class="coach-meta">142 active members</div>
+      <div class="nav-item active" onclick="window.location.href='index.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Home</span>
       </div>
+      <div class="nav-item" onclick="window.location.href='reco-card.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        <span>Growth Agent</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='copilot.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18M3 12h18M12 3a9 9 0 0 1 9 9 9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9z" style="display:none;"></path>
+          <!-- Sparkle shape resembling image -->
+          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>Ask Zora</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='settings.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      <div class="coach-card">
+        <div class="avatar">JH</div>
+        <div class="coach-info">
+          <div class="coach-name">Jordan Hayes</div>
+          <div class="coach-meta">142 active members</div>
+        </div>
+      </div>
+      <button id="theme-toggle" class="sidebar-theme-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <span>Theme</span>
+      </button>
+      <button onclick="window.location.href='login.html'" class="sidebar-logout-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </button>
     </div>
   </aside>
 
@@ -88,6 +316,15 @@
         <span class="sep">/</span>
         <span id="crumb-tail">Overview</span>
       </div>
+
+      <button class="pay-header-btn" id="pay-fab" type="button" aria-label="Payments due" aria-haspopup="dialog" style="margin-right: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; color: var(--ink-3); font-family: var(--font-geist); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-4);">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        <span>Payments Due</span>
+        <span id="pay-fab-count" style="display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 99px; background: var(--accent); color: #ffffff; font-size: 10px; font-weight: 700;">2</span>
+      </button>
 
       <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly
         style="cursor:pointer;" />
@@ -127,13 +364,8 @@
           <span class="hero-bloom hero-bloom--3"></span>
           <span class="hero-glow" id="hero-glow"></span>
         </div>
-        <svg class="hero-waves" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M-20 150 C 220 90, 420 200, 660 140 S 1080 80, 1240 150" />
-          <path d="M-20 178 C 260 130, 480 220, 720 168 S 1120 118, 1240 182" />
-          <path d="M-20 116 C 300 70, 520 158, 780 104 S 1100 52, 1240 120" />
-        </svg>
         <div class="hero-distilled">
-          <h1 class="page-title page-title--hero">Good morning, Riya: <em>Command Center</em></h1>
+          <h1 class="page-title page-title--hero">Good morning, <em>Emily</em></h1>
         </div>
         <div class="page-meta-inline">
           <span class="live">Live · synced 2 min ago</span>
@@ -145,9 +377,12 @@
       <!-- AI Action Center -->
       <div class="action-center" id="action-center-section">
         <div class="ac-head">
-          <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span> prepared for today</div>
-          <button class="ac-toggle-btn" id="ac-toggle-btn" type="button" aria-expanded="true" aria-label="Toggle AI Action Center">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span>
+            prepared for today</div>
+          <button class="ac-toggle-btn" id="ac-toggle-btn" type="button" aria-expanded="true"
+            aria-label="Toggle AI Action Center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="18 15 12 9 6 15"></polyline>
             </svg>
           </button>
@@ -156,126 +391,127 @@
         <!-- Completed Placeholder Banner -->
         <div class="ac-completed-placeholder" id="ac-completed-placeholder" style="display: none;">
           <span class="placeholder-icon">✓</span>
-          <span class="placeholder-text">All prioritized recommendations completed. <button class="placeholder-link-btn" id="ac-recover-link" type="button">Show Action Center</button></span>
+          <span class="placeholder-text">All prioritized recommendations completed. <button class="placeholder-link-btn"
+              id="ac-recover-link" type="button">Show Action Center</button></span>
         </div>
 
         <div class="ac-content-wrapper" id="ac-content-wrapper">
           <div class="draft-row" id="drafts-container">
-          <!-- Draft 1: Sarah K -->
-          <div class="draft draft-crit animated-entrance stagger-1" tabindex="0"
-            onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
-            <div class="draft-inner">
-              <div class="draft-head">
-                <div>
-                  <div class="draft-name">Sarah K.</div>
-                  <div class="draft-meta">Half-Marathon · Week 8</div>
+            <!-- Draft 1: Sarah K -->
+            <div class="draft draft-crit animated-entrance stagger-1" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Sarah K.</div>
+                    <div class="draft-meta">Half-Marathon · Week 8</div>
+                  </div>
+                  <span class="draft-tag tag-crit">Exhaustion Risk</span>
                 </div>
-                <span class="draft-tag tag-crit">Exhaustion Risk</span>
+                <div class="draft-signals">
+                  <div class="signal signal-bad">
+                    <span class="signal-val">18<span class="signal-unit">ms</span><span class="signal-arrow"
+                        aria-label="dropping">↓</span></span>
+                    <span class="signal-lbl">HRV</span>
+                  </div>
+                  <div class="signal signal-bad">
+                    <span class="signal-val">4.2<span class="signal-unit">h</span></span>
+                    <span class="signal-lbl">Sleep</span>
+                  </div>
+                </div>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
+                    aria-label="Review deload plan for Sarah K.">Review</button>
+                </div>
               </div>
-              <div class="draft-signals">
-                <div class="signal signal-bad">
-                  <span class="signal-val">18<span class="signal-unit">ms</span><span class="signal-arrow"
-                      aria-label="dropping">↓</span></span>
-                  <span class="signal-lbl">HRV</span>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
                 </div>
-                <div class="signal signal-bad">
-                  <span class="signal-val">4.2<span class="signal-unit">h</span></span>
-                  <span class="signal-lbl">Sleep</span>
-                </div>
-              </div>
-              <div class="draft-actions">
-                <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
-                <button class="btn-edit"
-                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
-                  aria-label="Review deload plan for Sarah K.">Review</button>
+                <button class="btn-undo" type="button">Undo</button>
               </div>
             </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <span class="skipped-icon">✕</span>
-                <span class="skipped-msg">Recommendation skipped</span>
-              </div>
-              <button class="btn-undo" type="button">Undo</button>
-            </div>
-          </div>
 
-          <!-- Draft 2: Marcus T -->
-          <div class="draft draft-crit animated-entrance stagger-2" tabindex="0"
-            onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
-            <div class="draft-inner">
-              <div class="draft-head">
-                <div>
-                  <div class="draft-name">Marcus T.</div>
-                  <div class="draft-meta">Strength · Week 6</div>
+            <!-- Draft 2: Marcus T -->
+            <div class="draft draft-crit animated-entrance stagger-2" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Marcus T.</div>
+                    <div class="draft-meta">Strength · Week 6</div>
+                  </div>
+                  <span class="draft-tag tag-crit">Churn Risk</span>
                 </div>
-                <span class="draft-tag tag-crit">Churn Risk</span>
+                <div class="draft-signals">
+                  <div class="signal signal-bad">
+                    <span class="signal-val">40<span class="signal-unit">%</span><span class="signal-arrow"
+                        aria-label="dropping">↓</span></span>
+                    <span class="signal-lbl">Completion</span>
+                  </div>
+                  <div class="signal signal-bad">
+                    <span class="signal-val">4<span class="signal-unit">d</span></span>
+                    <span class="signal-lbl">No reply</span>
+                  </div>
+                </div>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
+                    aria-label="Review intervention for Marcus T.">Review</button>
+                </div>
               </div>
-              <div class="draft-signals">
-                <div class="signal signal-bad">
-                  <span class="signal-val">40<span class="signal-unit">%</span><span class="signal-arrow"
-                      aria-label="dropping">↓</span></span>
-                  <span class="signal-lbl">Completion</span>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
                 </div>
-                <div class="signal signal-bad">
-                  <span class="signal-val">4<span class="signal-unit">d</span></span>
-                  <span class="signal-lbl">No reply</span>
-                </div>
-              </div>
-              <div class="draft-actions">
-                <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
-                <button class="btn-edit"
-                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
-                  aria-label="Review intervention for Marcus T.">Review</button>
+                <button class="btn-undo" type="button">Undo</button>
               </div>
             </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <span class="skipped-icon">✕</span>
-                <span class="skipped-msg">Recommendation skipped</span>
-              </div>
-              <button class="btn-undo" type="button">Undo</button>
-            </div>
-          </div>
 
-          <!-- Draft 3: Aman Khanna -->
-          <div class="draft draft-deload animated-entrance stagger-3" tabindex="0"
-            onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
-            <div class="draft-inner">
-              <div class="draft-head">
-                <div>
-                  <div class="draft-name">Aman Khanna</div>
-                  <div class="draft-meta">Hypertrophy · Week 14</div>
+            <!-- Draft 3: Alex Carter -->
+            <div class="draft draft-deload animated-entrance stagger-3" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Alex Carter</div>
+                    <div class="draft-meta">Hypertrophy · Week 14</div>
+                  </div>
+                  <span class="draft-tag tag-deload">Deload Pending</span>
                 </div>
-                <span class="draft-tag tag-deload">Deload Pending</span>
-              </div>
-              <div class="draft-signals">
-                <div class="signal signal-warn">
-                  <span class="signal-val">8<span class="signal-unit">/10</span></span>
-                  <span class="signal-lbl">Soreness</span>
+                <div class="draft-signals">
+                  <div class="signal signal-warn">
+                    <span class="signal-val">8<span class="signal-unit">/10</span></span>
+                    <span class="signal-lbl">Soreness</span>
+                  </div>
+                  <div class="signal signal-warn">
+                    <span class="signal-val">4<span class="signal-unit">wk</span></span>
+                    <span class="signal-lbl">Hard block</span>
+                  </div>
                 </div>
-                <div class="signal signal-warn">
-                  <span class="signal-val">4<span class="signal-unit">wk</span></span>
-                  <span class="signal-lbl">Hard block</span>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Alex Carter">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
+                    aria-label="Review deload plan for Alex Carter">Review</button>
                 </div>
               </div>
-              <div class="draft-actions">
-                <button class="btn-skip" type="button" aria-label="Skip deload plan for Aman Khanna">Skip</button>
-                <button class="btn-edit"
-                  onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
-                  aria-label="Review deload plan for Aman Khanna">Review</button>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
+                </div>
+                <button class="btn-undo" type="button">Undo</button>
               </div>
-            </div>
-            <div class="draft-skipped-state">
-              <div class="skipped-content">
-                <span class="skipped-icon">✕</span>
-                <span class="skipped-msg">Recommendation skipped</span>
-              </div>
-              <button class="btn-undo" type="button">Undo</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
       <!-- Pulse Metrics Ribbon -->
       <div class="pulse-metrics-ribbon">
@@ -291,7 +527,8 @@
           <span class="ribbon-sub">Wearables synced</span>
         </div>
         <div class="ribbon-divider"></div>
-        <div class="ribbon-item interactive" id="metric-at-risk" role="button" tabindex="0" title="Click to filter roster">
+        <div class="ribbon-item interactive" id="metric-at-risk" role="button" tabindex="0"
+          title="Click to filter roster">
           <span class="ribbon-label">Count at Risk</span>
           <span class="ribbon-val text-bad">3</span>
           <span class="ribbon-sub text-bad">Click to filter</span>
@@ -304,27 +541,59 @@
         </div>
       </div>
 
-      <!-- 2-col layout -->
-      <div class="grid-2col">
+      <!-- 2-col layout. Starts collapsed (no panel): the roster spans full
+           width. Selecting a context panel adds .has-panel, bringing the rail
+           back as a right column. -->
+      <div class="grid-2col" id="roster-layout">
 
         <!-- Left Column: Roster Grid -->
         <div class="roster-grid-container">
           <div class="roster-section-head">
             <div class="roster-section-titles">
-              <h2 class="roster-section-title">Client Roster</h2>
+              <h2 class="roster-section-title">Clients</h2>
               <p class="roster-section-sub"><span id="roster-count-shown">6</span> shown of <span
                   class="roster-count-total">142</span> active</p>
             </div>
-            <button class="view-roster-btn" id="open-full-roster-btn" type="button">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="4" rx="1"></rect>
-                <rect x="3" y="10" width="18" height="4" rx="1"></rect>
-                <rect x="3" y="16" width="18" height="4" rx="1"></rect>
-              </svg>
-              View full roster
-              <span class="view-roster-btn-count">142</span>
-            </button>
+            <div class="roster-head-actions">
+              <button class="view-roster-btn" id="open-full-roster-btn" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+                  <rect x="3" y="10" width="18" height="4" rx="1"></rect>
+                  <rect x="3" y="16" width="18" height="4" rx="1"></rect>
+                </svg>
+                View Clients List
+                <span class="view-roster-btn-count">142</span>
+              </button>
+
+              <!-- Context panel selector: collapses the three ambient lists into
+                   one dropdown. Picking one opens the right rail; the × collapses
+                   it and the grid returns to full width. -->
+              <div class="sort-container ctx-container">
+                <button class="sort-trigger-btn ctx-trigger" id="ctx-trigger" type="button" aria-haspopup="true"
+                  aria-expanded="false">Coach Center ▾</button>
+                <div class="sort-dropdown ctx-dropdown" id="ctx-dropdown">
+                  <button class="sort-item ctx-item" data-panel="sessions" type="button">
+                    <span>Today's Sessions</span><span class="ctx-item-count">3</span>
+                  </button>
+                  <button class="sort-item ctx-item" data-panel="messages" type="button">
+                    <span>Messages Awaiting Reply</span><span class="ctx-item-count">2</span>
+                  </button>
+                  <button class="sort-item ctx-item" data-panel="wins" type="button">
+                    <span>Recent Client Wins</span><span class="ctx-item-count">2</span>
+                  </button>
+                </div>
+              </div>
+
+              <button class="ctx-close" id="ctx-close" type="button" title="Close panel" aria-label="Close panel"
+                hidden>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
           </div>
           <div class="controls-bar">
             <div class="filter-group">
@@ -436,13 +705,13 @@
               </div>
             </div>
 
-            <!-- Aman Khanna -->
+            <!-- Alex Carter -->
             <div class="client-card" data-client="aman-khanna" data-risk="med" data-recency="24" data-type="strength"
               data-payment-due="true" onclick="window.location.href='reco-card.html?client=aman-khanna'">
               <div class="client-card-header">
-                <div class="client-card-avatar av-2">AK</div>
+                <div class="client-card-avatar av-2">AC</div>
                 <div>
-                  <div class="client-card-name">Aman Khanna</div>
+                  <div class="client-card-name">Alex Carter</div>
                   <div class="client-card-program">Hypertrophy · Week 14</div>
                 </div>
                 <span class="client-card-risk-badge risk-med">Medium Risk</span>
@@ -475,13 +744,13 @@
               </div>
             </div>
 
-            <!-- Meera Joshi -->
+            <!-- Megan Jones -->
             <div class="client-card" data-client="meera-joshi" data-risk="med" data-recency="5" data-type="weight-loss"
               data-payment-due="false" onclick="window.location.href='reco-card.html?client=meera-joshi'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-3">MJ</div>
                 <div>
-                  <div class="client-card-name">Meera Joshi</div>
+                  <div class="client-card-name">Megan Jones</div>
                   <div class="client-card-program">Nutrition · Week 6</div>
                 </div>
                 <span class="client-card-risk-badge risk-med">Medium Risk</span>
@@ -513,13 +782,13 @@
               </div>
             </div>
 
-            <!-- Priya I -->
+            <!-- Paige I -->
             <div class="client-card" data-client="priya-i" data-risk="low" data-recency="0.1" data-type="performance"
               data-payment-due="true" onclick="window.location.href='reco-card.html?client=priya-i'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-3">PI</div>
                 <div>
-                  <div class="client-card-name">Priya I.</div>
+                  <div class="client-card-name">Paige I.</div>
                   <div class="client-card-program">Performance · Week 6</div>
                 </div>
                 <span class="client-card-risk-badge risk-low">Optimized</span>
@@ -590,15 +859,14 @@
               </div>
             </div>
 
-            <!-- Raj M -->
+            <!-- Ryan M -->
             <div class="client-card" data-client="raj-m" data-risk="high" data-recency="1" data-type="hypertension"
               data-payment-due="false" onclick="window.location.href='reco-card.html?client=raj-m'">
               <div class="client-card-header">
                 <div class="client-card-avatar av-2">RM</div>
                 <div>
                   <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span>Raj M.</span>
-                    <span class="care-badge care-badge--sm" data-care="hypertension"><span class="care-badge-ico" aria-hidden="true">❤</span>Hypertension</span>
+                    <span>Ryan M.</span>
                   </div>
                   <div class="client-card-program">Hypertension · Stage 1</div>
                 </div>
@@ -639,7 +907,6 @@
                 <div>
                   <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                     <span>Lena P.</span>
-                    <span class="care-badge care-badge--sm" data-care="diabetes"><span class="care-badge-ico" aria-hidden="true">🩸</span>Diabetes</span>
                   </div>
                   <div class="client-card-program">Type 2 Diabetes · Week 6</div>
                 </div>
@@ -671,13 +938,52 @@
                 <span style="color: var(--warn); font-weight: 600;">Low Time-In-Range</span>
               </div>
             </div>
+
+            <!-- David L (second view) -->
+            <div class="client-card" data-client="david-l" data-risk="low" data-recency="18" data-type="strength"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=david-l'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">DL</div>
+                <div>
+                  <div class="client-card-name">David L.</div>
+                  <div class="client-card-program">Strength · Week 9</div>
+                </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 96%;"></div>
+                    </div>
+                    <span>96%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Sleep Score</span>
+                    <span>81 / 100</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>HRV</span>
+                    <span>64 ms</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 3h ago</span>
+                <span style="color: var(--ok); font-weight: 600;">On Track</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Slim Right Rail (Ambient Context) -->
-        <div class="ambient-rail">
+        <!-- Slim Right Rail (Ambient Context). Hidden until a panel is chosen;
+             one panel shows at a time, keyed by data-panel. -->
+        <div class="ambient-rail" id="ambient-rail" hidden>
           <!-- Today's Sessions -->
-          <div class="ambient-card">
+          <div class="ambient-card ctx-panel" data-panel="sessions" hidden>
             <div class="ambient-card-title">Today's Sessions</div>
             <div class="ambient-item">
               <span class="ambient-item-time">09:00 AM</span>
@@ -686,22 +992,22 @@
             </div>
             <div class="ambient-item">
               <span class="ambient-item-time">11:30 AM</span>
-              <span class="ambient-item-name">Priya I.</span>
+              <span class="ambient-item-name">Paige I.</span>
               <span class="ambient-item-desc">Coaching Chat</span>
             </div>
             <div class="ambient-item">
               <span class="ambient-item-time">02:00 PM</span>
-              <span class="ambient-item-name">Aman Khanna</span>
+              <span class="ambient-item-name">Alex Carter</span>
               <span class="ambient-item-desc">Form Review</span>
             </div>
           </div>
 
           <!-- Messages Awaiting Reply -->
-          <div class="ambient-card">
+          <div class="ambient-card ctx-panel" data-panel="messages" hidden>
             <div class="ambient-card-title">Messages Awaiting Reply</div>
             <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
               <div style="display:flex; justify-content:space-between; width:100%;">
-                <span class="ambient-item-name">Meera Joshi</span>
+                <span class="ambient-item-name">Megan Jones</span>
                 <span class="ambient-item-desc">5h ago</span>
               </div>
               <div style="font-size:12px; color:var(--ink-3); line-height:1.3;">"Struggling to hit protein on the road.
@@ -718,12 +1024,12 @@
           </div>
 
           <!-- Recent Client Wins -->
-          <div class="ambient-card">
+          <div class="ambient-card ctx-panel" data-panel="wins" hidden>
             <div class="ambient-card-title">Recent Client Wins</div>
             <div class="ambient-item" style="gap: 8px;">
               <span style="font-size: 16px;">🏆</span>
               <div>
-                <div class="ambient-item-name" style="font-size:13px;">Priya I.</div>
+                <div class="ambient-item-name" style="font-size:13px;">Paige I.</div>
                 <div style="font-size:11.5px; color:var(--ink-3);">Set a 5km Personal Best on Saturday!</div>
               </div>
             </div>
@@ -791,11 +1097,11 @@
         </div>
       </div>
 
-      <div class="queue-item" data-name="Aman Khanna">
-        <div class="qi-avatar av-2">AK</div>
+      <div class="queue-item" data-name="Alex Carter">
+        <div class="qi-avatar av-2">AC</div>
         <div class="qi-info">
           <div class="qi-name-row">
-            <span class="qi-name">Aman Khanna</span>
+            <span class="qi-name">Alex Carter</span>
             <span class="qi-tag tag-deload">Deload</span>
           </div>
           <div class="qi-meta">Hypertrophy · Week 14</div>
@@ -806,11 +1112,11 @@
         </div>
       </div>
 
-      <div class="queue-item" data-name="Priya I.">
+      <div class="queue-item" data-name="Paige I.">
         <div class="qi-avatar av-3">PI</div>
         <div class="qi-info">
           <div class="qi-name-row">
-            <span class="qi-name">Priya I.</span>
+            <span class="qi-name">Paige I.</span>
             <span class="qi-tag tag-plan">Optimized</span>
           </div>
           <div class="qi-meta">Performance · Week 6</div>
@@ -820,11 +1126,11 @@
         </div>
       </div>
 
-      <div class="queue-item" data-name="Meera Joshi">
+      <div class="queue-item" data-name="Megan Jones">
         <div class="qi-avatar av-1">MJ</div>
         <div class="qi-info">
           <div class="qi-name-row">
-            <span class="qi-name">Meera Joshi</span>
+            <span class="qi-name">Megan Jones</span>
             <span class="qi-tag tag-msg">Nutrition Drift</span>
           </div>
           <div class="qi-meta">Fat Loss · Week 3</div>
@@ -852,15 +1158,15 @@
         <span class="qci-status text-green">Ready</span>
         <button class="btn-quick-approve" data-athlete="Jordan M.">Approve</button>
       </div>
-      <div class="queue-compact-item" data-name="Tariq K.">
-        <span class="qci-name">Tariq K. (Week 9 · Conditioning)</span>
+      <div class="queue-compact-item" data-name="Travis K.">
+        <span class="qci-name">Travis K. (Week 9 · Conditioning)</span>
         <span class="qci-status text-green">Ready</span>
-        <button class="btn-quick-approve" data-athlete="Tariq K.">Approve</button>
+        <button class="btn-quick-approve" data-athlete="Travis K.">Approve</button>
       </div>
-      <div class="queue-compact-item" data-name="Sonia V.">
-        <span class="qci-name">Sonia V. (Week 5 · Strength)</span>
+      <div class="queue-compact-item" data-name="Sarah V.">
+        <span class="qci-name">Sarah V. (Week 5 · Strength)</span>
         <span class="qci-status text-green">Ready</span>
-        <button class="btn-quick-approve" data-athlete="Sonia V.">Approve</button>
+        <button class="btn-quick-approve" data-athlete="Sarah V.">Approve</button>
       </div>
     </div>
   </div>
@@ -1210,8 +1516,10 @@
             const nameText = nameEl.textContent.trim().toLowerCase();
             let clientKey = 'sarah-k';
             if (nameText.includes('marcus')) clientKey = 'marcus-t';
-            if (nameText.includes('aman')) clientKey = 'aman-khanna';
-            if (nameText.includes('priya')) clientKey = 'priya-i';
+            if (nameText.includes('aman') || nameText.includes('alex')) clientKey = 'aman-khanna';
+            if (nameText.includes('priya') || nameText.includes('paige')) clientKey = 'priya-i';
+            if (nameText.includes('meera') || nameText.includes('megan')) clientKey = 'meera-joshi';
+            if (nameText.includes('raj') || nameText.includes('ryan')) clientKey = 'raj-m';
             window.location.href = `reco-card.html?client=${clientKey}`;
           }
         });
@@ -1349,16 +1657,91 @@
     })();
   </script>
 
-  <!-- Payments Due: floating pill -->
-  <button class="pay-fab" id="pay-fab" type="button" aria-label="Payments due" aria-haspopup="dialog">
-    <svg class="pay-fab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-      <line x1="2" y1="10" x2="22" y2="10"></line>
+
+
+  <!-- Floating Collapsible Zora Button at right edge middle -->
+  <button id="zora-floating-trigger" style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 1200; background: var(--accent); color: white; border: 0; padding: 12px 6px; border-radius: 8px 0 0 8px; box-shadow: -2px 4px 12px rgba(122, 84, 135, 0.35); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.15s;" title="Ask Zora">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
     </svg>
-    <span class="pay-fab-label">payments due</span>
-    <span class="pay-fab-count" id="pay-fab-count">2</span>
+    <span style="writing-mode: vertical-rl; text-orientation: mixed; font-family: var(--font-geist); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ask Zora</span>
   </button>
+
+  <!-- Small AI Chat Box Widget -->
+  <div id="zora-floating-chat" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%) translateX(360px); width: 340px; height: 460px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 40px rgba(122, 84, 135, 0.15); z-index: 1200; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); pointer-events: none; opacity: 0;">
+    <div style="padding: 14px 16px; background: var(--accent-soft); border-bottom: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: white; font-weight: 800; font-size: 11px;">Z</span>
+        <span style="font-family: var(--font-geist); font-size: 13.5px; font-weight: 700; color: var(--accent-deep);">Ask Zora</span>
+      </div>
+      <button id="zora-floating-chat-close" style="background: transparent; border: 0; color: var(--ink-4); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div id="zora-floating-chat-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-dm-sans); font-size: 12.5px;">
+      <div style="background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;">
+        Hey! I'm Zora. How can I assist you with your coaching practice today?
+      </div>
+    </div>
+    <div style="padding: 10px; border-top: 1px solid var(--line-soft); display: flex; gap: 8px; background: white;">
+      <input id="zora-floating-chat-input" placeholder="Type a message..." style="flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-family: var(--font-dm-sans); outline: none;" />
+      <button id="zora-floating-chat-send" style="background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: var(--font-geist);">Send</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const trigger = document.getElementById('zora-floating-trigger');
+      const chat = document.getElementById('zora-floating-chat');
+      const closeBtn = document.getElementById('zora-floating-chat-close');
+      const input = document.getElementById('zora-floating-chat-input');
+      const sendBtn = document.getElementById('zora-floating-chat-send');
+      const messagesContainer = document.getElementById('zora-floating-chat-messages');
+
+      if (!trigger || !chat || !closeBtn) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chat.style.transform = 'translateY(-50%) translateX(0)';
+        chat.style.pointerEvents = 'auto';
+        chat.style.opacity = '1';
+        trigger.style.transform = 'translateY(-50%) translateX(50px)';
+        trigger.style.opacity = '0';
+        setTimeout(() => input.focus(), 150);
+      });
+
+      closeBtn.addEventListener('click', () => {
+        chat.style.transform = 'translateY(-50%) translateX(360px)';
+        chat.style.pointerEvents = 'none';
+        chat.style.opacity = '0';
+        trigger.style.transform = 'translateY(-50%) translateX(0)';
+        trigger.style.opacity = '1';
+      });
+
+      function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const userMsg = document.createElement('div');
+        userMsg.style.cssText = 'background: var(--accent-soft); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-end; max-width: 85%;';
+        userMsg.textContent = text;
+        messagesContainer.appendChild(userMsg);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        setTimeout(() => {
+          const aiMsg = document.createElement('div');
+          aiMsg.style.cssText = 'background: var(--paper-3); color: var(--accent-deep); padding: 8px 12px; border-radius: 10px; align-self: flex-start; max-width: 85%;';
+          aiMsg.textContent = "I've received your request! Staging analysis and syncing updates.";
+          messagesContainer.appendChild(aiMsg);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 800);
+      }
+
+      sendBtn.addEventListener('click', sendMessage);
+      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    });
+  </script>
 
   <!-- Payments Due: slide-in panel -->
   <div class="pay-drawer-overlay" id="pay-drawer-overlay"></div>
@@ -1380,11 +1763,11 @@
 
     <div class="pay-drawer-body" id="pay-drawer-body">
       <!-- Overdue first -->
-      <div class="pay-item is-overdue" data-name="Priya I." data-amount="$99">
+      <div class="pay-item is-overdue" data-name="Paige I." data-amount="$99">
         <div class="pay-item-avatar av-3">PI</div>
         <div class="pay-item-main">
           <div class="pay-item-top">
-            <span class="pay-item-name">Priya I.</span>
+            <span class="pay-item-name">Paige I.</span>
             <span class="pay-item-amount">$99</span>
           </div>
           <span class="pay-chip pay-chip-overdue">5 days overdue</span>
@@ -1395,11 +1778,11 @@
         </div>
       </div>
 
-      <div class="pay-item" data-name="Aman Khanna" data-amount="$149">
-        <div class="pay-item-avatar av-2">AK</div>
+      <div class="pay-item" data-name="Alex Carter" data-amount="$149">
+        <div class="pay-item-avatar av-2">AC</div>
         <div class="pay-item-main">
           <div class="pay-item-top">
-            <span class="pay-item-name">Aman Khanna</span>
+            <span class="pay-item-name">Alex Carter</span>
             <span class="pay-item-amount">$149</span>
           </div>
           <span class="pay-chip pay-chip-soon">due in 3 days</span>
@@ -1410,11 +1793,11 @@
         </div>
       </div>
 
-      <div class="pay-item" data-name="Tariq K." data-amount="$120">
+      <div class="pay-item" data-name="Travis K." data-amount="$120">
         <div class="pay-item-avatar av-1">TK</div>
         <div class="pay-item-main">
           <div class="pay-item-top">
-            <span class="pay-item-name">Tariq K.</span>
+            <span class="pay-item-name">Travis K.</span>
             <span class="pay-item-amount">$120</span>
           </div>
           <span class="pay-chip pay-chip-soon">due in 4 days</span>
@@ -1444,7 +1827,7 @@
     <div class="roster-modal">
       <div class="roster-modal-head">
         <div class="roster-modal-titles">
-          <h2 class="roster-modal-title" id="full-roster-title">Client Roster</h2>
+          <h2 class="roster-modal-title" id="full-roster-title">Clients</h2>
           <p class="roster-modal-sub"><span id="roster-modal-visible-count">142</span> of <span
               class="roster-count-total">142</span> active members</p>
         </div>
@@ -1479,7 +1862,7 @@
         <div class="roster-modal-table-head" role="row">
           <span role="columnheader">Member</span>
           <span role="columnheader">Program</span>
-          <span role="columnheader" class="rmt-vitals">Vitals</span>
+          <span role="columnheader" class="rmt-vitals" style="text-align: center;">Actions</span>
           <span role="columnheader">Status</span>
           <span role="columnheader" class="rmt-last">Last active</span>
         </div>
@@ -1536,9 +1919,9 @@
       const paletteItems = [
         { name: 'Sarah K.', desc: 'Half-Marathon · Exhaustion Risk (Plan & Performance)', url: 'reco-card.html?client=sarah-k&tab=plan' },
         { name: 'Marcus T.', desc: 'Strength · Churn Risk (Engagement & Risk)', url: 'reco-card.html?client=marcus-t&tab=risk' },
-        { name: 'Aman Khanna', desc: 'Hypertrophy · Deload Pending (Plan & Performance)', url: 'reco-card.html?client=aman-khanna&tab=plan' },
-        { name: 'Meera Joshi', desc: 'Nutrition · Nutrition Drift (Engagement & Risk)', url: 'reco-card.html?client=meera-joshi&tab=risk' },
-        { name: 'Priya I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
+        { name: 'Alex Carter', desc: 'Hypertrophy · Deload Pending (Plan & Performance)', url: 'reco-card.html?client=aman-khanna&tab=plan' },
+        { name: 'Megan Jones', desc: 'Nutrition · Nutrition Drift (Engagement & Risk)', url: 'reco-card.html?client=meera-joshi&tab=risk' },
+        { name: 'Paige I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
         { name: 'David L.', desc: 'Base Phase · Optimized (Plan & Performance)', url: 'reco-card.html?client=david-l&tab=plan' },
         { name: 'Filter: At-Risk', desc: 'Filter client roster by At-Risk status', action: 'filter-risk' },
         { name: 'Filter: Payment Due', desc: 'Filter client roster by Payment Due status', action: 'filter-payment' }
@@ -1818,26 +2201,72 @@
       // Initial filter on load
       updateFilters();
 
-      // Sidebar Collapsible Logic
+      // Sidebar logic: collapsed on load/refresh, toggleable at will
       const sidebar = document.querySelector('.sidebar');
       const sidebarToggle = document.getElementById('sidebar-toggle');
+      if (sidebar) {
+        sidebar.classList.add('collapsed');
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebarToggle.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+          });
+        }
+      }
 
-      if (sidebarToggle && sidebar) {
-        // Collapsed by default; only expanded if the user explicitly expanded it.
-        const isCollapsed = localStorage.getItem('sidebar-collapsed') !== 'false';
-        if (isCollapsed) {
-          sidebar.classList.add('collapsed');
-          sidebarToggle.setAttribute('title', 'Expand Sidebar');
-        } else {
-          sidebarToggle.setAttribute('title', 'Collapse Sidebar');
+      // ===== Collapsible context rail (Sessions / Messages / Wins) =====
+      (function () {
+        const trigger = document.getElementById('ctx-trigger');
+        const dropdown = document.getElementById('ctx-dropdown');
+        const closeBtn = document.getElementById('ctx-close');
+        const rail = document.getElementById('ambient-rail');
+        const layout = document.getElementById('roster-layout');
+        if (!trigger || !dropdown || !rail || !layout) return;
+
+        const items = Array.from(dropdown.querySelectorAll('.ctx-item'));
+        const panels = Array.from(rail.querySelectorAll('.ctx-panel'));
+        const labels = { sessions: "Today's Sessions", messages: 'Messages', wins: 'Client Wins' };
+
+        function openPanel(key) {
+          // Show only the chosen panel; bring the rail + right column back.
+          panels.forEach(p => { p.hidden = (p.dataset.panel !== key); });
+          rail.hidden = false;
+          layout.classList.add('has-panel');
+          closeBtn.hidden = false;
+          items.forEach(i => i.classList.toggle('active', i.dataset.panel === key));
+          trigger.innerHTML = (labels[key] || 'Coach Center') + ' ▾';
+          // Re-seed avatar faces inside the freshly shown panel, if present.
+          if (window.ZoraFaces && window.ZoraFaces.paint) window.ZoraFaces.paint(rail);
         }
 
-        sidebarToggle.addEventListener('click', () => {
-          const collapsed = sidebar.classList.toggle('collapsed');
-          localStorage.setItem('sidebar-collapsed', collapsed);
-          sidebarToggle.setAttribute('title', collapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+        function collapse() {
+          layout.classList.remove('has-panel');
+          rail.hidden = true;
+          panels.forEach(p => { p.hidden = true; });
+          closeBtn.hidden = true;
+          items.forEach(i => i.classList.remove('active'));
+          trigger.innerHTML = 'Coach Center ▾';
+        }
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
         });
-      }
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+
+        items.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openPanel(item.dataset.panel);
+            dropdown.classList.remove('show');
+          });
+        });
+
+        closeBtn.addEventListener('click', collapse);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && layout.classList.contains('has-panel')) collapse();
+        });
+      })();
 
 
     });
@@ -1860,24 +2289,24 @@
       const roster = [
         { name: 'Sarah K.', program: 'Half-Marathon · Wk 8', type: 'endurance', hrv: 18, sleep: 4.2, rhr: 74, steps: 3420, risk: 'high', last: '2h ago', key: 'sarah-k' },
         { name: 'Marcus T.', program: 'Strength · Wk 6', type: 'strength', hrv: 32, sleep: 6.2, rhr: 68, steps: 5100, risk: 'high', last: '4d ago', key: 'marcus-t' },
-        { name: 'Aman Khanna', program: 'Hypertrophy · Wk 14', type: 'strength', hrv: 42, sleep: 5.4, rhr: 71, steps: 4800, risk: 'med', last: '1d ago', key: 'aman-khanna' },
-        { name: 'Meera Joshi', program: 'Nutrition · Wk 6', type: 'weight-loss', hrv: 68, sleep: 7.8, rhr: 56, steps: 11200, risk: 'med', last: '5h ago', key: 'meera-joshi' },
-        { name: 'Priya I.', program: 'Performance · Wk 6', type: 'performance', hrv: 71, sleep: 7.8, rhr: 52, steps: 13400, risk: 'low', last: '10m ago', key: 'priya-i' },
+        { name: 'Alex Carter', program: 'Hypertrophy · Wk 14', type: 'strength', hrv: 42, sleep: 5.4, rhr: 71, steps: 4800, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Megan Jones', program: 'Nutrition · Wk 6', type: 'weight-loss', hrv: 68, sleep: 7.8, rhr: 56, steps: 11200, risk: 'med', last: '5h ago', key: 'meera-joshi' },
+        { name: 'Paige I.', program: 'Performance · Wk 6', type: 'performance', hrv: 71, sleep: 7.8, rhr: 52, steps: 13400, risk: 'low', last: '10m ago', key: 'priya-i' },
         { name: 'David L.', program: 'Base Phase · Wk 4', type: 'nutrition', hrv: 65, sleep: 7.2, rhr: 58, steps: 10500, risk: 'low', last: '6h ago', key: 'david-l' },
-        { name: 'Raj M.', program: 'Hypertension · Stage 1', type: 'hypertension', hrv: 0, sleep: 0, rhr: 0, steps: 6200, risk: 'high', last: '1h ago', key: 'raj-m', bp: '148/94' },
+        { name: 'Ryan M.', program: 'Hypertension · Stage 1', type: 'hypertension', hrv: 0, sleep: 0, rhr: 0, steps: 6200, risk: 'high', last: '1h ago', key: 'raj-m', bp: '148/94' },
         { name: 'Lena P.', program: 'Type 2 Diabetes · Wk 6', type: 'diabetes', hrv: 0, sleep: 0, rhr: 0, steps: 5800, risk: 'med', last: '20m ago', key: 'lena-p', glucose: 168 },
         { name: 'Elena R.', program: 'Peak Volume · Wk 12', type: 'strength', hrv: 74, sleep: 8.0, rhr: 54, steps: 12800, risk: 'low', last: '3h ago', key: 'priya-i' },
         { name: 'Jordan M.', program: 'Recovery · Wk 2', type: 'performance', hrv: 48, sleep: 5.8, rhr: 65, steps: 8200, risk: 'med', last: '2d ago', key: 'david-l' },
-        { name: 'Tariq K.', program: 'Conditioning · Wk 9', type: 'endurance', hrv: 80, sleep: 7.5, rhr: 50, steps: 14100, risk: 'low', last: '8h ago', key: 'priya-i' },
-        { name: 'Sonia V.', program: 'Strength · Wk 5', type: 'strength', hrv: 55, sleep: 6.5, rhr: 62, steps: 9300, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Travis K.', program: 'Conditioning · Wk 9', type: 'endurance', hrv: 80, sleep: 7.5, rhr: 50, steps: 14100, risk: 'low', last: '8h ago', key: 'priya-i' },
+        { name: 'Sarah V.', program: 'Strength · Wk 5', type: 'strength', hrv: 55, sleep: 6.5, rhr: 62, steps: 9300, risk: 'med', last: '1d ago', key: 'aman-khanna' },
         { name: 'Liam P.', program: 'Marathon · Wk 18', type: 'endurance', hrv: 28, sleep: 4.8, rhr: 72, steps: 4100, risk: 'high', last: '6d ago', key: 'marcus-t' },
         { name: 'Nina F.', program: 'Fat Loss · Wk 7', type: 'weight-loss', hrv: 82, sleep: 8.2, rhr: 53, steps: 11900, risk: 'low', last: '4h ago', key: 'meera-joshi' },
-        { name: 'Omar B.', program: 'Hypertrophy · Wk 11', type: 'strength', hrv: 58, sleep: 6.0, rhr: 63, steps: 9500, risk: 'med', last: '2d ago', key: 'aman-khanna' },
+        { name: 'Oscar B.', program: 'Hypertrophy · Wk 11', type: 'strength', hrv: 58, sleep: 6.0, rhr: 63, steps: 9500, risk: 'med', last: '2d ago', key: 'aman-khanna' },
         { name: 'Grace W.', program: 'Performance · Wk 3', type: 'performance', hrv: 88, sleep: 8.4, rhr: 48, steps: 15200, risk: 'low', last: '25m ago', key: 'priya-i' },
-        { name: 'Hassan R.', program: 'Base Phase · Wk 1', type: 'nutrition', hrv: 50, sleep: 5.5, rhr: 66, steps: 7800, risk: 'med', last: '3d ago', key: 'david-l' },
+        { name: 'Hunter R.', program: 'Base Phase · Wk 1', type: 'nutrition', hrv: 50, sleep: 5.5, rhr: 66, steps: 7800, risk: 'med', last: '3d ago', key: 'david-l' },
         { name: 'Chloe N.', program: 'Half-Marathon · Wk 10', type: 'endurance', hrv: 22, sleep: 4.0, rhr: 75, steps: 3100, risk: 'high', last: '5d ago', key: 'sarah-k' },
         { name: 'Devon A.', program: 'Strength · Wk 8', type: 'strength', hrv: 78, sleep: 7.6, rhr: 55, steps: 12100, risk: 'low', last: '7h ago', key: 'aman-khanna' },
-        { name: 'Ria S.', program: 'Fat Loss · Wk 4', type: 'weight-loss', hrv: 60, sleep: 6.8, rhr: 61, steps: 10200, risk: 'med', last: '1d ago', key: 'meera-joshi' },
+        { name: 'Rachel S.', program: 'Fat Loss · Wk 4', type: 'weight-loss', hrv: 60, sleep: 6.8, rhr: 61, steps: 10200, risk: 'med', last: '1d ago', key: 'meera-joshi' },
         { name: 'Felix O.', program: 'Conditioning · Wk 6', type: 'endurance', hrv: 84, sleep: 8.1, rhr: 49, steps: 13800, risk: 'low', last: '2h ago', key: 'priya-i' },
         { name: 'Maya T.', program: 'Performance · Wk 9', type: 'performance', hrv: 76, sleep: 7.4, rhr: 52, steps: 11500, risk: 'low', last: '9h ago', key: 'david-l' }
       ];
@@ -1905,7 +2334,7 @@
         tableBody.innerHTML = matches.map((c, i) => {
           const s = statusMeta[c.risk];
           const av = avClasses[i % avClasses.length];
-          
+
           let vitalsSummaryHtml = '';
           let tooltipHtml = '';
           if (c.type === 'hypertension') {
@@ -1974,8 +2403,8 @@
             `;
           }
 
-          const careBadge = c.type === 'hypertension' || c.type === 'diabetes' 
-            ? ` <span class="care-badge care-badge--sm" data-care="${c.type}"><span class="care-badge-ico">${c.type === 'hypertension' ? '❤' : '🩸'}</span>${c.type === 'hypertension' ? 'Hypertension' : 'Diabetes'}</span>`
+          const careBadge = c.type === 'hypertension' || c.type === 'diabetes'
+            ? ` <span class="care-badge care-badge--sm" data-care="${c.type}"><span class="care-badge-ico">${c.type === 'hypertension' ? '' : ''}</span>${c.type === 'hypertension' ? 'Hypertension' : 'Diabetes'}</span>`
             : '';
 
           return `
@@ -1985,11 +2414,31 @@
                 <span class="rmr-name">${c.name}${careBadge}</span>
               </span>
               <span class="rmr-program" role="cell">${c.program}</span>
-              <span class="rmr-vitals" role="cell">
-                ${vitalsSummaryHtml}
-                <div class="vitals-tooltip" role="tooltip">
-                  ${tooltipHtml}
-                </div>
+              <span class="rmr-vitals" role="cell" style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                <button class="qa-btn" data-action="nutrition" title="Nutrition" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v3M9 3v2M15 3v2M3 11h18"/>
+                    <path d="M4 11a8 8 0 0 0 16 0z"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="schedule" title="Schedule" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="chat" title="Chat" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="call" title="Call" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </button>
               </span>
               <span class="rmr-status" role="cell">
                 <span class="status-indicator ${s.dot}"></span>
@@ -2051,6 +2500,17 @@
 
       // Row navigation (click + keyboard) → client detail page
       tableBody.addEventListener('click', (e) => {
+        const qaBtn = e.target.closest('.qa-btn');
+        if (qaBtn) {
+          e.stopPropagation();
+          const row = qaBtn.closest('.roster-modal-row');
+          if (row) {
+            const clientKey = row.getAttribute('data-key');
+            const action = qaBtn.getAttribute('data-action');
+            window.location.href = `reco-card.html?client=${clientKey}&open=${action}`;
+          }
+          return;
+        }
         const row = e.target.closest('.roster-modal-row');
         if (!row) return;
         window.location.href = `reco-card.html?client=${row.getAttribute('data-key')}`;
@@ -2125,7 +2585,7 @@
         const n = remaining();
         fabCount.textContent = n;
         drawerCount.textContent = n;
-        fab.classList.toggle('is-clear', n === 0);
+        fab.style.display = n === 0 ? 'none' : 'inline-flex';
         fab.setAttribute('aria-label', n === 0 ? 'All payments collected' : `${n} payment${n === 1 ? '' : 's'} due`);
         emptyState.hidden = n !== 0;
       }
@@ -2237,11 +2697,6 @@
       });
     })();
   </script>
-</body>
-
-</html>);
-})();
-</script>
 </body>
 
 </html>

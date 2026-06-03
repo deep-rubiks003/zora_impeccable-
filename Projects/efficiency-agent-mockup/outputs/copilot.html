@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zora Product OS — Ask Zora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&family=Geist+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css?v=32">
+  <script>
+    // Pre-paint theme boot — avoids flash of incorrect theme
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    /* Layout structure matching core dashboard pages */
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      background: var(--paper);
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Copilot Workspace Container */
+    .cp {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    /* ---- conversation history (left-pane) ---- */
+    .history {
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      height: 100%;
+    }
+
+    [data-theme="dark"] .history {
+      background: rgba(26, 26, 46, 0.22);
+    }
+
+    .hh {
+      padding: 16px 16px 12px;
+    }
+
+    .hh-new {
+      width: 100%;
+      justify-content: center;
+      gap: 9px;
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-geist);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .hsearch {
+      margin: 0 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--paper-2);
+    }
+
+    .hsearch svg {
+      width: 14px;
+      height: 14px;
+      color: var(--ink-4);
+      flex: none;
+    }
+
+    .hsearch input {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 12.5px;
+      color: var(--ink);
+      flex: 1;
+      font-family: inherit;
+    }
+
+    .hsearch input::placeholder {
+      color: var(--ink-4);
+    }
+
+    .hlist {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 10px 12px;
+    }
+
+    .hgroup {
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      font-weight: 700;
+      padding: 14px 10px 6px;
+      font-family: var(--font-geist);
+    }
+
+    .hitem {
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .hitem svg {
+      width: 14px;
+      height: 14px;
+      color: var(--ink-4);
+      flex: none;
+    }
+
+    .hitem:hover {
+      background: var(--paper-2);
+      border-color: var(--line-soft);
+    }
+
+    .hitem.active {
+      background: var(--paper-2);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--line);
+    }
+
+    .hitem .ht {
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: var(--font-dm-sans);
+      color: var(--ink);
+    }
+
+    .hfoot {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .hfoot .note {
+      font-size: 11px;
+      color: var(--ink-4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.4;
+      font-family: var(--font-dm-sans);
+    }
+
+    .hfoot .note svg {
+      width: 13px;
+      height: 13px;
+      flex: none;
+      color: var(--accent);
+    }
+
+    /* ---- conversation canvas (right-pane) ---- */
+    .canvas {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+      background: var(--paper);
+      height: 100%;
+      background-image:
+        radial-gradient(135% 78% at 50% -20%, color-mix(in oklab, var(--accent) 15%, var(--paper)) 0%, transparent 54%),
+        radial-gradient(64% 52% at 90% 2%, color-mix(in oklab, var(--accent) 10%, transparent) 0%, transparent 60%),
+        radial-gradient(60% 50% at 6% 0%, color-mix(in oklab, var(--accent) 6%, transparent) 0%, transparent 52%);
+      background-attachment: fixed;
+    }
+
+    .cv-top {
+      height: 56px;
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line-soft);
+      background: transparent;
+    }
+
+    .cv-top .ti {
+      font-weight: 700;
+      font-size: 14px;
+      font-family: var(--font-geist);
+      color: var(--ink);
+    }
+
+    .cv-top .model {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--paper-2);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-3);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cv-top .model:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .cv-top .model .od {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ok);
+    }
+
+    .cv-top .model svg {
+      width: 12px;
+      height: 12px;
+      color: var(--ink-4);
+    }
+
+    .stream {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* empty / landing state */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+    }
+
+    .hero .orb {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(155deg, var(--accent-soft) 0%, var(--accent) 50%, var(--accent-deep) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(122, 84, 135, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .hero .orb::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 30px;
+      background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 30%, transparent), transparent 74%);
+      z-index: -1;
+      opacity: .85;
+    }
+
+    .hero .orb svg {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      text-align: center;
+      color: var(--ink);
+      width: 100%;
+      font-family: var(--font-geist);
+    }
+
+    .hero h1 em {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 800;
+    }
+
+    .hero .sub {
+      font-size: 13.5px;
+      color: var(--ink-3);
+      margin-top: 10px;
+      text-align: center;
+      max-width: 46ch;
+      line-height: 1.6;
+      font-family: var(--font-dm-sans);
+    }
+
+    .hero .composer-slot {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 24px;
+    }
+
+    .hero .cats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 620px;
+      margin-top: 24px;
+    }
+
+    .cat {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-3);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      padding: 6px 14px;
+      transition: all 0.15s;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: var(--font-geist);
+    }
+
+    .cat:hover {
+      color: var(--ink);
+      border-color: var(--ink-3);
+    }
+
+    .cat.on {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      border-color: color-mix(in oklab, var(--accent) 22%, transparent);
+    }
+
+    .hero .starters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+      max-width: 620px;
+      margin-top: 16px;
+    }
+
+    .scard {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: var(--paper-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 12px 14px;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .scard:hover {
+      background: var(--paper-2);
+      border-color: var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scard .si {
+      width: 28px;
+      height: 28px;
+      flex: none;
+      border-radius: 8px;
+      background: var(--paper-3);
+      border: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-3);
+      transition: all .15s;
+    }
+
+    .scard:hover .si {
+      background: var(--accent-soft);
+      border-color: color-mix(in oklab, var(--accent) 22%, transparent);
+      color: var(--accent-deep);
+    }
+
+    .scard .si svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .scard .stext {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+      font-family: var(--font-dm-sans);
+    }
+
+    .scard .sarrow {
+      margin-left: auto;
+      color: var(--ink-4);
+      opacity: 0;
+      transform: translateX(-3px);
+      transition: all .15s;
+      flex: none;
+    }
+
+    .scard:hover .sarrow {
+      opacity: 1;
+      transform: none;
+    }
+
+    .scard .sarrow svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    @media (max-width:560px) {
+      .hero .starters {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* turns & messages */
+    .turns {
+      padding: 24px 0 8px;
+    }
+
+    .turn {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 24px;
+    }
+
+    .turn.user .mrow {
+      justify-content: flex-end;
+    }
+
+    .mrow {
+      display: flex;
+      gap: 12px;
+    }
+
+    .mava {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mava.ai {
+      background: linear-gradient(150deg, var(--accent), var(--accent-deep));
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(122, 84, 135, 0.2);
+    }
+
+    .mava.ai svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .mava.me {
+      background: var(--accent-deep);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .bubble-u {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      border-top-right-radius: 4px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      max-width: 78%;
+      box-shadow: var(--shadow-sm);
+      color: var(--ink);
+      font-family: var(--font-dm-sans);
+    }
+
+    .msg {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+      min-width: 0;
+      flex: 1;
+      font-family: var(--font-dm-sans);
+    }
+
+    .msg p {
+      margin: 0 0 12px;
+    }
+
+    .msg p:last-child {
+      margin-bottom: 0;
+    }
+
+    .msg b {
+      font-weight: 700;
+    }
+
+    .msg .verdict {
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0 0 16px;
+    }
+
+    .msg .verdict b {
+      color: var(--accent-deep);
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .msg .verdict b {
+      color: var(--accent-soft);
+    }
+
+    .cite {
+      color: var(--accent);
+      font-weight: 600;
+      border-bottom: 1.5px dotted var(--accent);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .block-h {
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--ink-4);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-geist);
+    }
+
+    /* dynamic elements within chat response */
+    .signals {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .sig {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sig .sl {
+      font-size: 9.5px;
+      color: var(--ink-4);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      white-space: nowrap;
+      font-family: var(--font-geist);
+    }
+
+    .sig .sv {
+      font-family: var(--font-geist-mono, monospace);
+      font-size: 19px;
+      font-weight: 700;
+      margin-top: 6px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .sig .sv span {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--ink-4);
+      margin-left: 1px;
+    }
+
+    .sig .delta {
+      font-size: 9.5px;
+      margin-top: 6px;
+      color: var(--ink-4);
+      font-weight: 600;
+      font-family: var(--font-geist);
+    }
+
+    .sig.bad {
+      border-top: 2px solid var(--bad);
+    }
+
+    .sig.bad .sv {
+      color: var(--bad);
+    }
+
+    .sig.bad .delta {
+      color: var(--bad);
+    }
+
+    .sig.warn {
+      border-top: 2px solid var(--warn);
+    }
+
+    .sig.warn .sv {
+      color: var(--warn);
+    }
+
+    .sig.warn .delta {
+      color: var(--warn);
+    }
+
+    .reco {
+      background: var(--paper-3);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .reco .block-h {
+      color: var(--accent-deep);
+    }
+
+    [data-theme="dark"] .reco .block-h {
+      color: var(--accent-soft);
+    }
+
+    .reco-item {
+      display: flex;
+      gap: 11px;
+      padding: 8px 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--ink-3);
+      align-items: flex-start;
+    }
+
+    .reco-item .rn {
+      width: 18px;
+      height: 18px;
+      flex: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      font-family: var(--font-geist-mono, monospace);
+    }
+
+    .reco-item b {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* action card in conversation */
+    .actcard {
+      border: 1px solid color-mix(in oklab, var(--accent) 15%, var(--line));
+      background: var(--paper-3);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 8px 0 6px;
+    }
+
+    .actcard .ah {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 12px;
+    }
+
+    .actcard .ah .aic {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex: none;
+    }
+
+    .actcard .ah .aic svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .actcard .ah .at {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--accent-deep);
+      font-family: var(--font-geist);
+    }
+
+    [data-theme="dark"] .actcard .ah .at {
+      color: var(--accent-soft);
+    }
+
+    .actcard .ah .ad {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      opacity: .8;
+    }
+
+    .actcard .arow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 7px 0;
+      border-top: 1px dashed var(--line);
+      color: var(--ink-3);
+    }
+
+    .actcard .arow b {
+      font-family: var(--font-geist-mono, monospace);
+      color: var(--accent-deep);
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .actcard .arow b {
+      color: var(--accent-soft);
+    }
+
+    .actbtns {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /* mini timeline */
+    .tline {
+      margin: 6px 0 14px;
+    }
+
+    .tline .tr {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 12px;
+      padding: 7px 0;
+      border-left: 2px solid var(--line);
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .tline .tr::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 13px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .tline .tr .day {
+      font-family: var(--font-geist-mono, monospace);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      padding-top: 1px;
+    }
+
+    .tline .tr .what {
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+
+    .mactions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .mact {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: var(--font-geist);
+      transition: all 0.15s;
+    }
+
+    .mact:hover {
+      background: var(--paper-3);
+      color: var(--accent-deep);
+      border-color: color-mix(in oklab, var(--accent) 22%, transparent);
+    }
+
+    .mact svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Chat Composer style */
+    .comp {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      padding: 6px 6px 6px 10px;
+    }
+
+    .comp-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 8px 6px 4px 8px;
+    }
+
+    .comp-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-2);
+      background: var(--paper-3);
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      padding: 5px 6px 5px 9px;
+      max-width: 220px;
+      font-family: var(--font-geist);
+    }
+
+    .comp-chip>svg {
+      width: 12px;
+      height: 12px;
+      color: var(--accent);
+      flex: none;
+    }
+
+    .comp-chip .cn {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .comp-chip .cx {
+      width: 16px;
+      height: 16px;
+      flex: none;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-4);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .comp-chip .cx svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    .comp-chip .cx:hover {
+      color: var(--bad);
+      background: var(--bad-soft);
+    }
+
+    .comp-top {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .comp-attach {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink-4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-end;
+      margin-bottom: 2px;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .comp-attach:hover {
+      background: var(--paper-3);
+      color: var(--accent);
+    }
+
+    .comp-attach svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .comp-top textarea {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      resize: none;
+      background: transparent;
+      font-family: var(--font-dm-sans);
+      font-size: 14.5px;
+      color: var(--ink);
+      padding: 10px 4px;
+      max-height: 150px;
+      line-height: 1.5;
+    }
+
+    .comp-send {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      border-radius: 10px;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-end;
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .comp-send:hover {
+      background: var(--accent-deep);
+    }
+
+    .comp-send svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .composer-dock {
+      flex: none;
+      padding: 14px 24px 24px;
+    }
+
+    .composer-dock .comp {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 860px) {
+      .cp {
+        grid-template-columns: 1fr
+      }
+
+      .history {
+        display: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-mark">Z</div>
+        <div class="brand-text">
+          <div class="brand-name">ZORA</div>
+          <div class="brand-sub">COACH OS</div>
+        </div>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle"
+        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.25s;"
+        title="Expand Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item" onclick="window.location.href='index.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='reco-card.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        <span>Growth Agent</span>
+      </div>
+      <div class="nav-item active" onclick="window.location.href='copilot.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>Ask Zora</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='settings.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      <div class="coach-card">
+        <div class="avatar">JH</div>
+        <div class="coach-info">
+          <div class="coach-name">Jordan Hayes</div>
+          <div class="coach-meta">142 active members</div>
+        </div>
+      </div>
+      <button id="theme-toggle" class="sidebar-theme-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <span>Theme</span>
+      </button>
+      <button onclick="window.location.href='login.html'" class="sidebar-logout-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs">
+        <strong>Ask Zora</strong>
+        <span class="sep">/</span>
+        <span id="crumb-tail">Workspace</span>
+      </div>
+
+      <button onclick="window.location.href='index.html?roster=open'" style="margin-right: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; color: var(--ink-3); font-family: var(--font-geist); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-4);">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        <span>Payments Due</span>
+      </button>
+
+      <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly
+        style="cursor:pointer;" />
+
+      <button class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+
+      <button type="button" id="theme-toggle" class="theme-toggle" role="switch" aria-checked="false"
+        aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="theme-toggle__thumb" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- MAIN COPILOT WORKSPACE -->
+    <div class="cp" data-screen-label="Ask Zora">
+
+      <!-- CONVERSATION HISTORY (Middle-Pane) -->
+      <aside class="history">
+        <div class="hh">
+          <button class="btn btn-primary hh-new" id="newChat">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>New chat
+          </button>
+        </div>
+        <div class="hsearch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input placeholder="Search chats" />
+        </div>
+        <div class="hlist">
+          <div class="hgroup">Today</div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">Sarah Williams — deload</span>
+          </div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">Win-back · 7 lapsed clients</span>
+          </div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">Who should I upsell?</span>
+          </div>
+          <div class="hgroup">Earlier this week</div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">Marcus renewal — offer options</span>
+          </div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">May revenue review</span>
+          </div>
+          <div class="hitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="ht">Jason Miller — plateau plan</span>
+          </div>
+        </div>
+        <div class="hfoot">
+          <div class="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v4l3 2" />
+            </svg>Zora can see live client &amp; revenue data
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONVERSATION CANVAS (Right-Pane) -->
+      <section class="canvas">
+        <div class="cv-top">
+          <div class="ti" id="cvTitle">New chat</div>
+          <div class="model">
+            <span class="od"></span>Zora · Reasoning
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="stream" id="stream">
+          <div class="hero" id="hero">
+            <div class="orb">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2.2c.32 3.46 1.04 5.83 2.39 7.18C15.74 10.74 18.12 11.46 21.6 11.8c-3.48.34-5.86 1.06-7.21 2.42C13.04 15.57 12.32 17.94 12 21.4c-.32-3.46-1.04-5.83-2.39-7.18C8.26 12.86 5.88 12.14 2.4 11.8c3.48-.34 5.86-1.06 7.21-2.42C10.96 8.03 11.68 5.66 12 2.2Z" />
+              </svg>
+            </div>
+            <h1>Ready when you are, <em>Kelly</em></h1>
+            <p class="sub">Ask anything about your members, revenue, or what to do next. I'll answer with actions you
+              can approve — not reports.</p>
+
+            <div class="composer-slot" id="composerSlot"></div>
+
+            <div class="cats" id="cats">
+              <button class="cat on" data-cat="business">Business</button>
+              <button class="cat" data-cat="growth">Growth</button>
+              <button class="cat" data-cat="quality">Quality</button>
+              <button class="cat" data-cat="performance">Workout Performance</button>
+              <button class="cat" data-cat="injury">Injury Prevention</button>
+              <button class="cat" data-cat="success">Client Success</button>
+            </div>
+
+            <div class="starters" id="starters"></div>
+          </div>
+          <div class="turns" id="turns" style="display:none"></div>
+        </div>
+
+        <div class="composer-dock" id="composerDock" style="display:none"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Command Palette Overlay -->
+  <div class="palette-overlay" id="command-palette-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="palette-container">
+      <div class="palette-search-wrapper">
+        <span class="palette-search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input type="text" class="palette-input" id="palette-search-input"
+          placeholder="Search clients, actions, tabs..." />
+      </div>
+      <div class="palette-results" id="palette-results">
+        <!-- populated dynamically -->
+      </div>
+      <div class="palette-shortcuts-footer">
+        <span>Select with <kbd>↑</kbd><kbd>↓</kbd> and <kbd>Enter</kbd></span>
+        <span>Press <kbd>Esc</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- composer template (moved between hero & dock) -->
+  <template id="compTpl">
+    <div class="comp">
+      <div class="comp-files" hidden></div>
+      <div class="comp-top">
+        <button class="comp-attach" type="button" title="Add files" aria-label="Add files">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M21.4 11.05 12.25 20.2a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.67 3.67 0 0 1 5.19 5.19l-9.2 9.19a1.83 1.83 0 0 1-2.59-2.59l8.49-8.49" />
+          </svg>
+        </button>
+        <textarea rows="1" placeholder="Ask Zora anything, or describe an action to draft…"></textarea>
+        <button class="comp-send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+          </svg>
+        </button>
+      </div>
+      <input type="file" class="comp-fileinput" multiple hidden />
+    </div>
+  </template>
+
+  <!-- Dynamic Face Avatars Seed Logic -->
+  <script>
+    window.ZoraFaces = (function () {
+      var SEL = '.avatar, .mava.me, .chat-client-avatar';
+      function url(seed) {
+        return 'url("https://api.dicebear.com/9.x/notionists/svg?seed=' +
+          encodeURIComponent(seed || 'zora') +
+          '&backgroundColor=transparent&scale=120")';
+      }
+      function seedFor(el) {
+        if (el.classList.contains('me')) return 'Kelly Hayes';
+        var seed = (el.textContent || '').trim();
+        return seed || 'zora';
+      }
+      function paintOne(el, seed) {
+        el.style.setProperty('--face', url(seed || seedFor(el)));
+        el.style.backgroundImage = el.style.getPropertyValue('--face');
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+        el.classList.add('has-face');
+        if (el.classList.contains('avatar') || el.classList.contains('me')) {
+          el.textContent = '';
+        }
+      }
+      function paint(root) {
+        (root || document).querySelectorAll(SEL).forEach(function (el) { paintOne(el); });
+      }
+      return { paint: paint, paintOne: paintOne };
+    })();
+    document.addEventListener('DOMContentLoaded', function () { window.ZoraFaces.paint(); });
+  </script>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      function sync() {
+        var isDark = root.getAttribute('data-theme') === 'dark';
+        btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        btn.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+
+      sync();
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) { }
+        sync();
+      });
+    })();
+  </script>
+
+  <!-- Sidebar Collapse Logic -->
+  <script>
+    (function () {
+      // Sidebar logic: collapsed on load/refresh, toggleable at will
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      if (sidebar) {
+        sidebar.classList.add('collapsed');
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebarToggle.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+          });
+        }
+      }
+    })();
+  </script>
+
+  <!-- Command Palette Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const paletteOverlay = document.getElementById('command-palette-overlay');
+      const paletteInput = document.getElementById('palette-search-input');
+      const paletteResults = document.getElementById('palette-results');
+      const searchTrigger = document.getElementById('topbar-search-trigger');
+
+      const paletteItems = [
+        { name: 'Sarah K.', desc: 'Half-Marathon · Exhaustion Risk (Plan & Performance)', url: 'reco-card.html?client=sarah-k&tab=plan' },
+        { name: 'Marcus T.', desc: 'Strength · Churn Risk (Engagement & Risk)', url: 'reco-card.html?client=marcus-t&tab=risk' },
+        { name: 'Alex Carter', desc: 'Hypertrophy · Deload Pending (Plan & Performance)', url: 'reco-card.html?client=aman-khanna&tab=plan' },
+        { name: 'Megan Jones', desc: 'Nutrition · Nutrition Drift (Engagement & Risk)', url: 'reco-card.html?client=meera-joshi&tab=risk' },
+        { name: 'Paige I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
+        { name: 'David L.', desc: 'Base Phase · Optimized (Plan & Performance)', url: 'reco-card.html?client=david-l&tab=plan' },
+        { name: 'Ask Zora', desc: 'Open Zora Chat Copilot Workspace', url: 'copilot.html' }
+      ];
+
+      let selectedIndex = 0;
+
+      function renderPalette(query = '') {
+        paletteResults.innerHTML = '';
+        const filtered = paletteItems.filter(item =>
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.desc.toLowerCase().includes(query.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          paletteResults.innerHTML = '<div style="padding: 12px; font-size:13px; color:var(--ink-4); text-align:center;">No results found</div>';
+          return;
+        }
+
+        filtered.forEach((item, index) => {
+          const opt = document.createElement('div');
+          opt.className = 'palette-option' + (index === selectedIndex ? ' selected' : '');
+          opt.innerHTML = `
+            <div>
+              <div class="palette-option-name">${item.name}</div>
+              <div style="font-size: 11px; color: var(--ink-4); margin-top:2px;">${item.desc}</div>
+            </div>
+            <span class="palette-option-type">${item.url ? 'Detail Page' : 'Command'}</span>
+          `;
+          opt.addEventListener('click', () => triggerOption(item));
+          paletteResults.appendChild(opt);
+        });
+      }
+
+      function triggerOption(item) {
+        if (item.url) {
+          window.location.href = item.url;
+        }
+        closePalette();
+      }
+
+      function openPalette() {
+        paletteOverlay.classList.add('show');
+        paletteOverlay.setAttribute('aria-hidden', 'false');
+        paletteInput.value = '';
+        selectedIndex = 0;
+        renderPalette();
+        setTimeout(() => paletteInput.focus(), 100);
+      }
+
+      function closePalette() {
+        paletteOverlay.classList.remove('show');
+        paletteOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      if (searchTrigger) {
+        searchTrigger.addEventListener('click', openPalette);
+      }
+
+      paletteOverlay.addEventListener('click', (e) => {
+        if (e.target === paletteOverlay) closePalette();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/') {
+          const activeEl = document.activeElement;
+          if (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            openPalette();
+          }
+        }
+        if (e.key === 'Escape' && paletteOverlay.classList.contains('show')) {
+          closePalette();
+        }
+
+        if (paletteOverlay.classList.contains('show')) {
+          const options = paletteResults.querySelectorAll('.palette-option');
+          if (options.length === 0) return;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex + 1) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex - 1 + options.length) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const filtered = paletteItems.filter(item =>
+              item.name.toLowerCase().includes(paletteInput.value.toLowerCase()) ||
+              item.desc.toLowerCase().includes(paletteInput.value.toLowerCase())
+            );
+            if (filtered[selectedIndex]) {
+              triggerOption(filtered[selectedIndex]);
+            }
+          }
+        }
+      });
+
+      paletteInput.addEventListener('input', (e) => {
+        selectedIndex = 0;
+        renderPalette(e.target.value);
+      });
+    });
+  </script>
+
+  <!-- Interactive Conversation Script -->
+  <script>
+    // Custom zoraToast Notification system
+    window.zoraToast = function (title, options) {
+      let toast = document.getElementById('zora-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'zora-toast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--paper-2);border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:12px;padding:12px 16px;z-index:9999;transition:all 0.3s cubic-bezier(0.23, 1, 0.32, 1);transform:translateY(20px);opacity:0;display:flex;flex-direction:column;gap:4px;min-width:280px;font-family:var(--font-geist);';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<div style="font-weight:700;font-size:13px;color:var(--ink);">${title}</div><div style="font-size:12px;color:var(--ink-4);">${(options && options.desc) || ''}</div>`;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+      clearTimeout(window.zoraToastTimer);
+      window.zoraToastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+      }, 3500);
+    };
+
+    const hero = document.getElementById('hero'), turns = document.getElementById('turns'),
+      stream = document.getElementById('stream'), dock = document.getElementById('composerDock'),
+      slot = document.getElementById('composerSlot'), cvTitle = document.getElementById('cvTitle'),
+      tpl = document.getElementById('compTpl');
+
+    // build composer in the hero slot
+    const comp = tpl.content.firstElementChild.cloneNode(true);
+    slot.appendChild(comp);
+
+    let started = false;
+    function addChip(row, name) {
+      if (!row) return;
+      row.hidden = false;
+      const chip = document.createElement('span'); chip.className = 'comp-chip';
+      chip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="cn"></span><span class="cx" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>';
+      chip.querySelector('.cn').textContent = name;
+      chip.querySelector('.cx').addEventListener('click', () => { chip.remove(); if (!row.querySelector('.comp-chip')) row.hidden = true; });
+      row.appendChild(chip);
+    }
+    function wire(node) {
+      const ta = node.querySelector('textarea'), send = node.querySelector('.comp-send');
+      const attach = node.querySelector('.comp-attach'), fileInput = node.querySelector('.comp-fileinput'), filesRow = node.querySelector('.comp-files');
+      ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 150) + 'px'; });
+      send.addEventListener('click', () => { submit(ta.value); ta.value = ''; ta.style.height = 'auto'; });
+      ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(ta.value); ta.value = ''; ta.style.height = 'auto'; } });
+      if (attach && fileInput) {
+        attach.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+          const names = [...fileInput.files].map(f => f.name);
+          names.forEach(n => addChip(filesRow, n));
+          if (names.length) window.zoraToast(names.length > 1 ? names.length + ' files attached' : 'File attached', { desc: names[0] + (names.length > 1 ? ' +' + (names.length - 1) + ' more' : '') + ' — Zora can read this in the chat.', type: 'info' });
+          fileInput.value = '';
+        });
+      }
+      return ta;
+    }
+    let activeTa = wire(comp);
+
+    const RICH = {
+      'churn': {
+        title: 'Churn risk · this month',
+        html: `<p class="verdict"><b>4 members</b> are at elevated churn risk — <b>$5.4k</b> of MRR. Marcus is the one to act on first.</p>
+        <div class="reco">
+          <div class="block-h">Ranked by risk</div>
+          <div class="reco-item"><span class="rn">1</span><div><b>Marcus Thompson</b> — 74% risk · 40% adherence, silent 4 days · renews 9d ($540/mo)</div></div>
+          <div class="reco-item"><span class="rn">2</span><div><b>Kevin Park</b> — no replies in 6 days, month-3 dip ($180/mo)</div></div>
+          <div class="reco-item"><span class="rn">3</span><div><b>Jason Miller</b> — scale flat 3 weeks, frustration rising ($200/mo)</div></div>
+        </div>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div><div><div class="at">Retention sweep · 4 clients</div><div class="ad">A tailored save play for each at-risk member</div></div></div>
+          <div class="arow"><span>Revenue protected</span><b>~$5.4k</b></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Approve all</button><button class="btn btn-ghost btn-sm">Review each</button></div>
+        </div>`
+      },
+      'renewal': {
+        title: 'Renewal offer — Marcus',
+        html: `<p class="verdict">Marcus renews in <b>9 days</b> at <b>74% churn risk</b>. I've drafted a loyalty renewal that protects $540/mo.</p>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div><div><div class="at">Loyalty renewal · Marcus Thompson</div><div class="ad">Locks current rate · fresh strength block</div></div></div>
+          <div class="arow"><span>Revenue retained</span><b>$540/mo</b></div>
+          <div class="arow"><span>Projected accept</span><b>71%</b></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Approve &amp; send</button><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>`
+      },
+      'referral': {
+        title: 'Referral opportunities',
+        html: `<p>9 members hit NPS 9+ this week — prime moments to ask. Top 3 by reach:</p>
+        <div class="reco">
+          <div class="block-h">Highest-intent moments</div>
+          <div class="reco-item"><span class="rn">1</span><div><b>Sarah Williams</b> — NPS 10, just finished her half-marathon (~$700 LTV)</div></div>
+          <div class="reco-item"><span class="rn">2</span><div><b>Ryan Mitchell</b> — 3-week perfect streak (~$350 LTV)</div></div>
+          <div class="reco-item"><span class="rn">3</span><div><b>Tom Gardner</b> — 11-month member, 90% engaged (~$700 LTV)</div></div>
+        </div>
+        <div class="mactions"><button class="mact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Draft all 3 referral asks</button></div>`
+      },
+      'intervention': {
+        title: 'Clients needing intervention',
+        html: `<p class="verdict"><b>4 clients</b> are trending down and need a personal touch before it costs a renewal.</p>
+        <div class="reco">
+          <div class="block-h">Act this week</div>
+          <div class="reco-item"><span class="rn">1</span><div><b>Marcus Thompson</b> — 40% adherence, silent 4 days → save play ready</div></div>
+          <div class="reco-item"><span class="rn">2</span><div><b>Sarah Williams</b> — HRV crash, deload due → protective week drafted</div></div>
+          <div class="reco-item"><span class="rn">3</span><div><b>Jason Miller</b> — plateau frustration → recomposition reframe drafted</div></div>
+        </div>
+        <div class="mactions"><button class="mact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4M21 5H9a4 4 0 0 0-4 4v2"/></svg>Stage all check-ins for approval</button></div>`
+      },
+      'sarah': {
+        title: 'Sarah Williams — deload',
+        html: `<p class="verdict">This is <b>autonomic fatigue</b>, not disengagement — so the move is to <b>protect, not push.</b></p>
+        <div class="block-h">Signals <span class="cite">· 7 sources</span></div>
+        <div class="signals">
+          <div class="sig bad"><div class="sl">HRV · 7-day</div><div class="sv">18<span>ms</span></div><div class="delta">↓ from 72</div></div>
+          <div class="sig bad"><div class="sl">Sleep avg</div><div class="sv">4.2<span>h</span></div><div class="delta">↓ 2.8h vs base</div></div>
+          <div class="sig warn"><div class="sl">Resting HR</div><div class="sv">+9<span>bpm</span></div><div class="delta">elevated</div></div>
+          <div class="sig"><div class="sl">Sessions</div><div class="sv">2<span>/4</span></div><div class="delta">missed · both AM</div></div>
+        </div>
+        <div class="reco">
+          <div class="block-h">Recommended play</div>
+          <div class="reco-item"><span class="rn">1</span><div><b>Protective deload week</b> — cut volume ~30%, keep intensity touchpoints so fitness holds.</div></div>
+          <div class="reco-item"><span class="rn">2</span><div><b>Frame it as strategy</b> — "we're protecting race day," never "rest."</div></div>
+          <div class="reco-item"><span class="rn">3</span><div><b>Long run → weekend</b>, when she's home and sleeping in her own bed.</div></div>
+        </div>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><div class="at">Recovery Deload — Week 9</div><div class="ad">5 sessions · client note · ready to review</div></div></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Approve &amp; send</button><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>
+        <div class="mactions"><button class="mact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4M21 5H9a4 4 0 0 0-4 4v2"/></svg>Send to Efficiency Agent</button></div>`
+      },
+      'win-back': {
+        title: 'Win-back · 7 lapsed clients',
+        html: `<p>I built a <b>3-touch reactivation sequence</b> for the 7 clients who lapsed under 90 days, segmented by why they left.</p>
+        <div class="block-h">Sequence</div>
+        <div class="tline">
+          <div class="tr"><span class="day">DAY 0</span><span class="what">Personal "we miss you" note + their best result</span></div>
+          <div class="tr"><span class="day">DAY 4</span><span class="what">Offer: 2 weeks free to restart, no re-onboarding</span></div>
+          <div class="tr"><span class="day">DAY 9</span><span class="what">Last call — founding-rate lock if they return</span></div>
+        </div>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 3.5 3.5L21 6"/></svg></div><div><div class="at">Win-back campaign · 7 clients</div><div class="ad">Personalised · timed 4 days apart</div></div></div>
+          <div class="arow"><span>Projected reactivation</span><b>2–3 clients</b></div>
+          <div class="arow"><span>Revenue recovered</span><b>~$1.1k</b></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Approve</button><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-ghost btn-sm">Execute</button></div>
+        </div>`
+      },
+      'forecast': {
+        title: 'June revenue forecast',
+        html: `<p>Here's how June lands if you action the three plays in Growth Agent:</p>
+        <div class="signals">
+          <div class="sig"><div class="sl">MRR now</div><div class="sv">$48.2<span>k</span></div><div class="delta">+6.4% MoM</div></div>
+          <div class="sig"><div class="sl">Renewals 30d</div><div class="sv">$9.8<span>k</span></div><div class="delta">11 clients</div></div>
+          <div class="sig"><div class="sl">Expansion</div><div class="sv">+$0.9<span>k</span></div><div class="delta">5 upsells</div></div>
+          <div class="sig"><div class="sl">Win-back</div><div class="sv">+$1.1<span>k</span></div><div class="delta">7 lapsed</div></div>
+        </div>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="at">Projected close · June</div><div class="ad">If all 3 plays are actioned</div></div></div>
+          <div class="arow"><span>Projected MRR</span><b>$50.8k</b></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Open Growth Agent</button></div>
+        </div>`
+      },
+      'upsell': {
+        title: 'Upsell candidates',
+        html: `<p>5 members are at peak upsell readiness. Ranked top to bottom:</p>
+        <div class="reco">
+          <div class="block-h">Top candidates</div>
+          <div class="reco-item"><span class="rn">1</span><div><b>Emily Carter</b> — just PB'd, 95% engaged → recomposition 1:1 add-on (+$180/mo, 74% accept)</div></div>
+          <div class="reco-item"><span class="rn">2</span><div><b>Chloe Adams</b> — consistent → nutrition bundle (+$120/mo)</div></div>
+          <div class="reco-item"><span class="rn">3</span><div><b>Olivia Brooks</b> — race in 6 weeks → Hyrox race-prep block (+$150/mo)</div></div>
+        </div>
+        <div class="mactions"><button class="mact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Draft all 3 pitches</button></div>`
+      },
+      'jason': {
+        title: 'Jason Miller — plateau plan',
+        html: `<p class="verdict">Jason's scale has stalled for 3 weeks, but his <b>body composition is still improving</b> — this is a communication problem, not a programming one.</p>
+        <div class="signals">
+          <div class="sig warn"><div class="sl">Weight</div><div class="sv">0<span>kg</span></div><div class="delta">3 weeks flat</div></div>
+          <div class="sig"><div class="sl">Waist</div><div class="sv">−2<span>cm</span></div><div class="delta">same window</div></div>
+          <div class="sig"><div class="sl">Strength</div><div class="sv">+8<span>%</span></div><div class="delta">lifts up</div></div>
+        </div>
+        <div class="actcard">
+          <div class="ah"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><div class="at">Check-in message · Jason</div><div class="ad">Reframes the stall as recomposition progress</div></div></div>
+          <div class="actbtns"><button class="btn btn-primary btn-sm">Approve &amp; send</button><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>`
+      }
+    };
+
+    function pickRich(text) {
+      const t = text.toLowerCase();
+      if (t.includes('sarah')) return RICH.sarah;
+      if (t.includes('win-back') || t.includes('lapsed') || t.includes('reactivat')) return RICH['win-back'];
+      if (t.includes('renewal')) return RICH.renewal;
+      if (t.includes('referral')) return RICH.referral;
+      if (t.includes('churn')) return RICH.churn;
+      if (t.includes('intervention') || t.includes('trending down') || t.includes('quiet')) return RICH.intervention;
+      if (t.includes('upsell')) return RICH.upsell;
+      if (t.includes('forecast') || t.includes('revenue')) return RICH.forecast;
+      if (t.includes('jason') || t.includes('plateau')) return RICH.jason;
+      return null;
+    }
+
+    function addUser(text) {
+      const u = document.createElement('div'); u.className = 'turn user';
+      u.innerHTML = '<div class="mrow"><div class="bubble-u"></div><div class="mava me">RS</div></div>';
+      u.querySelector('.bubble-u').textContent = text; turns.appendChild(u);
+      if (window.ZoraFaces) window.ZoraFaces.paint(u);
+    }
+    function addAI() {
+      const a = document.createElement('div'); a.className = 'turn ai';
+      a.innerHTML = '<div class="mrow"><div class="mava ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15z"/></svg></div><div class="msg"><p style="color:var(--ink-4)">Thinking…</p></div></div>';
+      turns.appendChild(a); return a.querySelector('.msg');
+    }
+
+    function submit(text) {
+      if (!text.trim()) return;
+      if (!started) {
+        started = true;
+        hero.style.display = 'none';
+        turns.style.display = 'block';
+        dock.style.display = 'block';
+        const dcomp = tpl.content.firstElementChild.cloneNode(true);
+        dock.appendChild(dcomp);
+        activeTa = wire(dcomp);
+      }
+      addUser(text);
+      const msg = addAI();
+      stream.scrollTop = stream.scrollHeight;
+      const rich = pickRich(text);
+      if (rich) cvTitle.textContent = rich.title;
+      setTimeout(() => {
+        msg.innerHTML = rich ? rich.html
+          : '<p>Here\u2019s my read. I can pull the relevant members, draft the plan or message, and stage it for your approval — just say the word and I\u2019ll generate the action.</p>';
+        stream.scrollTop = stream.scrollHeight;
+        setTimeout(() => activeTa.focus(), 50);
+      }, 650);
+    }
+
+    /* category-driven starters */
+    const ICONS = {
+      dollar: '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+      alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+      trend: '<path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/>',
+      users: '<path d="M16 7a4 4 0 1 0-8 0M3 21v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2"/>',
+      refresh: '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+      pulse: '<path d="M3 12h4l3 8 4-16 3 8h4"/>',
+      shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+      bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+      spark: '<path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15z"/>',
+      target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6"/>'
+    };
+    const CATS = {
+      business: [['Forecast next month\u2019s revenue', 'dollar'], ['Who is most likely to churn this month?', 'alert'], ['Where am I leaving money on the table?', 'trend'], ['Summarise this month\u2019s revenue', 'dollar']],
+      growth: [['Show upsell opportunities', 'trend'], ['Draft a renewal offer', 'refresh'], ['Find referral opportunities', 'users'], ['Who\u2019s ready to convert from trial?', 'target']],
+      quality: [['Which programs are underperforming?', 'shield'], ['Flag clients with low adherence', 'alert'], ['Audit my check-in response times', 'pulse'], ['Where is plan quality slipping?', 'shield']],
+      performance: [['Who hit a new PR this week?', 'bolt'], ['Which clients are progressing fastest?', 'trend'], ['Spot training plateaus', 'pulse'], ['Recommend progressions for stalled lifts', 'bolt']],
+      injury: [['Who\u2019s showing overtraining signals?', 'alert'], ['Flag poor recovery &amp; low HRV', 'pulse'], ['Who needs a deload this week?', 'shield'], ['Which clients need a recovery check?', 'pulse']],
+      success: [['Which clients need intervention?', 'pulse'], ['Draft check-ins for quiet clients', 'users'], ['Who\u2019s due for a milestone moment?', 'spark'], ['Spot clients trending down', 'alert']]
+    };
+    const startersEl = document.getElementById('starters');
+    const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    function renderStarters(cat) {
+      const items = CATS[cat] || CATS.business;
+      startersEl.innerHTML = items.map(([q, ic]) => `<button class="scard" data-q="${q.replace(/&amp;/g, '&').replace(/"/g, '&quot;')}"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[ic] || ICONS.spark}</svg></span><span class="stext">${q}</span><span class="sarrow">${ARROW}</span></button>`).join('');
+      startersEl.querySelectorAll('.scard').forEach(c => c.addEventListener('click', () => submit(c.dataset.q)));
+    }
+    renderStarters('business');
+    document.querySelectorAll('.cat').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.cat').forEach(x => x.classList.remove('on')); b.classList.add('on');
+      renderStarters(b.dataset.cat);
+    }));
+    document.getElementById('newChat').addEventListener('click', () => location.reload());
+
+    /* history items load a conversation */
+    document.querySelectorAll('.hitem').forEach(it => {
+      it.addEventListener('click', () => {
+        document.querySelectorAll('.hitem').forEach(x => x.classList.remove('active')); it.classList.add('active');
+        submit(it.querySelector('.ht').textContent);
+      });
+    });
+    /* history search */
+    const hsi = document.querySelector('.hsearch input');
+    if (hsi) hsi.addEventListener('input', () => {
+      const q = hsi.value.trim().toLowerCase();
+      document.querySelectorAll('.hlist .hitem').forEach(it => { it.style.display = it.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+      document.querySelectorAll('.hgroup').forEach(g => {
+        let n = g.nextElementSibling, any = false;
+        while (n && n.classList.contains('hitem')) { if (n.style.display !== 'none') any = true; n = n.nextElementSibling; }
+        g.style.display = any ? '' : 'none';
+      });
+    });
+    /* in-thread action buttons act on click — no dead buttons */
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.actcard .btn, .mact');
+      if (!btn) return;
+      const label = btn.textContent.trim();
+      if (/open growth/i.test(label)) { window.location.href = 'growth.html'; return; }
+      if (/open efficiency/i.test(label) || /send to efficiency/i.test(label)) { window.location.href = 'index.html'; return; }
+      if (/^edit/i.test(label)) { window.zoraToast('Editing draft', { desc: 'Refine the message before it sends.', type: 'info' }); return; }
+      const card = btn.closest('.actcard');
+      if (card && /approve|execute|send|stage/i.test(label)) {
+        window.zoraToast('Action approved', { desc: 'Staged — Zora will handle the rest and report back.' });
+        card.style.transition = 'opacity .3s'; card.style.opacity = '.6'; card.style.pointerEvents = 'none';
+        const btns = card.querySelector('.actbtns');
+        if (btns) btns.innerHTML = '<span class="pill badge-ok" style="font-size:11px; padding: 4px 8px; border-radius: 99px; background: var(--ok-soft); color: var(--ok); font-weight: 600;"><span class="dot" style="display:inline-block; width:6px; height:6px; background:var(--ok); border-radius:50%; margin-right:4px;"></span>Approved · in motion</span>';
+        return;
+      }
+      window.zoraToast(label, { desc: 'On it — drafting now.', type: 'info' });
+    });
+
+    /* model dropdown */
+    const model = document.querySelector('.cv-top .model');
+    if (model) {
+      const menu = document.createElement('div');
+      menu.style.cssText = 'position:absolute;top:46px;right:24px;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;z-index:50;display:none;min-width:200px';
+      const MODELS = [['Zora · Reasoning', 'Deepest analysis · cites live data'], ['Zora · Fast', 'Quick answers for simple asks'], ['Zora · Pro', 'Long-context planning & forecasts']];
+      menu.innerHTML = MODELS.map((m, i) => `<div class="mopt" data-i="${i}" style="padding:9px 11px;border-radius:8px;cursor:pointer"><div style="font-size:12.5px;font-weight:600;color:var(--ink);">${m[0]}</div><div style="font-size:11px;color:var(--ink-4);">${m[1]}</div></div>`).join('');
+      document.querySelector('.canvas').appendChild(menu);
+      menu.querySelectorAll('.mopt').forEach(o => { o.addEventListener('mouseenter', () => o.style.background = 'var(--paper-3)'); o.addEventListener('mouseleave', () => o.style.background = 'transparent'); });
+      model.style.position = 'relative';
+      model.addEventListener('click', e => { e.stopPropagation(); menu.style.display = menu.style.display === 'none' ? 'block' : 'none'; });
+      document.addEventListener('click', () => menu.style.display = 'none');
+      menu.addEventListener('click', e => { const o = e.target.closest('.mopt'); if (!o) return; const m = MODELS[+o.dataset.i]; model.childNodes[1].nodeValue = m[0]; window.zoraToast('Switched model', { desc: m[0], type: 'info' }); });
+    }
+  </script>
+
+  <!-- Floating Collapsible Zora Button at right edge middle -->
+  <button id="zora-floating-trigger" style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 1200; background: var(--accent); color: white; border: 0; padding: 12px; border-radius: 12px 0 0 12px; box-shadow: -2px 4px 12px rgba(122, 84, 135, 0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;" title="Ask Zora" onclick="window.location.href='copilot.html'">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
+  </button>
+</body>
+
+</html>
