@@ -1811,11 +1811,11 @@
 
   <!-- Ask Zora FAB + copilot panel -->
   <style>
-    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
-    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
-    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
-    .zfab-spark svg{width:20px;height:20px}
-    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zfab{position:fixed;right:24px;bottom:24px;z-index:1100;display:flex;flex-direction:row;align-items:center;gap:8px;padding:10px 16px;border:none;border-radius:99px;background:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-2px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(150%) scale(0.9);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:18px;height:18px;display:block}
+    .zfab-label{font-size:13px;font-weight:600;font-family:var(--font-geist,sans-serif);white-space:nowrap}
     .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
     .zcopilot.open{transform:none}
     .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
@@ -1858,7 +1858,7 @@
     <span class="zfab-spark">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
     </span>
-    <span class="zfab-label">Ask Zora</span>
+    <span class="zfab-label">Zora</span>
   </button>
 
   <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">

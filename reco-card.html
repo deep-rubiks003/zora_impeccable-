@@ -133,6 +133,7 @@
       flex-direction: column;
       gap: 14px;
     }
+
     [data-theme="dark"] .iv-card {
       background: none;
       border-color: transparent;
@@ -236,30 +237,32 @@
     }
 
     .iv-suggestion {
-      background: rgba(122,84,135,0.10);
-      border: 1px solid rgba(122,84,135,0.18);
+      background: rgba(122, 84, 135, 0.10);
+      border: 1px solid rgba(122, 84, 135, 0.18);
       border-radius: 12px;
       padding: 13px 15px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       /* Inset highlight to separate from card bg */
-      box-shadow: 0 1px 0 rgba(255,255,255,.30) inset;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .30) inset;
     }
+
     [data-theme="dark"] .iv-suggestion {
-      background: rgba(122,84,135,0.16);
-      border-color: rgba(162,114,175,0.22);
-      box-shadow: 0 1px 0 rgba(255,255,255,.05) inset;
+      background: rgba(122, 84, 135, 0.16);
+      border-color: rgba(162, 114, 175, 0.22);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .05) inset;
     }
 
     .iv-card--ok .iv-suggestion {
-      background: rgba(46,204,113,0.09);
-      border-color: rgba(46,204,113,0.22);
-      box-shadow: 0 1px 0 rgba(255,255,255,.28) inset;
+      background: rgba(46, 204, 113, 0.09);
+      border-color: rgba(46, 204, 113, 0.22);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .28) inset;
     }
+
     [data-theme="dark"] .iv-card--ok .iv-suggestion {
-      background: rgba(46,204,113,0.12);
-      border-color: rgba(46,204,113,0.20);
+      background: rgba(46, 204, 113, 0.12);
+      border-color: rgba(46, 204, 113, 0.20);
     }
 
     .iv-suggestion-head {
@@ -402,12 +405,14 @@
       flex-shrink: 0;
       transition: background 140ms var(--ease-out), border-color 140ms var(--ease-out), transform 140ms var(--ease-out);
     }
+
     .recovery-ctx-btn:hover,
     .recovery-ctx-btn.is-open {
       background: var(--accent-soft);
       border-color: var(--accent);
       transform: scale(1.1);
     }
+
     .recovery-ctx-btn:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
@@ -428,41 +433,44 @@
       width: 248px;
       /* True glass: very low alpha so the blur reads, tinted slightly
          toward the brand purple rather than neutral white */
-      background: color-mix(in srgb, rgba(122,84,135,0.08) 100%, rgba(255,255,255,0.22));
+      background: color-mix(in srgb, rgba(122, 84, 135, 0.08) 100%, rgba(255, 255, 255, 0.22));
       backdrop-filter: blur(28px) saturate(200%) brightness(1.06);
       -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.06);
-      border: 1px solid rgba(255,255,255,0.28);
-      border-bottom-color: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
       border-radius: 13px;
       padding: 12px 14px 10px;
       /* Layered shadows for lift: ambient + umbra + top highlight */
       box-shadow:
-        0 1px 0 rgba(255,255,255,.50) inset,
-        0 28px 56px -10px rgba(26,26,46,.32),
-        0 6px 18px -2px rgba(26,26,46,.14);
+        0 1px 0 rgba(255, 255, 255, .50) inset,
+        0 28px 56px -10px rgba(26, 26, 46, .32),
+        0 6px 18px -2px rgba(26, 26, 46, .14);
       pointer-events: none;
       opacity: 0;
       transform: translateY(-6px) scale(.97);
-      transition: opacity 200ms cubic-bezier(.23,1,.32,1), transform 200ms cubic-bezier(.23,1,.32,1);
+      transition: opacity 200ms cubic-bezier(.23, 1, .32, 1), transform 200ms cubic-bezier(.23, 1, .32, 1);
       user-select: none;
       /* Force text to read against the blurred background */
       color: var(--ink);
     }
+
     /* Dark mode: deep semi-transparent with stronger shadow */
     [data-theme="dark"] .ctx-glass-tip {
-      background: rgba(28,20,42,0.38);
-      border-color: rgba(255,255,255,.10);
-      border-bottom-color: rgba(0,0,0,.18);
+      background: rgba(28, 20, 42, 0.38);
+      border-color: rgba(255, 255, 255, .10);
+      border-bottom-color: rgba(0, 0, 0, .18);
       box-shadow:
-        0 1px 0 rgba(255,255,255,.06) inset,
-        0 28px 56px -10px rgba(0,0,0,.60),
-        0 6px 18px -2px rgba(0,0,0,.30);
+        0 1px 0 rgba(255, 255, 255, .06) inset,
+        0 28px 56px -10px rgba(0, 0, 0, .60),
+        0 6px 18px -2px rgba(0, 0, 0, .30);
     }
+
     .ctx-glass-tip.is-visible {
       opacity: 1;
       transform: translateY(0) scale(1);
       pointer-events: auto;
     }
+
     /* Caret: small diamond notch. Left driven by --caret-x set by JS. */
     .ctx-glass-tip::before {
       content: '';
@@ -471,17 +479,19 @@
       left: var(--caret-x, 20px);
       width: 9px;
       height: 9px;
-      background: rgba(255,255,255,0.32);
+      background: rgba(255, 255, 255, 0.32);
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
-      border-top: 1px solid rgba(255,255,255,0.28);
-      border-left: 1px solid rgba(255,255,255,0.28);
+      border-top: 1px solid rgba(255, 255, 255, 0.28);
+      border-left: 1px solid rgba(255, 255, 255, 0.28);
       transform: rotate(45deg);
     }
+
     [data-theme="dark"] .ctx-glass-tip::before {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,.10);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, .10);
     }
+
     .ctx-glass-tip-head {
       font-family: var(--font-geist);
       font-size: 10px;
@@ -491,23 +501,28 @@
       color: var(--ink-4);
       margin-bottom: 8px;
       padding-bottom: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.22);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
     }
+
     [data-theme="dark"] .ctx-glass-tip-head {
-      border-bottom-color: rgba(255,255,255,.08);
+      border-bottom-color: rgba(255, 255, 255, .08);
     }
+
     .ctx-glass-signal {
       display: flex;
       align-items: flex-start;
       gap: 8px;
       padding: 5px 0;
     }
-    .ctx-glass-signal + .ctx-glass-signal {
-      border-top: 1px solid rgba(255,255,255,0.16);
+
+    .ctx-glass-signal+.ctx-glass-signal {
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
     }
-    [data-theme="dark"] .ctx-glass-signal + .ctx-glass-signal {
-      border-top-color: rgba(255,255,255,.06);
+
+    [data-theme="dark"] .ctx-glass-signal+.ctx-glass-signal {
+      border-top-color: rgba(255, 255, 255, .06);
     }
+
     .ctx-glass-signal-dot {
       width: 6px;
       height: 6px;
@@ -515,15 +530,26 @@
       flex-shrink: 0;
       margin-top: 4px;
     }
-    .ctx-glass-signal-dot.flagged { background: var(--bad); }
-    .ctx-glass-signal-dot.ok      { background: var(--ok);  }
-    .ctx-glass-signal-dot.warn    { background: oklch(0.75 0.13 75); }
+
+    .ctx-glass-signal-dot.flagged {
+      background: var(--bad);
+    }
+
+    .ctx-glass-signal-dot.ok {
+      background: var(--ok);
+    }
+
+    .ctx-glass-signal-dot.warn {
+      background: oklch(0.75 0.13 75);
+    }
+
     .ctx-glass-signal-body {
       display: flex;
       flex-direction: column;
       gap: 1px;
       min-width: 0;
     }
+
     .ctx-glass-signal-label {
       font-family: var(--font-geist);
       font-size: 11.5px;
@@ -531,15 +557,23 @@
       color: var(--ink);
       line-height: 1.3;
     }
+
     .ctx-glass-signal-val {
       font-family: var(--font-dm-sans);
       font-size: 11px;
       color: var(--ink-3);
       line-height: 1.35;
     }
+
     @media (prefers-reduced-motion: reduce) {
-      .ctx-glass-tip { transition: opacity 100ms linear; transform: none; }
-      .ctx-glass-tip.is-visible { transform: none; }
+      .ctx-glass-tip {
+        transition: opacity 100ms linear;
+        transform: none;
+      }
+
+      .ctx-glass-tip.is-visible {
+        transform: none;
+      }
     }
 
     /* ===== Recovery list — distilled, label-only rows ===== */
@@ -548,6 +582,7 @@
       column-gap: 14px;
       column-rule: 1px solid var(--line-soft);
     }
+
     .recovery-item {
       display: flex;
       align-items: center;
@@ -557,8 +592,16 @@
       break-inside: avoid;
       -webkit-column-break-inside: avoid;
     }
-    .recovery-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .recovery-item:first-child { padding-top: 0; }
+
+    .recovery-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .recovery-item:first-child {
+      padding-top: 0;
+    }
+
     .recovery-item-ico {
       flex-shrink: 0;
       width: 4px;
@@ -568,6 +611,7 @@
       opacity: 0.45;
       margin-top: 1px;
     }
+
     .recovery-item-label {
       font-family: var(--font-dm-sans);
       font-size: 12px;
@@ -575,6 +619,7 @@
       color: var(--ink);
       line-height: 1.3;
     }
+
     .recovery-focus-banner {
       background: var(--accent-soft);
       border: 1px solid color-mix(in oklab, var(--accent) 18%, transparent);
@@ -587,7 +632,10 @@
       color: var(--accent-deep);
       line-height: 1.35;
     }
-    [data-theme="dark"] .recovery-focus-banner { color: var(--accent); }
+
+    [data-theme="dark"] .recovery-focus-banner {
+      color: var(--accent);
+    }
 
     /* "From <source>" footer inside each week-strip day card (Training /
        Nutrition / Recovery): names the signal streams that drove that area's
@@ -806,8 +854,13 @@
       white-space: nowrap;
     }
 
-    .bsig-delta.bad { color: var(--bad); }
-    .bsig-delta.ok  { color: var(--ok); }
+    .bsig-delta.bad {
+      color: var(--bad);
+    }
+
+    .bsig-delta.ok {
+      color: var(--ok);
+    }
 
     .bsig-graph-wrap {
       position: relative;
@@ -881,8 +934,13 @@
 
     /* Sparkline path animation on draw */
     @keyframes bsig-draw {
-      from { stroke-dashoffset: 1; }
-      to   { stroke-dashoffset: 0; }
+      from {
+        stroke-dashoffset: 1;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
     .bsig-line-path {
@@ -898,8 +956,13 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .bsig-line-path { animation: none !important; }
-      .bsig-tip { transition: none; }
+      .bsig-line-path {
+        animation: none !important;
+      }
+
+      .bsig-tip {
+        transition: none;
+      }
     }
 
     @media (max-width: 640px) {
@@ -907,7 +970,10 @@
         grid-template-columns: 1fr;
         gap: 20px;
       }
-      .bsig-divider { display: none; }
+
+      .bsig-divider {
+        display: none;
+      }
     }
 
     /* ===== HRV segmented toggle (current / with-changes) ===== */
@@ -924,6 +990,7 @@
       gap: 0;
       flex-shrink: 0;
     }
+
     .hrv-seg-btn {
       position: relative;
       display: inline-flex;
@@ -940,28 +1007,39 @@
       color: var(--ink-4);
       cursor: pointer;
       white-space: nowrap;
-      transition: color .18s, background .2s cubic-bezier(.23,1,.32,1), box-shadow .18s;
+      transition: color .18s, background .2s cubic-bezier(.23, 1, .32, 1), box-shadow .18s;
       line-height: 1;
     }
+
     .hrv-seg-btn.is-active {
       background: var(--paper-2);
       color: var(--ink);
-      box-shadow: 0 1px 4px rgba(26,26,46,.13);
+      box-shadow: 0 1px 4px rgba(26, 26, 46, .13);
     }
+
     .hrv-seg-btn.is-active.is-proj {
       background: var(--accent-soft);
       color: var(--accent-deep);
-      box-shadow: 0 1px 4px color-mix(in oklab,var(--accent) 22%,transparent);
+      box-shadow: 0 1px 4px color-mix(in oklab, var(--accent) 22%, transparent);
     }
-    .hrv-seg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .hrv-seg-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .hrv-seg-btn { transition: none; }
+      .hrv-seg-btn {
+        transition: none;
+      }
     }
 
     /* Tabs & Grid Layout */
     .detail-grid-container {
       display: grid;
-      grid-template-columns: 1fr 92px;
+      /* Rail moved to a floating right-edge dial, so the old 92px gutter is
+         dead space — reclaim it to widen the signals + recommendation cards. */
+      grid-template-columns: 1fr;
       gap: 24px;
       align-items: start;
       position: relative;
@@ -1251,6 +1329,7 @@
     .adherence-heatmap-wrap {
       width: 100%;
     }
+
     .adherence-heatmap-grid {
       display: grid;
       /* Week label col + 7 day cols */
@@ -1258,9 +1337,12 @@
       gap: 3px;
       width: 100%;
     }
-    .hm-corner { /* empty top-left corner */
+
+    .hm-corner {
+      /* empty top-left corner */
       grid-column: 1;
     }
+
     .hm-day-label {
       font-family: var(--font-geist, sans-serif);
       font-size: 8.5px;
@@ -1272,6 +1354,7 @@
       padding-bottom: 3px;
       white-space: nowrap;
     }
+
     .hm-week-label {
       font-family: var(--font-geist-mono, 'Geist Mono', monospace);
       font-size: 8px;
@@ -1282,6 +1365,7 @@
       padding-right: 4px;
       white-space: nowrap;
     }
+
     .heatmap-cell {
       aspect-ratio: 1;
       border-radius: 4px;
@@ -1289,30 +1373,40 @@
       position: relative;
       cursor: default;
     }
+
     .heatmap-cell:hover {
       transform: scale(1.18);
       z-index: 2;
-      box-shadow: 0 3px 10px rgba(0,0,0,.18);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, .18);
     }
+
     /* Brightness reduced ~20% from vivid — using oklch to stay in gamut */
     .heatmap-cell.good {
-      background: oklch(0.68 0.14 145); /* muted green */
+      background: oklch(0.68 0.14 145);
+      /* muted green */
     }
+
     .heatmap-cell.warn {
-      background: oklch(0.75 0.13 75);  /* muted amber */
+      background: oklch(0.75 0.13 75);
+      /* muted amber */
     }
+
     .heatmap-cell.bad {
-      background: oklch(0.62 0.16 25);  /* muted red */
+      background: oklch(0.62 0.16 25);
+      /* muted red */
     }
+
     .heatmap-cell.rest {
       background: var(--paper-3);
       border: 1px solid var(--line-soft);
     }
+
     .heatmap-cell.empty {
       background: color-mix(in oklab, var(--paper-3) 80%, transparent);
       border: 1px dashed var(--line-soft);
       opacity: .5;
     }
+
     /* Tooltip via title — enhanced with aria-label for screen readers */
     .hm-legend {
       display: flex;
@@ -1321,6 +1415,7 @@
       margin-top: 10px;
       flex-wrap: wrap;
     }
+
     .hm-legend-item {
       display: inline-flex;
       align-items: center;
@@ -1329,16 +1424,30 @@
       font-size: 10.5px;
       color: var(--ink-3);
     }
+
     .hm-legend-dot {
       width: 10px;
       height: 10px;
       border-radius: 3px;
       flex-shrink: 0;
     }
-    .hm-legend-dot.good { background: oklch(0.68 0.14 145); }
-    .hm-legend-dot.warn { background: oklch(0.75 0.13 75); }
-    .hm-legend-dot.bad  { background: oklch(0.62 0.16 25); }
-    .hm-legend-dot.rest { background: var(--paper-3); border: 1px solid var(--line); }
+
+    .hm-legend-dot.good {
+      background: oklch(0.68 0.14 145);
+    }
+
+    .hm-legend-dot.warn {
+      background: oklch(0.75 0.13 75);
+    }
+
+    .hm-legend-dot.bad {
+      background: oklch(0.62 0.16 25);
+    }
+
+    .hm-legend-dot.rest {
+      background: var(--paper-3);
+      border: 1px solid var(--line);
+    }
 
     /* Fix suggestions styling */
     .fix-row {
@@ -1776,8 +1885,11 @@
     .dials {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px 12px;
-      margin: 4px 0 2px;
+      gap: 18px 28px;
+      /* Full-width, left-to-right across the card (not a centered cluster). */
+      margin: 6px 0 4px;
+      width: 100%;
+      max-width: none;
     }
 
     @media (max-width: 640px) {
@@ -1813,9 +1925,9 @@
     /* Semicircle gauge: smooth, box-free dome with the value nested beneath. */
     .dial-gauge {
       position: relative;
-      width: 96px;
-      height: 58px;
-      margin-bottom: 6px;
+      width: 120px;
+      height: 72px;
+      margin-bottom: 8px;
     }
 
     .dial-svg {
@@ -1858,7 +1970,7 @@
       justify-content: center;
       gap: 1px;
       font-family: var(--font-geist);
-      font-size: 20px;
+      font-size: 25px;
       font-weight: 500;
       letter-spacing: -.03em;
       color: var(--d-ink);
@@ -1867,13 +1979,13 @@
     }
 
     .dial-value--word {
-      font-size: 16px;
+      font-size: 20px;
       font-weight: 500;
       letter-spacing: -.02em;
     }
 
     .dial-unit {
-      font-size: 9.5px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: -.01em;
       color: var(--ink-4);
@@ -1882,7 +1994,7 @@
 
     .dial-name {
       font-family: var(--font-geist);
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
       letter-spacing: -.008em;
       color: var(--ink);
@@ -2042,32 +2154,35 @@
       border-radius: 0;
       padding: 20px 0 24px;
     }
+
     /* Glass layer: sits behind all content, masked at all four edges */
     .signals-detail::before {
       content: '';
       position: absolute;
       inset: 0;
       z-index: 0;
-      background: color-mix(in srgb, rgba(122,84,135,0.07) 100%, rgba(255,255,255,0.22));
+      background: color-mix(in srgb, rgba(122, 84, 135, 0.07) 100%, rgba(255, 255, 255, 0.22));
       backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
       -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
-      box-shadow: 0 8px 32px -6px rgba(26,26,46,.10);
+      box-shadow: 0 8px 32px -6px rgba(26, 26, 46, .10);
       /* Fade all four edges — mask only applies to this pseudo-element,
          never touches the text children above it */
       -webkit-mask-image:
-        linear-gradient(to right,  transparent 0%, black 6%, black 94%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
         linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
       -webkit-mask-composite: destination-in;
       mask-image:
-        linear-gradient(to right,  transparent 0%, black 6%, black 94%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
         linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
       mask-composite: intersect;
       pointer-events: none;
     }
+
     [data-theme="dark"] .signals-detail::before {
-      background: rgba(28,20,42,0.32);
-      box-shadow: 0 8px 32px -6px rgba(0,0,0,.28);
+      background: rgba(28, 20, 42, 0.32);
+      box-shadow: 0 8px 32px -6px rgba(0, 0, 0, .28);
     }
+
     @media (prefers-reduced-motion: reduce) {
       .signals-detail::before {
         backdrop-filter: none;
@@ -2075,6 +2190,7 @@
         background: color-mix(in srgb, var(--paper-3) 55%, transparent);
       }
     }
+
     /* Inner content sits above the glass layer */
     .signals-detail-inner {
       position: relative;
@@ -2190,7 +2306,8 @@
       <div style="display: flex; align-items: center; gap: 10px;">
         <div class="brand-mark">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
-            <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
+            <path
+              d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
           </svg>
         </div>
         <div class="brand-text">
@@ -2209,29 +2326,36 @@
 
     <div class="nav-section">
       <div class="nav-item active" onclick="window.location.href='index.html'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
         <span>Home</span>
       </div>
       <div class="nav-item" onclick="window.location.href='growth.html'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
           <polyline points="17 6 23 6 23 12"></polyline>
         </svg>
         <span>Growth Agent</span>
       </div>
       <div class="nav-item" onclick="window.location.href='copilot.html'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"
+            fill="currentColor" stroke="none"></path>
         </svg>
         <span>Ask Zora</span>
       </div>
       <div class="nav-item" onclick="window.location.href='settings.html'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+          </path>
         </svg>
         <span>Settings</span>
       </div>
@@ -2246,14 +2370,18 @@
         </div>
       </div>
       <button id="theme-toggle" class="sidebar-theme-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"></circle>
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+          <path
+            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41">
+          </path>
         </svg>
         <span>Theme</span>
       </button>
       <button onclick="window.location.href='login.html'" class="sidebar-logout-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>
           <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -2284,7 +2412,7 @@
         <span id="crumb-tail">Client</span>
       </div>
 
-<input class="search" placeholder="Search members, plans, signals…" />
+      <input class="search" placeholder="Search members, plans, signals…" />
 
       <button class="icon-btn" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2570,76 +2698,59 @@
                 <div class="rec-h1-row" style="margin-bottom: 20px;">
                   <h3 class="rec-h1" style="margin: 0;">
                     <span class="ai-sparkle-inline">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align: middle;">
-                        <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"
+                        style="vertical-align: middle;">
+                        <path
+                          d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
                       </svg>
                     </span>
                     Zora's Recommendation
                   </h3>
+
+                  <!-- Quick actions, top-right of the card. Icon + label, no pills,
+                       hairline dividers between. -->
+                  <nav class="rec-actions" aria-label="Client quick actions">
+                    <button class="rec-action-btn" id="rail-btn-call" title="Schedule call">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                      <span>Schedule Call</span>
+                    </button>
+                    <button class="rec-action-btn" id="rail-btn-chat" title="Chat with client">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <span>Chat</span>
+                    </button>
+                    <button class="rec-action-btn" id="rail-btn-nutrition" title="Meal plan">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M9 3v2M15 3v2M3 11h18"/><path d="M4 11a8 8 0 0 0 16 0z"/></svg>
+                      <span>Meal Plan</span>
+                    </button>
+                  </nav>
                 </div>
 
                 <!-- Reasoning breakdown: 3 source streams -> 3 recommendation
                      areas. Populated by renderRecoBreakdown(). -->
                 <div class="rec-narrative" id="ai-narrative" style="margin-bottom: 24px; max-width: 100%;"></div>
 
-                <!-- Weekly Schedule Adjustment — horizontal week strip with a
-                     single week-level toggle (current week <-> Zora's recommended). -->
+                <!-- Schedule: full-week grid (toggle sits below the box). -->
                 <div class="week-strip" id="week-strip" data-view="recommended">
-                  <div class="week-strip-head">
-                    <div class="week-strip-titles">
-                      <span class="week-strip-title">Weekly Schedule Adjustment</span>
-                    </div>
-
-                    <!-- Self-explaining segmented switch: two labeled sides,
-                         the active one is filled. Count rides the Zora side. -->
-                    <div class="week-toggle" id="week-toggle" role="switch" aria-checked="true"
-                      aria-label="Show Zora's plan instead of this week">
-                      <span class="week-toggle-thumb" id="week-toggle-thumb" aria-hidden="true"></span>
-                      <span class="week-toggle-end week-toggle-end--left" aria-hidden="true">Current Plan</span>
-                      <span class="week-toggle-end week-toggle-end--right" aria-hidden="true">
-                        Zora's plan<span class="week-toggle-count" id="see-schedule-count">0 changes</span>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="week-strip-track" id="inline-schedule-console" role="list"
-                    aria-label="Seven day training week">
+                  <div class="week-strip-dropdown-area" id="inline-schedule-console">
                     <!-- Rendered dynamically by javascript -->
                   </div>
 
                   <p class="week-strip-empty" id="week-strip-empty" hidden>No adjustments needed this week.</p>
 
-                  <!-- Master-detail panel: left tab rail + card pane + right actions -->
+                  <!-- Three-panel detail: training / nutrition / recovery side by side + actions row -->
                   <div class="sched-detail-shell" id="sched-detail-shell" style="display: none;">
 
-                    <!-- Left: vertical category tab rail -->
-                    <nav class="sched-tab-rail" aria-label="Schedule category">
-                      <button class="sched-tab-btn is-active" data-tab="training" type="button" aria-expanded="true">
-                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6.5h2a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-2M6 6.5H4A1.5 1.5 0 0 0 2.5 8v8A1.5 1.5 0 0 0 4 17.5h2M6.5 12h11M6 9v6M18 9v6"/></svg>
-                        Training
-                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-                      </button>
-                      <button class="sched-tab-btn" data-tab="nutrition" type="button" aria-expanded="false">
-                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v3M9 3v2M15 3v2M3 11h18"/><path d="M4 11a8 8 0 0 0 16 0z"/></svg>
-                        Nutrition
-                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-                      </button>
-                      <button class="sched-tab-btn" data-tab="recovery" type="button" aria-expanded="false">
-                        <svg class="sched-tab-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.34 7a9.97 9.97 0 0 1 .659-1.017C5.24 4.246 7.35 3 9.5 3c1.89 0 3.63.88 4.5 2.25C14.87 3.88 16.61 3 18.5 3c2.15 0 4.26 1.246 5.5 2.983.3.41.543.853.728 1.317"/><path d="M20 10H4"/><path d="M20 10c0 6.627-8 11-8 11S4 16.627 4 10"/><path d="m8 10 2 3 4-6 2 3"/></svg>
-                        Recovery
-                        <svg class="sched-tab-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-                      </button>
-                    </nav>
-
-                    <!-- Centre: active category card content -->
+                    <!-- Row 1: all three category cards simultaneously -->
                     <div class="sched-card-pane" id="sched-card-pane">
-                      <!-- Populated by renderInlineDayDetails() -->
-                      <div class="inline-day-details" id="inline-day-details"></div>
+                      <!-- Populated by renderInlineDayDetails() — renders all 3 panels at once -->
+                      <div class="sched-cards-row" id="inline-day-details"></div>
                     </div>
 
-                    <!-- Right: action buttons column -->
-                    <div class="sched-actions-col">
+                    <!-- Row 2: action buttons at the bottom -->
+                    <div class="sched-actions-row">
                       <button class="btn-primary" id="btn-approve">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.5" aria-hidden="true">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                         Approve &amp; Send
@@ -2649,6 +2760,17 @@
                     </div>
 
                   </div><!-- /sched-detail-shell -->
+                </div><!-- /week-strip -->
+
+                <!-- Plan toggle: outside the schedule box, below it, still inside
+                     the Zora's Recommendation card. -->
+                <div class="week-toggle week-toggle--below" id="week-toggle" role="switch" aria-checked="false"
+                  aria-label="Show Zora's plan instead of this week">
+                  <span class="week-toggle-thumb" id="week-toggle-thumb" aria-hidden="true"></span>
+                  <span class="week-toggle-end week-toggle-end--left" aria-hidden="true">
+                    Zora's plan<span class="week-toggle-count" id="see-schedule-count">0 changes</span>
+                  </span>
+                  <span class="week-toggle-end week-toggle-end--right" aria-hidden="true">Current Plan</span>
                 </div>
               </div>
             </div>
@@ -2691,7 +2813,8 @@
                 <button class="planfit-run" id="planfit-run" type="button">
                   <span class="ai-sparkle-inline" aria-hidden="true">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                      <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
+                      <path
+                        d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
                     </svg>
                   </span>
                   <span class="planfit-run-label">Run plan analysis</span>
@@ -2713,7 +2836,8 @@
                 <!-- Behavioral signals (moved here from a standalone card) -->
                 <div class="planfit-reveal-item bsig-section"
                   style="margin-top: var(--space-md); border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
-                  <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 16px;">Behavioral Signals &amp; Wearable Trends</div>
+                  <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 16px;">Behavioral
+                    Signals &amp; Wearable Trends</div>
 
                   <!-- Three graphs, no boxes — label+value+graph each in their own column -->
                   <div class="bsig-graphs">
@@ -2728,7 +2852,8 @@
                         <span class="bsig-value" id="sentiment-value">Neutral</span>
                       </div>
                       <div class="bsig-graph-wrap">
-                        <svg id="sentiment-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none" aria-label="Message sentiment trend"></svg>
+                        <svg id="sentiment-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
+                          aria-label="Message sentiment trend"></svg>
                         <div class="bsig-crosshair" id="sentiment-crosshair" hidden></div>
                         <div class="bsig-tip" id="sentiment-tip" hidden></div>
                       </div>
@@ -2742,8 +2867,10 @@
                         <span class="bsig-label">HRV Trend</span>
                         <!-- HRV segmented toggle -->
                         <div class="hrv-seg" id="hrv-seg" role="group" aria-label="HRV view">
-                          <button class="hrv-seg-btn is-active" id="hrv-btn-current" type="button" aria-pressed="true">Current</button>
-                          <button class="hrv-seg-btn is-proj" id="hrv-btn-proj" type="button" aria-pressed="false">With changes</button>
+                          <button class="hrv-seg-btn is-active" id="hrv-btn-current" type="button"
+                            aria-pressed="true">Current</button>
+                          <button class="hrv-seg-btn is-proj" id="hrv-btn-proj" type="button" aria-pressed="false">With
+                            changes</button>
                         </div>
                       </div>
                       <div class="bsig-value-row">
@@ -2753,9 +2880,11 @@
                       <div class="bsig-graph-wrap">
                         <div style="position: relative; width: 100%; height: 100%;">
                           <svg id="hrv-current-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
-                            style="transition: opacity .28s cubic-bezier(.16,1,.3,1);" aria-label="HRV current trend"></svg>
+                            style="transition: opacity .28s cubic-bezier(.16,1,.3,1);"
+                            aria-label="HRV current trend"></svg>
                           <svg id="hrv-projected-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
-                            style="position: absolute; inset: 0; opacity: 0; transition: opacity .28s cubic-bezier(.16,1,.3,1);" aria-label="HRV projected trend"></svg>
+                            style="position: absolute; inset: 0; opacity: 0; transition: opacity .28s cubic-bezier(.16,1,.3,1);"
+                            aria-label="HRV projected trend"></svg>
                         </div>
                         <div class="bsig-crosshair" id="hrv-crosshair" hidden></div>
                         <div class="bsig-tip" id="hrv-tip" hidden></div>
@@ -2775,7 +2904,8 @@
                         <span class="bsig-value" id="completion-value">52%</span>
                       </div>
                       <div class="bsig-graph-wrap">
-                        <svg id="completion-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none" aria-label="Completion trend"></svg>
+                        <svg id="completion-chart-svg" class="bsig-svg" viewBox="0 0 200 64" preserveAspectRatio="none"
+                          aria-label="Completion trend"></svg>
                         <div class="bsig-crosshair" id="completion-crosshair" hidden></div>
                         <div class="bsig-tip" id="completion-tip" hidden></div>
                       </div>
@@ -2792,7 +2922,8 @@
                   style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; border-top: 1px solid var(--line-soft); padding-top: var(--space-md);">
                   <!-- Adherence Heatmap -->
                   <div class="adherence-heatmap-wrap">
-                    <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 10px;">Adherence Heatmap <span style="font-weight:400;color:var(--ink-4);">· 6 weeks</span></div>
+                    <div style="font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 10px;">Adherence
+                      Heatmap <span style="font-weight:400;color:var(--ink-4);">· 6 weeks</span></div>
                     <div class="adherence-heatmap-grid" id="adherence-heatmap" aria-label="Adherence heatmap grid">
                       <!-- Populated by renderHeatmap() — header row + week rows -->
                     </div>
@@ -2820,40 +2951,6 @@
 
         </div>
 
-        <!-- Right Sidebar Action Rail. Top group = the four always-available
-             quick actions; below the divider = secondary section jumps. -->
-        <nav class="persistent-action-rail" aria-label="Client quick actions">
-          <button class="action-rail-btn" id="rail-btn-nutrition" title="Nutrition logs">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2v3M9 3v2M15 3v2M3 11h18" />
-              <path d="M4 11a8 8 0 0 0 16 0z" />
-            </svg>
-            <span>Nutrition</span>
-          </button>
-          <button class="action-rail-btn" id="rail-btn-schedule" title="Weekly schedule">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <span>Schedule</span>
-          </button>
-          <button class="action-rail-btn" id="rail-btn-chat" title="Chat with client">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <span>Chat</span>
-          </button>
-          <button class="action-rail-btn" id="rail-btn-call" title="Schedule call">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path
-                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-            </svg>
-            <span>Call</span>
-          </button>
-        </nav>
 
       </div>
 
@@ -2943,13 +3040,13 @@
         aiNarrative: "Sarah's acute training load has increased by <span class=\"hl\">35% week-over-week</span>, while Sleep Score has dropped to a critical <span class=\"hl\">42/100</span> (averaging 4.2 h). HRV has plunged <span class=\"hl\">52% below</span> her rolling baseline, signaling autonomic nervous system exhaustion. Zora recommends a mandatory active recovery shift to prevent injury.",
         verdictText: "Fatigue accumulation risk — deload this week to prevent injury.",
         weekPlan: [
-          { name: "Mon", type: "Threshold intervals", detail: "6 × 1 km at 4:10/km", originalType: "Threshold intervals", originalDetail: "6 × 1 km", edited: false },
-          { name: "Tue", type: "Strength", detail: "Full lower body focus", originalType: "Strength", originalDetail: "Full session", edited: false },
-          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Thu", type: "Tempo", detail: "8 km at marathon pace", originalType: "Tempo", originalDetail: "8 km", edited: false },
-          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Sat", type: "Long run", detail: "14 km progression", originalType: "Long run", originalDetail: "14 km", edited: false },
-          { name: "Sun", type: "Easy run", detail: "5 km recovery jog", originalType: "Easy run", originalDetail: "5 km", edited: false }
+          { name: "Mon", type: "Easy run", detail: "5 km @ 5:40/km, Zone 2", originalType: "Threshold intervals", originalDetail: "6 × 1 km @ 4:10/km", edited: false },
+          { name: "Tue", type: "Mobility", detail: "25 min hips + calves, 2 rounds", originalType: "Strength", originalDetail: "Full lower body", edited: false },
+          { name: "Wed", type: "Rest", detail: "Rest", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Easy run", detail: "6 km @ 5:35/km + 4 × 20s strides", originalType: "Tempo", originalDetail: "8 km @ marathon pace", edited: false },
+          { name: "Fri", type: "Rest", detail: "15 min foam roll", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Long run", detail: "11 km @ 5:50/km, conversational", originalType: "Long run", originalDetail: "16 km progression", edited: false },
+          { name: "Sun", type: "Easy run", detail: "4 km @ 6:00/km recovery", originalType: "Easy run", originalDetail: "5 km recovery jog", edited: false }
         ],
         churnRisk: 42,
         churnRiskLabel: "Medium Churn Risk",
@@ -3064,13 +3161,13 @@
         aiNarrative: "Marcus's app opens have dropped to <span class=\"hl\">zero for 6 consecutive days</span>. Workouts completed have fallen to <span class=\"hl\">40%</span> and he did not respond to the <span class=\"hl\">last two automated check-ins</span>. Zora recommends scaling back work to <span class=\"hl\">3 strength sessions</span> to prevent disengagement.",
         verdictText: "Disengagement pattern — re-engagement window is open now.",
         weekPlan: [
-          { name: "Mon", type: "Strength", detail: "Squat + Deadlift heavy focus", originalType: "Strength", originalDetail: "Squat + Deadlift heavy focus", edited: false },
-          { name: "Tue", type: "Strength", detail: "Bench + Row hypertrophy", originalType: "Strength", originalDetail: "Bench + Row hypertrophy", edited: false },
-          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Thu", type: "Strength", detail: "Accessory lower body focus", originalType: "Strength", originalDetail: "Accessory lower body focus", edited: false },
-          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Sat", type: "Strength", detail: "Accessory upper body focus", originalType: "Strength", originalDetail: "Accessory upper body focus", edited: false },
-          { name: "Sun", type: "Conditioning", detail: "20 min HIIT rowing session", originalType: "Conditioning", originalDetail: "20 min HIIT rowing session", edited: false }
+          { name: "Mon", type: "Strength", detail: "Back squat 5×5 @ RPE 7, Romanian DL 3×8", originalType: "Strength", originalDetail: "Squat + Deadlift heavy", edited: false },
+          { name: "Tue", type: "Rest", detail: "20 min walk", originalType: "Strength", originalDetail: "Bench + Row hypertrophy", edited: false },
+          { name: "Wed", type: "Strength", detail: "Bench 5×5 @ RPE 7, Barbell row 4×8", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Rest", detail: "Mobility", originalType: "Strength", originalDetail: "Accessory lower body", edited: false },
+          { name: "Fri", type: "Strength", detail: "Deadlift 4×4 @ RPE 7, Pull-ups 3×8", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Rest", detail: "Optional walk", originalType: "Strength", originalDetail: "Accessory upper body", edited: false },
+          { name: "Sun", type: "Conditioning", detail: "15 min row, easy (optional)", originalType: "Conditioning", originalDetail: "20 min HIIT row", edited: false }
         ],
         churnRisk: 74,
         churnRiskLabel: "High Churn Risk",
@@ -3161,13 +3258,13 @@
         aiNarrative: "Alex's cumulative muscle soreness has reached <span class=\"hl\">8/10</span>. His HRV is down <span class=\"hl\">18%</span> from baseline. Adherence has begun to slip (<span class=\"hl\">2 workouts skipped</span> this week) as physical strain exceeded his recovery capacity. Zora recommends a recovery deload week.",
         verdictText: "Physical strain at peak — a deload week protects the training block.",
         weekPlan: [
-          { name: "Mon", type: "Strength", detail: "Push A heavy focus", originalType: "Strength", originalDetail: "Push A heavy focus", edited: false },
-          { name: "Tue", type: "Strength", detail: "Pull A heavy focus", originalType: "Strength", originalDetail: "Pull A heavy focus", edited: false },
-          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Thu", type: "Strength", detail: "Legs A heavy focus", originalType: "Strength", originalDetail: "Legs A heavy focus", edited: false },
-          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Sat", type: "Strength", detail: "Arms + Shoulders hypertrophy", originalType: "Strength", originalDetail: "Arms + Shoulders hypertrophy", edited: false },
-          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+          { name: "Mon", type: "Push", detail: "Bench 3×10 @ 60%, OHP 3×10, Lateral raise 2×15", originalType: "Strength", originalDetail: "Push A heavy focus", edited: false },
+          { name: "Tue", type: "Pull", detail: "Row 3×10 @ 60%, Lat pulldown 3×10, Curl 2×15", originalType: "Strength", originalDetail: "Pull A heavy focus", edited: false },
+          { name: "Wed", type: "Mobility", detail: "20 min full-body foam roll", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Legs", detail: "Squat 3×12 light, Leg press 3×12, Calf 2×20", originalType: "Strength", originalDetail: "Legs A heavy focus", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Strength", detail: "Arms + shoulders 2×15 pump @ 50%", originalType: "Strength", originalDetail: "Arms + Shoulders heavy", edited: false },
+          { name: "Sun", type: "Mobility", detail: "20 min stretch flow", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
         churnRisk: 55,
         churnRiskLabel: "Medium Churn Risk",
@@ -3257,13 +3354,13 @@
         aiNarrative: "Megan has logged consistent workouts but her logged protein intake is <span class=\"hl\">36% below</span> target (average <span class=\"hl\">64g vs 100g target</span>). Goal adherence requires nutritional adaptation to prevent muscle breakdown.",
         verdictText: "Training is strong — close the protein gap to hold progress.",
         weekPlan: [
-          { name: "Mon", type: "Easy run", detail: "6 km recovery pace", originalType: "Easy run", originalDetail: "6 km recovery pace", edited: false },
-          { name: "Tue", type: "Strength", detail: "Full body conditioning", originalType: "Strength", originalDetail: "Full body conditioning", edited: false },
-          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Thu", type: "Easy run", detail: "6 km tempo work", originalType: "Easy run", originalDetail: "6 km tempo work", edited: false },
-          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Sat", type: "Long run", detail: "10 km progression", originalType: "Long run", originalDetail: "10 km progression", edited: false },
-          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+          { name: "Mon", type: "Strength", detail: "Full body 3×10 (squat, push, row), protein within 1 h", originalType: "Easy run", originalDetail: "6 km recovery pace", edited: false },
+          { name: "Tue", type: "Easy run", detail: "5 km @ 6:00/km, Zone 2", originalType: "Strength", originalDetail: "Full body conditioning", edited: false },
+          { name: "Wed", type: "Rest", detail: "20 min walk + mobility", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Strength", detail: "Upper body 3×10 + core 3 sets", originalType: "Easy run", originalDetail: "6 km tempo work", edited: false },
+          { name: "Fri", type: "Rest", detail: "Rest", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Easy run", detail: "8 km @ 5:50/km steady", originalType: "Long run", originalDetail: "10 km progression", edited: false },
+          { name: "Sun", type: "Rest", detail: "Meal prep", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
         churnRisk: 22,
         churnRiskLabel: "Low Churn Risk",
@@ -3342,8 +3439,8 @@
         first: "Paige",
         initials: "PI",
         avatarClass: "av-1",
-        phase: "Week 4 · Base training",
-        program: "Base training · Week 4",
+        phase: "Week 4 · Weight Loss",
+        program: "Weight Loss · Week 4",
         vitals: { recovery: 78, engagement: 94, riskText: "Low Churn Risk", riskClass: "risk-low", active: "10m ago" },
         metrics: {
           sleep: "78",
@@ -3362,13 +3459,13 @@
         aiNarrative: "Paige is in an optimal training adaptation window. HRV is elevated <span class=\"hl\">15% above</span> baseline, sleep is consistent, and adherence is near-perfect (<span class=\"hl\">94%</span>). She is highly receptive to positive reinforcement.",
         verdictText: "All signals green — a great time to introduce progressive overload.",
         weekPlan: [
-          { name: "Mon", type: "Strength", detail: "Strength endurance session", originalType: "Strength", originalDetail: "Strength endurance session", edited: false },
-          { name: "Tue", type: "Easy run", detail: "8 km base pace", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
-          { name: "Wed", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Thu", type: "Easy run", detail: "8 km base pace", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
-          { name: "Fri", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false },
-          { name: "Sat", type: "Long run", detail: "12 km base pace", originalType: "Long run", originalDetail: "12 km base pace", edited: false },
-          { name: "Sun", type: "Easy run", detail: "5 km base pace", originalType: "Easy run", originalDetail: "5 km base pace", edited: false }
+          { name: "Mon", type: "Strength", detail: "Full-body circuit 3 rounds × 12 (squat, push, row, lunge), 45s rest", originalType: "Strength", originalDetail: "Strength endurance session", edited: false },
+          { name: "Tue", type: "Easy run", detail: "5 km @ 6:10/km, Zone 2 fat-burn", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
+          { name: "Wed", type: "Walk", detail: "10k steps + 15 min mobility", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Thu", type: "Strength", detail: "Lower body 4×12 (goblet squat, RDL, lunge) + core", originalType: "Easy run", originalDetail: "8 km base pace", edited: false },
+          { name: "Fri", type: "Rest", detail: "Light walk", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sat", type: "Conditioning", detail: "25 min intervals, 1 min hard / 2 min easy", originalType: "Long run", originalDetail: "12 km base pace", edited: false },
+          { name: "Sun", type: "Walk", detail: "8k steps recovery", originalType: "Easy run", originalDetail: "5 km base pace", edited: false }
         ],
         churnRisk: 8,
         churnRiskLabel: "Low Churn Risk",
@@ -3474,13 +3571,13 @@
         },
         aiNarrative: "Ryan's blood pressure has averaged <span class=\"hl\">142/90</span> over the last 14 days, with today's reading at <span class=\"hl\">148/94</span>. Sodium intake is over target on most days and he missed <span class=\"hl\">2 doses</span> this week. Zora recommends a sodium cut and a <span class=\"hl\">3-day recheck</span> before any medication change.",
         weekPlan: [
-          { name: "Mon", type: "Morning + evening BP", detail: "Log both readings", originalType: "Morning + evening BP", originalDetail: "Log both readings", edited: false },
-          { name: "Tue", type: "30 min walk", detail: "Brisk, post-dinner", originalType: "30 min walk", originalDetail: "Brisk, post-dinner", edited: false },
-          { name: "Wed", type: "Morning + evening BP", detail: "Log both readings", originalType: "Morning + evening BP", originalDetail: "Log both readings", edited: false },
-          { name: "Thu", type: "30 min walk", detail: "Brisk, post-dinner", originalType: "30 min walk", originalDetail: "Brisk, post-dinner", edited: false },
-          { name: "Fri", type: "Morning + evening BP", detail: "Log both readings", originalType: "Morning + evening BP", originalDetail: "Log both readings", edited: false },
-          { name: "Sat", type: "Recheck + review", detail: "Compare to target", originalType: "Recheck + review", originalDetail: "Compare to target", edited: false },
-          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+          { name: "Mon", type: "BP log", detail: "Morning + evening", originalType: "BP log", originalDetail: "Evening reading only", edited: false },
+          { name: "Tue", type: "Walk", detail: "30 min brisk @ ~5 km/h, post-dinner", originalType: "Walk", originalDetail: "20 min, any time", edited: false },
+          { name: "Wed", type: "BP log", detail: "Morning + evening", originalType: "BP log", originalDetail: "Evening reading only", edited: false },
+          { name: "Thu", type: "Walk", detail: "30 min brisk, post-dinner", originalType: "Walk", originalDetail: "20 min, any time", edited: false },
+          { name: "Fri", type: "BP log", detail: "Morning + evening", originalType: "BP log", originalDetail: "Evening reading only", edited: false },
+          { name: "Sat", type: "BP log", detail: "Recheck + review vs 140/90 target", originalType: "Rest", originalDetail: "Rest day", edited: false },
+          { name: "Sun", type: "Rest", detail: "Rest", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
         churnRisk: 0, churnRiskLabel: "Elevated", churnRiskClass: "risk-high", isAtRisk: true,
         riskText: "Ryan's BP is above target and trending up",
@@ -3577,13 +3674,13 @@
         },
         aiNarrative: "Lena's average glucose is <span class=\"hl\">162 mg/dL</span> with time-in-range at <span class=\"hl\">54%</span> against a <span class=\"hl\">70%</span> target. The pattern points to <span class=\"hl\">post-dinner spikes</span>. Zora recommends shifting carbohydrates earlier in the day and a short post-dinner walk before any dose change.",
         weekPlan: [
-          { name: "Mon", type: "Fasting + post-meal glucose", detail: "Log 4 readings", originalType: "Fasting + post-meal glucose", originalDetail: "Log 4 readings", edited: false },
-          { name: "Tue", type: "15 min post-dinner walk", detail: "Blunt the evening spike", originalType: "15 min post-dinner walk", originalDetail: "Blunt the evening spike", edited: false },
-          { name: "Wed", type: "Fasting + post-meal glucose", detail: "Log 4 readings", originalType: "Fasting + post-meal glucose", originalDetail: "Log 4 readings", edited: false },
-          { name: "Thu", type: "15 min post-dinner walk", detail: "Blunt the evening spike", originalType: "15 min post-dinner walk", originalDetail: "Blunt the evening spike", edited: false },
-          { name: "Fri", type: "Fasting + post-meal glucose", detail: "Log 4 readings", originalType: "Fasting + post-meal glucose", originalDetail: "Log 4 readings", edited: false },
-          { name: "Sat", type: "Review week + adjust carbs", detail: "Shift carbs earlier", originalType: "Review week + adjust carbs", originalDetail: "Shift carbs earlier", edited: false },
-          { name: "Sun", type: "Rest", detail: "Rest day", originalType: "Rest", originalDetail: "Rest day", edited: false }
+          { name: "Mon", type: "Walk", detail: "15 min post-dinner (anti-spike)", originalType: "Glucose log", originalDetail: "4 readings, no walk", edited: false },
+          { name: "Tue", type: "Strength", detail: "Light full body 2×12 + glucose log", originalType: "Glucose log", originalDetail: "4 readings only", edited: false },
+          { name: "Wed", type: "Walk", detail: "15 min post-dinner", originalType: "Glucose log", originalDetail: "4 readings, no walk", edited: false },
+          { name: "Thu", type: "Walk", detail: "20 min + 10 min mobility", originalType: "Glucose log", originalDetail: "4 readings only", edited: false },
+          { name: "Fri", type: "Walk", detail: "15 min post-dinner", originalType: "Glucose log", originalDetail: "4 readings, no walk", edited: false },
+          { name: "Sat", type: "Glucose log", detail: "Glucose review vs TIR target", originalType: "Glucose log", originalDetail: "Shift carbs earlier", edited: false },
+          { name: "Sun", type: "Rest", detail: "Gentle stretch", originalType: "Rest", originalDetail: "Rest day", edited: false }
         ],
         churnRisk: 0, churnRiskLabel: "Watch", churnRiskClass: "risk-medium", isAtRisk: true,
         riskText: "Lena's time-in-range is below target",
@@ -3696,7 +3793,7 @@
     // Per-client dial ranges so each client's verdict reflects their own data.
     const CLIENT_DIAL_RANGES = {
       'sarah-k': {
-        '7':  [
+        '7': [
           { name: 'Recovery', value: '61', unit: '/100', pct: 61, state: 'bad', why: 'declining 3 days' },
           { name: 'Sleep', value: 'Poor', word: true, pct: 25, state: 'bad', why: '4.2 h, below 7 h ×5' },
           { name: 'Completion', value: '67', unit: '%', pct: 67, state: 'warn', why: 'skipped 2 of 6' },
@@ -3716,7 +3813,7 @@
         ]
       },
       'marcus-t': {
-        '7':  [
+        '7': [
           { name: 'Recovery', value: '74', unit: '/100', pct: 74, state: 'ok', why: 'physical recovery intact' },
           { name: 'Sleep', value: 'Fair', word: true, pct: 47, state: 'warn', why: '5.8 h avg this week' },
           { name: 'Completion', value: '40', unit: '%', pct: 40, state: 'bad', why: '3 sessions missed' },
@@ -3736,7 +3833,7 @@
         ]
       },
       'aman-khanna': {
-        '7':  [
+        '7': [
           { name: 'Recovery', value: '58', unit: '/100', pct: 58, state: 'bad', why: 'fatigue accumulated' },
           { name: 'Sleep', value: 'Fair', word: true, pct: 48, state: 'warn', why: '6.1 h avg this week' },
           { name: 'Completion', value: '68', unit: '%', pct: 68, state: 'warn', why: 'skipped 2 sessions' },
@@ -3756,7 +3853,7 @@
         ]
       },
       'meera-joshi': {
-        '7':  [
+        '7': [
           { name: 'Recovery', value: '78', unit: '/100', pct: 78, state: 'ok', why: 'stable and healthy' },
           { name: 'Sleep', value: 'Good', word: true, pct: 72, state: 'ok', why: '7.2 h avg, on target' },
           { name: 'Completion', value: '85', unit: '%', pct: 85, state: 'ok', why: 'on plan this week' },
@@ -3776,7 +3873,7 @@
         ]
       },
       'priya-i': {
-        '7':  [
+        '7': [
           { name: 'Recovery', value: '94', unit: '/100', pct: 94, state: 'ok', why: 'optimal this week' },
           { name: 'Sleep', value: 'Great', word: true, pct: 86, state: 'ok', why: '7.8 h avg, well above 7 h' },
           { name: 'Completion', value: '94', unit: '%', pct: 94, state: 'ok', why: 'near perfect' },
@@ -4965,8 +5062,8 @@
           [70, 160, 50, 1560, 'Eggs', '—', 'Salad, no protein add', '—', 'Pizza night'],
           [96, 200, 60, 1850, 'Pancakes + whey', 'Cottage cheese', 'Burrito bowl', '—', 'Steak + potato'],
           [82, 170, 53, 1660, 'Oats', 'Banana', 'Poke bowl', '—', 'Curry + rice']
-        ], 'Protein averaged 83 g/day against a 120 g target.',
-          'Add a post-run protein source (Greek yogurt or a shake) on Tue, Wed and Fri to close the gap.'),
+        ], 'Protein 120 g target; carbs added before easy runs this deload week.',
+          'Hold protein, add ~40 g carbs pre-run so the deload still fuels recovery.'),
         'meera-joshi': buildWeek(100, [
           [70, 180, 52, 1700, 'Idli + sambar', 'Buttermilk', 'Dal + roti', 'Fruit', 'Paneer + veg'],
           [58, 170, 48, 1580, 'Poha', '—', 'Veg pulao', '—', 'Khichdi'],
@@ -4976,7 +5073,57 @@
           [74, 185, 53, 1720, 'Eggs + toast', 'Yogurt', 'Paneer bowl', '—', 'Fish curry'],
           [60, 170, 48, 1600, 'Dosa', '—', 'Sambar rice', '—', 'Veg + dal']
         ], 'Protein averaged 64 g/day against a 100 g target.',
-          'A high-protein breakfast and a post-Tuesday-workout shake closes most of the gap.')
+          'A high-protein breakfast and a post-Tuesday-workout shake closes most of the gap.'),
+        'marcus-t': buildWeek(180, [
+          [184, 280, 78, 2680, 'Eggs + oats', 'Whey shake', 'Beef + rice', 'Cottage cheese', 'Chicken + potato'],
+          [176, 270, 75, 2600, 'Omelette', 'Protein bar', 'Turkey wrap', 'Greek yogurt', 'Salmon + quinoa'],
+          [150, 240, 70, 2300, 'Oats + whey', '—', 'Leftover beef bowl', 'Nuts', 'Stir-fry + tofu'],
+          [182, 275, 76, 2640, 'Eggs + toast', 'Whey shake', 'Chicken rice', 'Cottage cheese', 'Steak + veg'],
+          [168, 255, 72, 2450, 'Smoothie + whey', '—', 'Tuna pasta', 'Yogurt', 'Pork + rice'],
+          [188, 285, 80, 2720, 'Pancakes + whey', 'Protein bar', 'Burrito bowl', 'Jerky', 'Chicken + potato'],
+          [172, 260, 74, 2520, 'Oats + whey', 'Banana + nuts', 'Beef bowl', '—', 'Curry + rice']
+        ], 'Protein averaged 174 g/day against a 180 g target.',
+          'Strong intake — keep the post-lift shake on heavy days to stay above target.'),
+        'aman-khanna': buildWeek(190, [
+          [192, 300, 82, 2820, 'Eggs + oats', 'Whey shake', 'Chicken rice bowl', 'Cottage cheese', 'Beef + potato'],
+          [186, 290, 80, 2760, 'Omelette + toast', 'Protein bar', 'Turkey wrap', 'Greek yogurt', 'Salmon + rice'],
+          [170, 260, 74, 2500, 'Oats + whey', 'Nuts', 'Leftover bowl', '—', 'Tofu stir-fry'],
+          [188, 295, 81, 2780, 'Eggs + oats', 'Whey shake', 'Chicken pasta', 'Cottage cheese', 'Steak + quinoa'],
+          [174, 265, 76, 2540, 'Smoothie + whey', '—', 'Tuna rice', 'Yogurt', 'Pork + veg'],
+          [196, 305, 84, 2860, 'Pancakes + whey', 'Protein bar', 'Burrito bowl', 'Jerky', 'Chicken + potato'],
+          [178, 270, 77, 2580, 'Oats + whey', 'Banana + nuts', 'Beef bowl', '—', 'Curry + rice']
+        ], 'Protein averaged 183 g/day against a 190 g target.',
+          'Recovery week — hold protein high and add carbs around training to refill glycogen.'),
+        'priya-i': buildWeek(120, [
+          [118, 110, 42, 1480, 'Eggs + spinach', 'Greek yogurt', 'Chicken salad', 'Apple', 'Salmon + greens'],
+          [122, 105, 40, 1450, 'Oats + whey', '—', 'Turkey wrap', 'Carrots + hummus', 'Tofu + veg'],
+          [114, 100, 38, 1400, 'Smoothie + whey', '—', 'Lentil soup', 'Berries', 'Chicken + broccoli'],
+          [120, 108, 41, 1470, 'Eggs + toast', 'Greek yogurt', 'Tuna salad', 'Apple', 'Shrimp + greens'],
+          [116, 102, 39, 1420, 'Oats + whey', '—', 'Veg + chicken bowl', 'Edamame', 'Cod + veg'],
+          [124, 112, 43, 1500, 'Omelette', 'Cottage cheese', 'Chicken wrap', 'Almonds', 'Steak + salad'],
+          [110, 98, 37, 1380, 'Smoothie', '—', 'Soup + side salad', 'Yogurt', 'Tofu stir-fry']
+        ], 'Protein 118 g/day on a 1,450 kcal deficit target.',
+          'Protein is locked in — keep the deficit moderate so adherence and energy hold.'),
+        'raj-m': buildWeek(90, [
+          [92, 200, 55, 1900, 'Oats + berries', 'Fruit', 'Dal + brown rice', 'Unsalted nuts', 'Grilled fish + veg'],
+          [88, 195, 53, 1850, 'Veg omelette', 'Banana', 'Chicken + salad', 'Yogurt', 'Lentil soup + roti'],
+          [90, 205, 54, 1880, 'Smoothie', '—', 'Rajma + rice', 'Apple', 'Baked fish + greens'],
+          [86, 190, 52, 1820, 'Poha, low salt', 'Buttermilk', 'Veg + dal', 'Nuts', 'Chicken + veg'],
+          [94, 210, 56, 1920, 'Eggs + toast', 'Fruit', 'Chole + rice', 'Yogurt', 'Fish curry, light salt'],
+          [88, 198, 53, 1860, 'Oats', 'Orange', 'Paneer + salad', 'Almonds', 'Veg stir-fry'],
+          [90, 200, 54, 1880, 'Idli + sambar', '—', 'Dal + roti', 'Fruit', 'Grilled chicken + veg']
+        ], 'Sodium under 1.5 g/day target, potassium-rich DASH pattern.',
+          'Keep sodium below 1.5 g and recheck BP in 3 days before any dose change.'),
+        'lena-p': buildWeek(100, [
+          [102, 130, 48, 1800, 'Eggs + avocado', 'Greek yogurt', 'Chicken + quinoa', 'Nuts', 'Fish + greens (low carb)'],
+          [98, 125, 46, 1760, 'Veg omelette', 'Berries', 'Lentil + salad', 'Cheese', 'Tofu stir-fry, light rice'],
+          [104, 135, 49, 1820, 'Smoothie + whey', '—', 'Chicken salad', 'Apple + PB', 'Paneer + veg'],
+          [100, 128, 47, 1780, 'Oats + chia', 'Yogurt', 'Rajma + small rice', 'Nuts', 'Grilled fish + greens'],
+          [96, 122, 45, 1740, 'Eggs + spinach', '—', 'Veg + chicken bowl', 'Edamame', 'Soup + side salad'],
+          [102, 130, 48, 1800, 'Besan chilla', 'Buttermilk', 'Dal + salad', 'Almonds', 'Fish + sauteed veg'],
+          [98, 126, 46, 1770, 'Smoothie', 'Berries', 'Tofu + quinoa', 'Yogurt', 'Light dinner, low carb']
+        ], 'Lower-GI plan, evening carbs reduced to flatten post-dinner spikes.',
+          'Shift carbs earlier and hold the post-dinner walk before any dose change.')
       };
       function defaultWeek(c) {
         return buildWeek(130, DAYS.map(() =>
@@ -4984,6 +5131,7 @@
         ), `Protein on target for ${c.first} all week.`, '');
       }
       function weekFor(c) { return NUTRI_WEEK[window.clientKey] || defaultWeek(c); }
+      window.weekFor = weekFor;
 
       // Default selected day = today if it's in the week, else Monday.
       let nutriDayIndex = (() => {
@@ -5222,6 +5370,60 @@
             { label: 'Soreness index', val: '8/10 — highest in 4 weeks', state: 'flagged' },
             { label: 'Training load', val: 'Deload week triggered by cumulative load', state: 'warn' }
           ]
+        },
+        'priya-i': {
+          daily: [
+            { label: 'Hit 10,000 steps daily' },
+            { label: 'Sleep 7.5 h, fixed window' },
+            { label: 'Hydrate 3 L by 7 pm' },
+            { label: 'Log every meal + weigh-in 1× weekly' },
+            { label: '20 g protein at breakfast' },
+            { label: '10 min walk after dinner' },
+            { label: 'Stop eating 2 h before bed' }
+          ],
+          focus: 'Steps + protein hold the deficit without crushing energy.',
+          context: [
+            { label: 'HRV', val: '71 ms — optimal recovery', state: 'ok' },
+            { label: 'Sleep score', val: '78 / 100 — consistent', state: 'ok' },
+            { label: 'Adherence', val: '94% — meals + steps logged', state: 'ok' },
+            { label: 'Weight trend', val: 'Down 0.4 kg/week — on target', state: 'ok' }
+          ]
+        },
+        'raj-m': {
+          daily: [
+            { label: 'Take meds, both doses' },
+            { label: 'Log BP morning + evening' },
+            { label: 'Sodium under 1.5 g today' },
+            { label: '10 min breathwork to lower BP' },
+            { label: '30 min walk, post-dinner' },
+            { label: 'Sleep 7.5 h' },
+            { label: 'Hydrate 2 L, steady' }
+          ],
+          focus: 'Meds + sodium first — recheck BP in 3 days.',
+          context: [
+            { label: 'Blood pressure', val: '148 / 94 today, 142/90 avg', state: 'flagged' },
+            { label: 'Sodium', val: 'Over 1.5 g on most days', state: 'flagged' },
+            { label: 'Medication', val: '2 doses missed this week', state: 'flagged' },
+            { label: 'Completion', val: '60% — morning logs slipping', state: 'warn' }
+          ]
+        },
+        'lena-p': {
+          daily: [
+            { label: '15 min walk after dinner' },
+            { label: 'Log glucose 4× daily' },
+            { label: 'Take meds on schedule' },
+            { label: 'Shift carbs to earlier meals' },
+            { label: '5 min breathwork before dinner' },
+            { label: 'Sleep 7.5 h' },
+            { label: 'Hydrate 2.5 L' }
+          ],
+          focus: 'Post-dinner walk + earlier carbs flatten the evening spike.',
+          context: [
+            { label: 'Glucose', val: '162 mg/dL avg, spikes post-dinner', state: 'flagged' },
+            { label: 'Time-in-range', val: '54% vs 70% target', state: 'flagged' },
+            { label: 'Post-dinner walk', val: 'Frequently skipped', state: 'warn' },
+            { label: 'Completion', val: '54% — evening adherence low', state: 'warn' }
+          ]
         }
       };
       function recoveryContextFor(c) {
@@ -5235,6 +5437,11 @@
         }
         return hb.context;
       }
+      // Expose signal helpers so the schedule grid (separate IIFE) can build the
+      // "Based on signals" tooltips.
+      window.buildRecoBreakdown = buildRecoBreakdown;
+      window.recoveryContextFor = recoveryContextFor;
+      window.RECO_SOURCES = RECO_SOURCES;
       function habitsFor(c) {
         return HABITS[window.clientKey] || {
           daily: [
@@ -5249,8 +5456,10 @@
           context: []
         };
       }
+      window.habitsFor = habitsFor;
+      window.dayHasChange = dayHasChange;
 
-      window.__openSchedule = function() {
+      window.__openSchedule = function () {
         const railSchedule = document.getElementById('rail-btn-schedule');
         if (railSchedule) {
           railSchedule.click();
@@ -5573,72 +5782,9 @@
 
       function initClientDraftEdits(client) {
         if (!client || client.draftEditsInitialized) return;
-
-        const key = window.clientKey;
-        if (key === 'sarah-k') {
-          const edits = [
-            { day: 'Mon', type: 'Easy run', detail: '5 km recovery jog', originalType: 'Threshold intervals', originalDetail: '6 × 1 km at 4:10/km' },
-            { day: 'Thu', type: 'Mobility', detail: '30 min dynamic stretching', originalType: 'Tempo', originalDetail: '8 km at marathon pace' },
-            { day: 'Sat', type: 'Active Recovery', detail: '8 km easy jog', originalType: 'Long run', originalDetail: '14 km progression' }
-          ];
-          edits.forEach(e => {
-            const day = client.weekPlan.find(d => d.name === e.day);
-            if (day) {
-              day.originalType = e.originalType;
-              day.originalDetail = e.originalDetail;
-              day.type = e.type;
-              day.detail = e.detail;
-              day.edited = true;
-              day.remark = 'AI Suggestion';
-            }
-          });
-        } else if (key === 'marcus-t') {
-          const edits = [
-            { day: 'Tue', type: 'Rest', detail: 'Rest day', originalType: 'Strength', originalDetail: 'Bench + Row hypertrophy' },
-            { day: 'Thu', type: 'Rest', detail: 'Rest day', originalType: 'Strength', originalDetail: 'Accessory lower body focus' }
-          ];
-          edits.forEach(e => {
-            const day = client.weekPlan.find(d => d.name === e.day);
-            if (day) {
-              day.originalType = e.originalType;
-              day.originalDetail = e.originalDetail;
-              day.type = e.type;
-              day.detail = e.detail;
-              day.edited = true;
-              day.remark = 'AI Suggestion';
-            }
-          });
-        } else if (key === 'aman-khanna') {
-          const edits = [
-            { day: 'Thu', type: 'Strength (Deload)', detail: 'Legs focus - light speed work', originalType: 'Strength', originalDetail: 'Legs A heavy focus' }
-          ];
-          edits.forEach(e => {
-            const day = client.weekPlan.find(d => d.name === e.day);
-            if (day) {
-              day.originalType = e.originalType;
-              day.originalDetail = e.originalDetail;
-              day.type = e.type;
-              day.detail = e.detail;
-              day.edited = true;
-              day.remark = 'AI Suggestion';
-            }
-          });
-        } else if (key === 'meera-joshi') {
-          const edits = [
-            { day: 'Tue', type: 'Nutrition check-in', detail: 'Meal consistency checklist', originalType: 'Easy run', originalDetail: '6 km tempo work' }
-          ];
-          edits.forEach(e => {
-            const day = client.weekPlan.find(d => d.name === e.day);
-            if (day) {
-              day.originalType = e.originalType;
-              day.originalDetail = e.originalDetail;
-              day.type = e.type;
-              day.detail = e.detail;
-              day.edited = true;
-              day.remark = 'AI Suggestion';
-            }
-          });
-        }
+        // weekPlan already carries the recommended type/detail plus the
+        // pre-recommendation originalType/originalDetail (for the Current↔Zora
+        // toggle). No further overrides — they would clobber the authored plan.
         client.draftEditsInitialized = true;
       } function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -5947,11 +6093,92 @@
         return js === 0 ? 6 : js - 1;
       })();
       let inlineEditing = false;
-      let activeSchedTab = 'training'; // 'training' | 'nutrition' | 'recovery'
+      let inlineAiEditing = false; // "Edit with AI" inline prompt open?
+      let activeSchedTab = 'training'; // kept for legacy compat, unused in new layout
 
-      // Render the 7-day week as a horizontal strip. Each day carries both its
-      // original and Zora's recommended workout; which set shows is governed by
-      // the strip's data-view (set by the week toggle), not per-day controls.
+      // Expand a workout (type + detail) into a structured spec the coach can
+      // scan at a glance: focus, the main block, intensity target, and an
+      // estimated duration. No data migration — derived heuristically from the
+      // existing type/detail strings so every client benefits immediately.
+      function buildTrainingBreakdown(type, detail) {
+        const t = (type || '').toLowerCase();
+        const d = (detail || '').trim();
+
+        // Rest / off days have no spec.
+        if (/rest|off/.test(t)) {
+          return { rest: true, focus: 'Full rest', rows: [], duration: '—', intensity: 'Recovery' };
+        }
+
+        // Pull a distance (km) or rep scheme (e.g. "6 × 1 km") out of detail.
+        const km = (d.match(/(\d+(?:\.\d+)?)\s*km/i) || [])[1];
+        const reps = (d.match(/(\d+)\s*[×x]\s*([\d.]+\s*\w+)/i) || []);
+        const pace = (d.match(/(\d+:\d{2})\s*\/\s*km/i) || [])[1];
+        const mins = (d.match(/(\d+)\s*min/i) || [])[1];
+
+        let focus = d || type || 'Session';
+        let main, intensity, duration, warm = '10 min easy + drills', cool = '5 min easy + mobility';
+
+        if (/threshold|interval|tempo/.test(t)) {
+          main = reps.length ? `${reps[1]} × ${reps[2]}` + (pace ? ` @ ${pace}/km` : '')
+               : (km ? `${km} km` : 'Work block') + (pace ? ` @ ${pace}/km` : '');
+          intensity = /tempo/.test(t) ? 'Zone 4 · RPE 7' : 'Zone 4–5 · RPE 8';
+          duration = mins ? `${mins} min` : (km ? `~${Math.round(km * 5.5 + 15)} min` : '45–55 min');
+          focus = type;
+        } else if (/long run|progression/.test(t)) {
+          main = (km ? `${km} km` : 'Long effort') + ' progression';
+          intensity = 'Zone 2→3 · RPE 5–7';
+          duration = km ? `~${Math.round(km * 6)} min` : '70–90 min';
+          warm = 'Steady start, build by feel';
+          focus = type;
+        } else if (/easy|recovery|jog/.test(t)) {
+          main = (km ? `${km} km` : 'Easy effort') + ' conversational';
+          intensity = 'Zone 2 · RPE 3–4';
+          duration = km ? `~${Math.round(km * 6.5)} min` : '30–40 min';
+          warm = 'No warm-up needed — start easy';
+          cool = 'Optional light stretch';
+          focus = type;
+        } else if (/strength|squat|deadlift|bench|push|pull|legs|accessory|arms|shoulder/.test(t)) {
+          // Strength: turn the detail into a 3-lift outline.
+          const lifts = d.replace(/heavy focus|hypertrophy|focus|session/gi, '').trim();
+          main = (lifts ? lifts.replace(/\s*\+\s*/g, ' · ') : 'Main lifts') +
+                 (/hypertrophy/.test(d) ? ' — 4 × 8–12' : ' — 5 × 5');
+          intensity = /hypertrophy/.test(d) ? 'RPE 7–8 · 60–90s rest' : 'RPE 8 · 2–3 min rest';
+          duration = '50–65 min';
+          warm = '8 min general + ramp sets';
+          cool = 'Stretch + 5 min walk';
+          focus = (type === 'Strength' && lifts) ? lifts : type;
+        } else if (/mobility|stretch/.test(t)) {
+          main = d || 'Dynamic mobility flow';
+          intensity = 'Zone 1 · RPE 2';
+          duration = mins ? `${mins} min` : '30 min';
+          warm = 'Start gently';
+          cool = 'Breathing down-regulation';
+          focus = type;
+        } else if (/condition|hiit|row/.test(t)) {
+          main = d || 'Conditioning circuit';
+          intensity = 'Zone 4 · RPE 8 (intervals)';
+          duration = mins ? `${mins} min` : '20–30 min';
+          focus = type;
+        } else {
+          main = d || 'Main work';
+          intensity = 'RPE 6–7';
+          duration = mins ? `${mins} min` : (km ? `~${Math.round(km * 6)} min` : '45 min');
+        }
+
+        return {
+          rest: false,
+          focus,
+          duration,
+          intensity,
+          rows: [
+            { k: 'Warm-up', v: warm },
+            { k: 'Main set', v: main },
+            { k: 'Cooldown', v: cool },
+          ],
+        };
+      }
+
+      // Render a compact horizontal row of day pills (Mon–Sun).
       function renderInlineSchedule(client) {
         const container = document.getElementById('inline-schedule-console');
         const strip = document.getElementById('week-strip');
@@ -5969,85 +6196,30 @@
           window.activeClientName = client.name;
           selectedDayIndex = currentDayIdx;
           inlineEditing = false;
-          activeSchedTab = 'training'; // reset to Training on client switch
-          // Sync the tab rail UI to match
-          document.querySelectorAll('.sched-tab-btn').forEach(btn => {
-            const isActive = btn.dataset.tab === 'training';
-            btn.classList.toggle('is-active', isActive);
-            btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-          });
         }
 
         const plan = client.weekPlan || [];
         const changeCount = plan.filter(dayHasChange).length;
+        const isRecoView = strip.dataset.view === 'recommended';
 
-        let changeIndex = 0;
-        plan.forEach((day, idx) => {
-          const hasChange = dayHasChange(day);
-          const cell = document.createElement('div');
-          cell.className = `week-day ${hasChange ? 'is-changed' : ''} ${idx === selectedDayIndex ? 'is-selected' : ''}`;
-          cell.dataset.day = day.name;
-          cell.setAttribute('role', 'listitem');
-          // Per-changed-day index drives the left-to-right "light up" stagger.
-          if (hasChange) cell.style.setProperty('--i', changeIndex++);
-
-          // Both states live in the cell; CSS reveals one per strip view.
-          cell.innerHTML = `
-          <div class="week-day-head">
-            <span class="week-day-name">${esc(day.name)}</span>
-            ${hasChange ? '<span class="week-day-flag" title="Adjusted by Zora" aria-label="Adjusted by Zora"></span>' : ''}
-          </div>
-          <div class="week-day-body">
-            <div class="week-day-state week-day-state--current">
-              <div class="week-day-type">${esc(day.originalType || day.type)}</div>
-              <div class="week-day-detail">${esc(day.originalDetail || day.detail || '')}</div>
-            </div>
-            <div class="week-day-state week-day-state--reco">
-              <div class="week-day-type">${esc(day.type)}</div>
-              <div class="week-day-detail">${esc(day.detail || '')}</div>
-            </div>
-          </div>
-        `;
-
-          cell.addEventListener('click', () => {
-            selectedDayIndex = idx;
-            inlineEditing = false;
-            
-            // Add is-clicked for the bloom micro-animation
-            cell.classList.add('is-clicked');
-            cell.addEventListener('animationend', () => {
-              cell.classList.remove('is-clicked');
-            }, { once: true });
-            
-            container.querySelectorAll('.week-day').forEach(c => c.classList.remove('is-selected'));
-            cell.classList.add('is-selected');
-            renderInlineDayDetails(client);
-          });
-
-          container.appendChild(cell);
-        });
-
-        // No-changes clients (e.g. priya-i): show the steady week, disable toggle.
+        // The full-week grid (formerly behind "View week") is now the default
+        // inline view. The console area itself stays empty — the grid renders
+        // inside the detail shell so it sits above the action row.
+        // Toggle is ALWAYS active — even when the two weeks match, the coach can
+        // flip between Current and Zora's plan.
         const empty = document.getElementById('week-strip-empty');
         const toggle = document.getElementById('week-toggle');
-        if (changeCount === 0) {
-          strip.classList.add('no-changes');
-          if (empty) empty.hidden = false;
-          if (toggle) toggle.setAttribute('aria-hidden', 'true');
-          setWeekView('current', { silent: true });
-        } else {
-          strip.classList.remove('no-changes');
-          if (empty) empty.hidden = true;
-          if (toggle) toggle.removeAttribute('aria-hidden');
-          setWeekView('current', { silent: true });
-        }
+        strip.classList.remove('no-changes');
+        if (empty) empty.hidden = true;
+        if (toggle) toggle.removeAttribute('aria-hidden');
+        setWeekView(currentTab === 'plan' ? 'recommended' : 'current', { silent: true });
 
         updateScheduleCount();
 
-        // Show the master-detail shell and render the active tab
+        // Show the detail shell and render the full-week grid as the default.
         const shell = document.getElementById('sched-detail-shell');
         if (shell) {
-          shell.style.display = 'grid';
+          shell.style.display = 'flex';
           renderInlineDayDetails(client);
         }
       }
@@ -6068,6 +6240,18 @@
         const strip = document.getElementById('week-strip');
         const view = strip ? (strip.dataset.view || 'recommended') : 'recommended';
         const isRecoView = view === 'recommended';
+
+        // DEFAULT VIEW: the full 7-day grid (formerly the "View week" page).
+        // We only drop into the single-day 3-panel detail when the coach is
+        // actively tweaking or AI-editing a specific day.
+        if (!inlineEditing && !inlineAiEditing) {
+          container.classList.add('inline-week-grid-host');
+          container.innerHTML = (typeof window.buildWeekGrid === 'function')
+            ? window.buildWeekGrid(client, view)
+            : '';
+          return;
+        }
+        container.classList.remove('inline-week-grid-host');
 
         const typeToShow = isRecoView ? day.type : (day.originalType || day.type);
         const detailToShow = isRecoView ? (day.detail || '') : (day.originalDetail || day.detail || '');
@@ -6092,13 +6276,81 @@
             </div>
           </div>
         `;
-        } else {
+        } else if (inlineAiEditing) {
+          // Inline "Edit with AI" prompt — coach describes the change in
+          // natural language; Zora rewrites the workout.
           trainingHTML = `
-          <div class="inline-day-item ${hasChange && isRecoView ? 'is-proposal' : ''}">
-            <div class="inline-day-item-label">${esc(typeToShow)}</div>
-            <div class="inline-day-item-sub">${esc(detailToShow)}</div>
+          <div class="inline-ai-form">
+            <div class="inline-ai-head">
+              <span class="ai-sparkle-inline" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/>
+                </svg>
+              </span>
+              <span>Tell Zora how to adjust ${esc(day.name)}'s session</span>
+            </div>
+            <textarea class="inline-ai-input" id="ai-edit-prompt" rows="2"
+              placeholder="e.g. cut the volume 20% and keep it Zone 2, knee felt tight"></textarea>
+            <div class="inline-ai-chips" aria-label="Quick prompts">
+              <button type="button" class="inline-ai-chip" onclick="window.applyAiQuickPrompt('Make it easier — drop intensity to recovery')">Make easier</button>
+              <button type="button" class="inline-ai-chip" onclick="window.applyAiQuickPrompt('Shorten by 20% but keep the main set')">Shorten 20%</button>
+              <button type="button" class="inline-ai-chip" onclick="window.applyAiQuickPrompt('Swap to a rest day')">Make rest</button>
+            </div>
+            <div class="inline-ai-actions">
+              <button class="inline-ai-btn-apply" id="ai-edit-apply" onclick="window.runAiEdit('${day.name}')">
+                <span class="ai-sparkle-inline" style="margin:0;" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+                </span>
+                Apply with Zora
+              </button>
+              <button class="inline-edit-btn-cancel" onclick="window.cancelAiEdit()">Cancel</button>
+            </div>
           </div>
-          <button class="inline-day-edit-toggle" onclick="window.startInlineEdit()">Tweak workout</button>
+        `;
+        } else {
+          const bd = buildTrainingBreakdown(typeToShow, detailToShow);
+          const changedTraining = hasChange && isRecoView;
+
+          // Spec rows: warm-up / main set / cooldown. Skipped for rest days.
+          const specRows = bd.rest
+            ? `<div class="train-spec-rest">Recovery day — no session scheduled</div>`
+            : bd.rows.map(r => `
+              <div class="train-spec-row">
+                <span class="train-spec-k">${esc(r.k)}</span>
+                <span class="train-spec-v">${esc(r.v)}</span>
+              </div>`).join('');
+
+          // When this day changed, show original collapsed underneath.
+          const origBreakdown = changedTraining
+            ? buildTrainingBreakdown(day.originalType || day.type, day.originalDetail || day.detail)
+            : null;
+          const diffHTML = changedTraining ? `
+            <div class="train-diff">
+              <span class="train-diff-was">Was: ${esc(day.originalType || '')}${origBreakdown && !origBreakdown.rest ? ' · ' + esc(origBreakdown.rows.find(r => r.k === 'Main set').v) : ''}</span>
+            </div>` : '';
+
+          trainingHTML = `
+          <div class="train-block ${changedTraining ? 'is-proposal' : ''}">
+            <div class="train-head">
+              <span class="train-focus">${esc(bd.focus)}</span>
+              ${changedTraining ? '<span class="train-badge">Zora updated</span>' : ''}
+            </div>
+            <div class="train-meta">
+              <span class="train-pill"><span class="train-pill-k">Intensity</span>${esc(bd.intensity)}</span>
+              <span class="train-pill"><span class="train-pill-k">Duration</span>${esc(bd.duration)}</span>
+            </div>
+            <div class="train-spec">${specRows}</div>
+            ${diffHTML}
+          </div>
+          <div class="train-actions">
+            <button class="inline-day-edit-toggle" onclick="window.startInlineEdit()">Tweak manually</button>
+            <button class="train-ai-btn" onclick="window.startAiEdit()">
+              <span class="ai-sparkle-inline" style="margin:0;transform:none;" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+              </span>
+              Edit with AI
+            </button>
+          </div>
         `;
         }
 
@@ -6179,111 +6431,130 @@
 
         const cardClass = 'inline-day-card' + (isRecoView ? ' overdrive-sweep' : '');
 
-        // Build each panel's full HTML — only the active tab is rendered into the pane
-        const panels = {
-          training: `
-            <div class="${cardClass}" style="--card-index: 0;">
-              <div class="inline-day-card-title" style="justify-content: space-between;">
-                <span style="display:inline-flex;align-items:center;gap:6px;">
-                  <span class="inline-day-card-ico">${INLINE_ICON_TRAIN}</span>
-                  <span>Training</span>
-                </span>
-                ${isRecoView ? trainingCtxHTML : ''}
-              </div>
-              ${trainingHTML}
-              ${trainSrc}
-            </div>`,
-          nutrition: `
-            <div class="${cardClass}" style="--card-index: 0;">
-              <div class="inline-day-card-title" style="justify-content: space-between;">
-                <span style="display:inline-flex;align-items:center;gap:6px;">
-                  <span class="inline-day-card-ico">${INLINE_ICON_FOOD}</span>
-                  <span>Nutrition</span>
-                </span>
-                ${isRecoView ? nutritionCtxHTML : ''}
-              </div>
-              ${nutritionHTML}
-              ${nutriSrc}
-            </div>`,
-          recovery: `
-            <div class="${cardClass}" style="--card-index: 0;">
-              <div class="inline-day-card-title" style="justify-content: space-between;">
-                <span style="display:inline-flex;align-items:center;gap:6px;">
-                  <span class="inline-day-card-ico">${INLINE_ICON_HABIT}</span>
-                  <span>Recovery</span>
-                </span>
-                ${isRecoView ? recoveryCtxHTML : ''}
-              </div>
-              ${habitsHTML}
-              ${habitSrc}
-            </div>`
-        };
-
-        container.innerHTML = panels[activeSchedTab] || panels.training;
+        // Render all 3 panels simultaneously — one for each category
+        container.innerHTML = `
+          <div class="${cardClass}" style="--card-index: 0;">
+            <div class="inline-day-card-title" style="justify-content: space-between;">
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <span class="inline-day-card-ico">${INLINE_ICON_TRAIN}</span>
+                <span>Training</span>
+              </span>
+              ${isRecoView ? trainingCtxHTML : ''}
+            </div>
+            ${trainingHTML}
+            ${trainSrc}
+          </div>
+          <div class="${cardClass}" style="--card-index: 1;">
+            <div class="inline-day-card-title" style="justify-content: space-between;">
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <span class="inline-day-card-ico">${INLINE_ICON_FOOD}</span>
+                <span>Nutrition</span>
+              </span>
+              ${isRecoView ? nutritionCtxHTML : ''}
+            </div>
+            ${nutritionHTML}
+            ${nutriSrc}
+          </div>
+          <div class="${cardClass}" style="--card-index: 2;">
+            <div class="inline-day-card-title" style="justify-content: space-between;">
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <span class="inline-day-card-ico">${INLINE_ICON_HABIT}</span>
+                <span>Recovery</span>
+              </span>
+              ${isRecoView ? recoveryCtxHTML : ''}
+            </div>
+            ${habitsHTML}
+            ${habitSrc}
+          </div>`;
       }
 
-      // ===== Schedule tab rail wiring =====
-      // Handles desktop tab switching with crossfade and mobile accordion.
-      (function initSchedTabs() {
-        const rail = document.querySelector('.sched-tab-rail');
-        if (!rail) return;
-
-        const pane = document.getElementById('sched-card-pane');
-        const isMobile = () => window.innerWidth < 768;
-
-        function switchTab(tab, skipAnimation) {
-          activeSchedTab = tab;
-
-          // Update active state and aria-expanded on all tab buttons
-          rail.querySelectorAll('.sched-tab-btn').forEach(btn => {
-            const isActive = btn.dataset.tab === tab;
-            btn.classList.toggle('is-active', isActive);
-            btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-          });
-
-          if (!pane) { renderInlineDayDetails(window.client); return; }
-
-          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          if (skipAnimation || reduce) {
-            renderInlineDayDetails(window.client);
-            return;
-          }
-
-          // Crossfade: fade out → swap content → fade in
-          pane.classList.add('is-switching');
-          setTimeout(() => {
-            renderInlineDayDetails(window.client);
-            // Force reflow before removing class so transition fires
-            void pane.offsetWidth;
-            pane.classList.remove('is-switching');
-          }, 170);
-        }
-
-        rail.addEventListener('click', e => {
-          const btn = e.target.closest('.sched-tab-btn');
-          if (!btn) return;
-          const tab = btn.dataset.tab;
-          if (!tab || tab === activeSchedTab) return;
-          switchTab(tab);
-        });
-
-        // Expose so day-click can re-render without resetting the tab
-        window.__schedSwitchTab = switchTab;
-      })();
+      // Tab rail is removed; expose a no-op for any remaining callers
+      window.__schedSwitchTab = function() {};
 
       function startInlineEdit() {
         const toggle = document.getElementById('week-toggle');
-        const isReco = toggle && toggle.getAttribute('aria-checked') === 'true';
+        const isReco = toggle && toggle.getAttribute('aria-checked') === 'false';
         if (!isReco) {
           setWeekView('recommended');
         }
         inlineEditing = true;
+        inlineAiEditing = false;
         renderInlineDayDetails(window.client);
       }
 
       function cancelInlineEdit() {
         inlineEditing = false;
         renderInlineDayDetails(window.client);
+      }
+
+      // --- Edit with AI: inline natural-language workout editor ---
+      function startAiEdit() {
+        const toggle = document.getElementById('week-toggle');
+        const isReco = toggle && toggle.getAttribute('aria-checked') === 'false';
+        if (!isReco) setWeekView('recommended');
+        inlineAiEditing = true;
+        inlineEditing = false;
+        renderInlineDayDetails(window.client);
+        const ta = document.getElementById('ai-edit-prompt');
+        if (ta) ta.focus();
+      }
+
+      function cancelAiEdit() {
+        inlineAiEditing = false;
+        renderInlineDayDetails(window.client);
+      }
+
+      function applyAiQuickPrompt(text) {
+        const ta = document.getElementById('ai-edit-prompt');
+        if (ta) { ta.value = text; ta.focus(); }
+      }
+
+      // Interpret the coach's prompt and rewrite the day. Heuristic — mirrors
+      // how Zora would parse intent, no backend call.
+      function runAiEdit(dayName) {
+        const ta = document.getElementById('ai-edit-prompt');
+        const prompt = (ta ? ta.value : '').trim();
+        if (!prompt) { if (ta) ta.focus(); return; }
+
+        const day = (window.client.weekPlan || []).find(d => d.name === dayName);
+        if (!day) return;
+
+        const btn = document.getElementById('ai-edit-apply');
+        if (btn) { btn.disabled = true; btn.classList.add('is-working'); btn.innerHTML = 'Zora is rewriting…'; }
+
+        // Snapshot original before first edit.
+        if (!day.originalType) {
+          day.originalType = day.type;
+          day.originalDetail = day.detail;
+        }
+
+        // Brief "thinking" beat, then apply derived change.
+        setTimeout(() => {
+          const p = prompt.toLowerCase();
+          if (/rest|day off|skip/.test(p)) {
+            day.type = 'Rest';
+            day.detail = 'Rest day';
+          } else if (/easier|recovery|easy|deload|lighter|drop intensity|zone 2/.test(p)) {
+            day.type = day.type === 'Rest' ? 'Easy run' : day.type;
+            day.detail = 'Reduced to easy effort · Zone 2 recovery';
+          } else if (/short|cut|reduce|less volume|20%|trim/.test(p)) {
+            const km = (day.detail.match(/(\d+(?:\.\d+)?)\s*km/i) || [])[1];
+            day.detail = km
+              ? `${(km * 0.8).toFixed(1)} km — volume trimmed 20%`
+              : (day.detail + ' — volume trimmed 20%');
+          } else if (/hard|harder|intensity up|push|threshold/.test(p)) {
+            day.detail = day.detail + ' — intensity raised, RPE 8';
+          } else if (/mobility|stretch/.test(p)) {
+            day.type = 'Mobility';
+            day.detail = '30 min dynamic mobility';
+          } else {
+            // Generic: fold the request into the detail line.
+            day.detail = `${day.detail} · adjusted: ${prompt}`;
+          }
+          day.edited = true;
+          inlineAiEditing = false;
+          renderInlineSchedule(window.client);
+        }, 850);
       }
 
       function saveInlineTweak(dayName) {
@@ -6328,10 +6599,15 @@
       }
 
       // Export inline schedule methods to window for onclick handlers
+      window.renderInlineSchedule = renderInlineSchedule;
       window.startInlineEdit = startInlineEdit;
       window.cancelInlineEdit = cancelInlineEdit;
       window.saveInlineTweak = saveInlineTweak;
       window.openNutritionFromInline = openNutritionFromInline;
+      window.startAiEdit = startAiEdit;
+      window.cancelAiEdit = cancelAiEdit;
+      window.applyAiQuickPrompt = applyAiQuickPrompt;
+      window.runAiEdit = runAiEdit;
 
       // Flip the whole strip between the current and recommended week, with a
       // brief blur-crossfade (DESIGN.md transition idiom). reduced-motion -> instant.
@@ -6343,33 +6619,35 @@
         if (!strip) return;
 
         const toggle = document.getElementById('week-toggle');
-        const apply = () => {
-          const isReco = view === 'recommended';
-          strip.dataset.view = view;
-          if (toggle) toggle.setAttribute('aria-checked', isReco ? 'true' : 'false');
-          if (thumb) thumb.style.transform = isReco ? 'translateX(100%)' : 'translateX(0)';
+        const isReco = view === 'recommended';
 
-          // Refresh inline details when toggle changes
-          renderInlineDayDetails(window.client);
-        };
+        // Flip the source-of-truth state SYNCHRONOUSLY so back-to-back clicks
+        // always read the current side. Only the re-render is deferred for the
+        // crossfade.
+        strip.dataset.view = view;
+        if (toggle) toggle.setAttribute('aria-checked', isReco ? 'false' : 'true');
+        if (thumb) thumb.style.transform = isReco ? 'translateX(0)' : 'translateX(100%)';
+
+        const render = () => renderInlineDayDetails(window.client);
 
         const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (opts.silent || reduce) { apply(); return; }
+        if (opts.silent || reduce) { render(); return; }
 
-        const track = document.getElementById('inline-schedule-console');
-        if (track) {
-          track.classList.add('is-swapping');
+        // Blur-crossfade the grid host while the new view renders.
+        const gridHost = document.getElementById('inline-day-details');
+        if (gridHost) {
+          gridHost.classList.add('is-swapping');
           clearTimeout(weekSwapTimer);
           weekSwapTimer = setTimeout(() => {
-            apply();
+            render();
             requestAnimationFrame(() => {
-              track.classList.remove('is-swapping');
-              if (view === 'recommended') celebrateReco();
+              gridHost.classList.remove('is-swapping');
+              if (isReco) celebrateReco();
             });
           }, 150);
         } else {
-          apply();
-          if (view === 'recommended') celebrateReco();
+          render();
+          if (isReco) celebrateReco();
         }
       }
 
@@ -6409,9 +6687,9 @@
         const toggle = document.getElementById('week-toggle');
         if (!toggle) return;
         toggle.addEventListener('click', () => {
-          const strip = document.getElementById('week-strip');
-          if (strip && strip.classList.contains('no-changes')) return;
-          const isReco = toggle.getAttribute('aria-checked') === 'true';
+          // Toggle is always live — flip between Current and Zora's plan even
+          // when the two weeks happen to match.
+          const isReco = toggle.getAttribute('aria-checked') === 'false';
           setWeekView(isReco ? 'current' : 'recommended');
         });
       })();
@@ -6604,9 +6882,9 @@
         // For named CSS var references, return a concrete fallback the browser
         // can use inside SVG defs (which don't inherit cascade the same way).
         if (cssVar === 'var(--accent)') return '#7a5487';
-        if (cssVar === 'var(--ok)')     return '#22c55e';
-        if (cssVar === 'var(--bad)')    return '#e74c3c';
-        if (cssVar === 'var(--warn)')   return '#e67e22';
+        if (cssVar === 'var(--ok)') return '#22c55e';
+        if (cssVar === 'var(--bad)') return '#e74c3c';
+        if (cssVar === 'var(--warn)') return '#e67e22';
         return cssVar;
       }
 
@@ -7052,7 +7330,7 @@
 
         const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         const LABELS = { 2: 'Completed', 1: 'Partial', 0: 'Skipped', '-1': 'Rest' };
-        const STATUS  = { 2: 'good',     1: 'warn',    0: 'bad',     '-1': 'rest' };
+        const STATUS = { 2: 'good', 1: 'warn', 0: 'bad', '-1': 'rest' };
 
         // Header row: empty corner + 7 day labels
         const corner = document.createElement('div');
@@ -7142,7 +7420,7 @@
         // Plan fit score and bar
         const scoreEl = document.getElementById('plan-quality-score');
         const qBar = document.getElementById('plan-quality-bar');
-        
+
         if (scoreEl && qBar) {
           if (c.planFit) {
             scoreEl.innerHTML = `${c.planFit.score}<span style="font-size: 11px; color: var(--ink-4);">/100</span>`;
@@ -7824,7 +8102,7 @@
       // 8. Bind action rail buttons.
       // Each button switches to the tab that holds its section, scrolls it into
       // view, and flashes it once. Chat and Call open their existing surfaces.
-      const railButtons = document.querySelectorAll('.persistent-action-rail .action-rail-btn');
+      const railButtons = document.querySelectorAll('.rec-actions .rec-action-btn');
       function setRailActive(btn) {
         railButtons.forEach(b => b.classList.toggle('is-active', b === btn));
       }
@@ -7874,6 +8152,7 @@
       if (railHistory) railHistory.addEventListener('click', () => goToSection('risk', 'section-history', railHistory));
       if (railCall) railCall.addEventListener('click', () => { setRailActive(railCall); openScheduleCallModal(); });
       if (railChat) railChat.addEventListener('click', () => { setRailActive(railChat); openChatSlideover(); });
+
 
       // Theme Toggle Logic
       const themeBtn = document.getElementById('theme-toggle');
@@ -8006,7 +8285,7 @@
             const strip = document.getElementById('strip-avatar');
             if (strip && window.ZoraFaces) window.ZoraFaces.paintOne(strip, window.client.name);
             // Reset any active rail selection; the coach is starting fresh on this client.
-            document.querySelectorAll('.persistent-action-rail .action-rail-btn.is-active')
+            document.querySelectorAll('.rec-actions .rec-action-btn.is-active')
               .forEach(b => b.classList.remove('is-active'));
             // Keep the URL shareable + the back/forward stack honest.
             const url = `${window.location.pathname}?client=${key}&tab=${currentTab}`;
@@ -8061,9 +8340,42 @@
           menu.hidden = true;
           jumpBtn.setAttribute('aria-expanded', 'false');
         }
+        let csMenuHideTimer = null;
+        function showCsMenu() {
+          clearTimeout(csMenuHideTimer);
+          openMenu();
+        }
+        function hideCsMenu(immediate) {
+          clearTimeout(csMenuHideTimer);
+          const delay = immediate ? 0 : 120;
+          csMenuHideTimer = setTimeout(() => {
+            closeMenu();
+          }, delay);
+        }
+
         jumpBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           if (menu.hidden) openMenu(); else closeMenu();
+        });
+
+        jumpBtn.addEventListener('mouseover', () => {
+          showCsMenu();
+        });
+        jumpBtn.addEventListener('mouseout', (e) => {
+          const toEl = e.relatedTarget;
+          if (!toEl || (!toEl.closest('#cs-jump') && !toEl.closest('#cs-menu'))) {
+            hideCsMenu(false);
+          }
+        });
+
+        menu.addEventListener('mouseover', () => {
+          showCsMenu();
+        });
+        menu.addEventListener('mouseout', (e) => {
+          const toEl = e.relatedTarget;
+          if (!toEl || (!toEl.closest('#cs-menu') && !toEl.closest('#cs-jump'))) {
+            hideCsMenu(false);
+          }
         });
         // Clicking anywhere outside the menu (or its trigger) collapses it.
         document.addEventListener('click', (e) => {
@@ -8232,6 +8544,960 @@
   </script>
 
   <style>
+    /* ===== View-week trigger button ===== */
+    .view-week-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px 6px 9px;
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-3);
+      cursor: pointer;
+      white-space: nowrap;
+      margin-left: 8px;
+      transition: color 130ms ease, border-color 130ms ease, background 130ms ease;
+    }
+
+    .view-week-btn:hover {
+      color: var(--ink);
+      border-color: rgba(26, 26, 46, 0.25);
+      background: rgba(26, 26, 46, 0.03);
+    }
+
+    .view-week-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .view-week-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* ===== Full-Week Schedule Modal ===== */
+    .week-modal {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      width: min(1060px, calc(100vw - 32px));
+      max-height: calc(100vh - 48px);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0;
+      background: var(--paper-2);
+      box-shadow: 0 24px 64px -16px rgba(26, 26, 46, 0.18), 0 4px 16px rgba(26, 26, 46, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      /* entry animation target */
+      opacity: 0;
+      transform: scale(0.97) translateY(8px);
+      transition: opacity 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .week-modal[open] {
+      display: flex;
+    }
+
+    .week-modal.wm-entering {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .week-modal::backdrop {
+      background: rgba(26, 26, 46, 0.28);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .week-modal.wm-entering::backdrop {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .week-modal,
+      .week-modal::backdrop {
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .wm-inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+
+    /* Header */
+    .wm-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px 16px;
+      border-bottom: 1px solid var(--line-soft);
+      flex-shrink: 0;
+    }
+
+    .wm-head-left {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .wm-title {
+      font-family: var(--font-geist);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .wm-subtitle {
+      font-family: var(--font-dm-sans);
+      font-size: 12px;
+      color: var(--ink-4);
+    }
+
+    .wm-head-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* Mirror of the main week toggle, scaled down */
+    .wm-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: stretch;
+      width: 240px;
+      height: 30px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(26, 26, 46, 0.04);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 200ms ease;
+      box-sizing: border-box;
+    }
+
+    [data-theme="dark"] .wm-toggle {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .wm-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .wm-toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: calc(50% - 3px);
+      height: calc(100% - 6px);
+      border-radius: 4px;
+      background: var(--accent);
+      box-shadow: 0 1px 6px rgba(122, 84, 135, 0.4);
+      transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 0;
+    }
+
+    .wm-toggle-end {
+      position: relative;
+      z-index: 1;
+      flex: 1 1 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: -0.003em;
+      color: var(--ink-3);
+      white-space: nowrap;
+      transition: color 200ms ease;
+      pointer-events: none;
+    }
+
+    .wm-toggle[aria-checked="false"] .wm-toggle-end--left { color: #fff; }
+    .wm-toggle[aria-checked="true"]  .wm-toggle-end--right { color: #fff; }
+
+    .wm-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink-3);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 130ms ease, color 130ms ease, border-color 130ms ease;
+      flex-shrink: 0;
+    }
+
+    .wm-close:hover {
+      background: rgba(26, 26, 46, 0.05);
+      color: var(--ink);
+      border-color: rgba(26, 26, 46, 0.2);
+    }
+
+    .wm-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Body: 7-column scrollable grid */
+    .wm-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 20px 4px;
+    }
+
+    .wm-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0;
+      min-width: 600px;
+    }
+
+    /* Zora's Recommendation card: a more defined border + a touch more room on
+       the right so the floating dial never overlaps it. */
+    .rec-card {
+      border: 1.5px solid color-mix(in srgb, var(--accent) 32%, var(--line)) !important;
+      border-radius: 20px;
+      /* Sits just below the signals/dials with a clear gap. */
+      margin-top: 32px;
+    }
+
+    [data-theme="dark"] .rec-card {
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important;
+    }
+
+    /* "Zora's Recommendation" heading at 80% of its size. */
+    .rec-card .rec-h1 {
+      font-size: 22.4px;
+    }
+
+    .rec-card .rec-h1 .ai-sparkle-inline svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ===== Quick-action rail as a minimal semicircular dial on the right edge.
+       Center pinned to the right viewport edge; the four buttons fan out along
+       a left-facing semicircle. ===== */
+    /* Plan toggle moved below the schedule box (still inside the card). */
+    .week-toggle--below {
+      margin: 16px auto 0;
+    }
+
+    /* Quick actions: pinned to the card's top-right corner, sitting above the
+       heading. Icon + label, horizontal, no pills, hairline dividers between. */
+    .rec-actions {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 0;
+      z-index: 3;
+    }
+
+    .rec-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-family: var(--font-dm-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-3);
+      white-space: nowrap;
+      transition: color 150ms var(--ease-out);
+      position: relative;
+    }
+
+    /* Hairline divider between items */
+    .rec-action-btn + .rec-action-btn::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 16px;
+      background: var(--line-soft);
+    }
+
+    .rec-action-btn svg {
+      width: 15px;
+      height: 15px;
+      color: var(--ink-4);
+      transition: color 150ms var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .rec-action-btn:hover { color: var(--accent-deep); }
+    .rec-action-btn:hover svg { color: var(--accent); }
+    [data-theme="dark"] .rec-action-btn:hover { color: var(--accent); }
+
+    .rec-action-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .rec-action-btn.is-active { color: var(--accent-deep); }
+    .rec-action-btn.is-active svg { color: var(--accent); }
+
+    @media (max-width: 720px) {
+      .rec-action-btn span {
+        position: absolute;
+        width: 1px; height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+      }
+      .rec-action-btn { padding: 6px 10px; }
+    }
+
+    /* Console strip is empty now that the grid is the default inline view —
+       collapse it so it leaves no gap above the grid. */
+    #inline-schedule-console:empty {
+      display: none;
+    }
+
+    #inline-day-details {
+      transition: filter 150ms var(--ease-out), opacity 150ms var(--ease-out);
+    }
+
+    /* Tighten padding throughout the inline Weekly Schedule grid so the full
+       7-day schedule fits with minimal wasted space. Modal copy untouched. */
+    .inline-week-grid-host .wm-grid {
+      min-width: 0;
+    }
+
+    .inline-week-grid-host .wm-day-head {
+      padding: 6px 7px 6px;
+    }
+
+    .inline-week-grid-host .wm-section {
+      padding: 7px 8px;
+    }
+
+    /* Trim the card's body padding so the full-width schedule stretches wider,
+       evenly on both sides (no shift). */
+    .rec-card .rec-body {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    .sched-detail-shell .sched-actions-row {
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+
+    /* Slimmer outer padding on the schedule card itself. */
+    .week-strip {
+      padding: 12px 12px 14px;
+    }
+
+    .sched-detail-shell {
+      margin-top: 12px;
+      padding-top: 12px;
+    }
+
+    #inline-day-details.is-swapping {
+      filter: blur(1.5px);
+      opacity: 0.55;
+    }
+
+    /* Inline host: the full-week grid is now the default view inside the
+       Weekly Schedule Adjustment card (not just the modal). The detail row is
+       normally a 3-column grid; collapse it to one cell when hosting the
+       full-week grid so it can span the whole width. */
+    .sched-cards-row.inline-week-grid-host {
+      display: block !important;
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      background: var(--paper-2);
+    }
+
+    .inline-week-grid-host .wm-grid {
+      width: 100%;
+      min-width: 0;
+      gap: 6px;
+      /* Slim vertical-label column + 7 equal day columns. */
+      grid-template-columns: 22px repeat(7, minmax(0, 1fr));
+      grid-template-rows: auto auto auto auto;
+    }
+
+
+    .inline-week-grid-host .wm-day-col {
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 4;
+    }
+
+    [data-theme="light"] .inline-week-grid-host {
+      background: var(--paper-3);
+    }
+
+    /* Day column */
+    .wm-day-col {
+      border-right: 1px solid var(--line-soft);
+      min-width: 0;
+    }
+
+    .wm-day-col:last-child {
+      border-right: 0;
+    }
+
+    .wm-day-head {
+      padding: 8px 12px 9px;
+      border-bottom: 1px solid var(--line-soft);
+      position: sticky;
+      top: 0;
+      background: var(--paper-2);
+      z-index: 2;
+    }
+
+    .wm-day-name {
+      font-family: var(--font-geist-mono);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+    }
+
+    .wm-day-col.is-changed .wm-day-name {
+      color: var(--accent-deep);
+    }
+
+    [data-theme="dark"] .wm-day-col.is-changed .wm-day-name {
+      color: var(--accent);
+    }
+
+
+    /* Adjusted marker is now a single accent dot, not a text tag. */
+    .wm-adjusted-tag {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .wm-day-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ============================================================
+       VIBRANT SCHEDULE — committed per-category color, TODAY accent,
+       icon chips. Overrides the calmer base above.
+       ============================================================ */
+    .inline-week-grid-host {
+      --c-train: var(--accent);          /* purple */
+      --c-train-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+      --c-nutri: #1f9d6b;                /* green */
+      --c-nutri-soft: rgba(31, 157, 107, 0.12);
+      --c-recov: #2b8fb8;                /* teal-blue */
+      --c-recov-soft: rgba(43, 143, 184, 0.12);
+      --c-warn-text: #a85a18;            /* AA-safe warn on light tint */
+    }
+    [data-theme="dark"] .inline-week-grid-host {
+      --c-warn-text: var(--warn);
+    }
+
+    /* Day columns get rounded separation + lift on hover */
+    .inline-week-grid-host .wm-day-col {
+      border-right: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      min-width: 0;            /* allow equal tracks; content shrinks, not widens */
+    }
+    .inline-week-grid-host .wm-section { min-width: 0; }
+    .inline-week-grid-host .wm-act { min-width: 0; }
+    /* keep the today ring visible (not clipped) */
+    .inline-week-grid-host .wm-day-col.is-today { overflow: visible; }
+    /* Subgrid fallback: browsers without subgrid still stack sections cleanly. */
+    @supports not (grid-template-rows: subgrid) {
+      .inline-week-grid-host .wm-day-col {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    /* Left label column: vertical category names, no card chrome. */
+    .inline-week-grid-host .wm-label-col {
+      border: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .inline-week-grid-host .wm-label-head { border-bottom: 0; background: transparent; }
+    .inline-week-grid-host .wm-label-cell {
+      background: transparent !important;
+      border-top: 0 !important;
+      padding: 6px 0 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+    }
+    .wm-vlabel {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: var(--font-geist);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      white-space: nowrap;
+    }
+    /* Zora sparkle at the top of each label cell, above the vertical word.
+       Tint encodes signal state; hover opens the "Based on signals" popover. */
+    .wm-ctx-spark {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: help;
+      display: grid;
+      place-items: center;
+      color: var(--ink-4);
+      transition: transform 160ms var(--ease-out), color 160ms var(--ease-out), filter 160ms var(--ease-out);
+    }
+    .wm-ctx-spark svg { width: 14px; height: 14px; }
+    /* Generous invisible hit area for pointer + touch. */
+    .wm-ctx-spark::after { content: ""; position: absolute; inset: -7px; }
+    .wm-ctx-spark.is-ok      { color: var(--accent); }
+    .wm-ctx-spark.is-warn    { color: var(--c-warn-text, #a85a18); }
+    .wm-ctx-spark.is-flagged { color: var(--bad); }
+    [data-theme="dark"] .wm-ctx-spark.is-warn { color: var(--warn); }
+    .wm-ctx-spark:hover,
+    .wm-ctx-spark.is-open {
+      transform: scale(1.18) rotate(8deg);
+      filter: drop-shadow(0 0 5px color-mix(in srgb, currentColor 45%, transparent));
+    }
+    .wm-ctx-spark:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      .wm-ctx-spark:hover, .wm-ctx-spark.is-open { transform: none; }
+    }
+
+    /* Vibrant day header */
+    .inline-week-grid-host .wm-day-head {
+      background: var(--paper-3);
+      border-bottom: 2px solid var(--line-soft);
+    }
+    .inline-week-grid-host .wm-day-name { color: var(--ink-2); }
+
+    /* TODAY: filled accent header + ring around the whole column */
+    .inline-week-grid-host .wm-day-col.is-today {
+      box-shadow: inset 0 0 0 2px var(--accent);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--accent) 5%, transparent);
+    }
+    .inline-week-grid-host .wm-day-col.is-today .wm-day-head {
+      background: var(--accent);
+      border-bottom-color: var(--accent);
+      border-radius: 10px 10px 0 0;
+    }
+    .inline-week-grid-host .wm-day-col.is-today .wm-day-name {
+      color: #fff;
+      letter-spacing: 0.1em;
+    }
+
+    /* Category bands: soft tinted background + colored heading */
+    .inline-week-grid-host .wm-section--training { background: var(--c-train-soft); }
+    .inline-week-grid-host .wm-section--nutrition { background: var(--c-nutri-soft); }
+    .inline-week-grid-host .wm-section--recovery  { background: var(--c-recov-soft); }
+
+    /* Icon chip: filled circle in the band's color */
+    .wm-chip {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      box-shadow: 0 2px 6px -2px rgba(26, 26, 46, 0.18);
+    }
+    [data-theme="dark"] .wm-chip { background: rgba(255,255,255,0.1); }
+    .wm-chip .wm-ico { width: 22px; height: 22px; }
+
+    /* Small chip for inline metric icons (egg / protein), matching the others */
+    .wm-chip-sm {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+    }
+    .wm-chip-sm .wm-ico,
+    .wm-chip-sm .wm-ico-sm { width: 16px; height: 16px; }
+
+    /* Colored category accent on the activity name */
+    .inline-week-grid-host .wm-section--training .wm-act-name { color: var(--accent-deep); }
+    .inline-week-grid-host .wm-section--nutrition .wm-act-name { color: var(--c-nutri); }
+
+    /* "Based on signals" ? trigger inside the schedule (TODAY column).
+       Pinned to each section's top-right corner so all three behave the same. */
+    .inline-week-grid-host .wm-section { position: relative; }
+    .wm-chip, .wm-act-name, .wm-act-detail, .wm-metrics, .wm-habit-list { pointer-events: none; }
+    .wm-ctx-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 5;
+      pointer-events: auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink-3);
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+      cursor: help;
+      display: grid;
+      place-items: center;
+      transition: background 140ms var(--ease-out), border-color 140ms var(--ease-out), color 140ms var(--ease-out);
+    }
+    .wm-ctx-btn:hover,
+    .wm-ctx-btn.is-open {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-deep);
+    }
+    [data-theme="dark"] .wm-ctx-btn:hover,
+    [data-theme="dark"] .wm-ctx-btn.is-open { color: var(--accent); }
+    .wm-ctx-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Recovery habit icons in the same flat chip as the others */
+    .inline-week-grid-host .wm-section--recovery .wm-habit-item .wm-ico,
+    .inline-week-grid-host .wm-section--recovery .wm-habit-item .wm-ico-sm {
+      padding: 3px;
+      border-radius: 7px;
+      background: #fff;
+      box-shadow: 0 1px 3px -1px rgba(26, 26, 46, 0.16);
+      box-sizing: content-box;
+    }
+    [data-theme="dark"] .inline-week-grid-host .wm-section--recovery .wm-habit-item .wm-ico,
+    [data-theme="dark"] .inline-week-grid-host .wm-section--recovery .wm-habit-item .wm-ico-sm {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ===== Icon-led day cell ===== */
+    .wm-act {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Real /Icons art: rendered as <img>, fixed box, left of the text. */
+    .wm-ico {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .wm-ico-sm {
+      width: 20px;
+      height: 20px;
+    }
+
+    .wm-section--training.is-rest .wm-ico { opacity: 0.6; }
+
+    .wm-act-name {
+      font-family: var(--font-geist);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+      letter-spacing: -0.005em;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .wm-section--training.is-rest .wm-act-name { color: var(--ink-4); }
+
+    /* Full prescription line under the activity name */
+    .wm-act-detail {
+      font-family: var(--font-dm-sans);
+      font-size: 13px;
+      color: var(--ink-3);
+      line-height: 1.35;
+      margin-top: 5px;
+      overflow-wrap: anywhere;
+      text-wrap: pretty;
+    }
+
+    /* Metric rows: icon + value, no label words */
+    .wm-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .wm-metric {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-geist-mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wm-metric svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      color: var(--ink-4);
+    }
+
+    .wm-metric .wm-ico,
+    .wm-metric .wm-ico-sm { width: 18px; height: 18px; }
+
+    .wm-metric.is-ok   { color: var(--ok); }
+    .wm-metric.is-ok svg   { color: var(--ok); }
+    .wm-metric.is-warn { color: var(--c-warn-text, #a85a18); }
+    .wm-metric.is-warn svg { color: var(--c-warn-text, #a85a18); }
+    .wm-metric.is-bad  { color: var(--bad); }
+    .wm-metric.is-bad svg  { color: var(--bad); }
+
+    /* Recovery focus + habits, compact */
+    .wm-focus {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-dm-sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-deep);
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .wm-focus svg { width: 16px; height: 16px; flex-shrink: 0; }
+    [data-theme="dark"] .wm-focus { color: var(--accent); }
+
+    /* ============================================================
+       SCHEDULE TYPESET + LAYOUT (product register)
+       Fixed rem scale, 1.2 ratio, mono tabular-nums for data, one
+       consistent 4pt spacing rhythm. Scoped to the inline grid.
+       ============================================================ */
+    .inline-week-grid-host {
+      --sch-eyebrow: 0.6875rem;  /* 11px — day label */
+      --sch-primary: 0.9375rem;  /* 15px — activity / kcal */
+      --sch-secondary: 0.8125rem;/* 13px — detail line */
+      --sch-data: 0.8125rem;     /* 13px — metrics, habits */
+      --sch-pad: 12px;
+      --sch-gap: 10px;
+    }
+
+    /* Day label: the one eyebrow, tracked, tabular */
+    .inline-week-grid-host .wm-day-name {
+      font-size: var(--sch-eyebrow);
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+    }
+    .inline-week-grid-host .wm-day-head { padding: 9px var(--sch-pad); }
+
+    /* Primary line: activity type / kcal */
+    .inline-week-grid-host .wm-act-name {
+      font-size: var(--sch-primary);
+      font-weight: 650;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    /* Secondary: the full prescription */
+    .inline-week-grid-host .wm-act-detail {
+      font-size: var(--sch-secondary);
+      line-height: 1.4;
+      color: var(--ink-3);
+      margin-top: 6px;
+    }
+
+    /* Data rows: numbers align, mono */
+    .inline-week-grid-host .wm-metric {
+      font-size: var(--sch-data);
+      font-weight: 550;
+    }
+    .inline-week-grid-host .wm-habit-item {
+      font-size: var(--sch-data);
+      font-family: var(--font-dm-sans);
+      line-height: 1.35;
+    }
+
+    /* Spacing rhythm: consistent section padding + group gaps */
+    .inline-week-grid-host .wm-section { padding: var(--sch-pad); }
+    .inline-week-grid-host .wm-act { gap: 10px; }
+    .inline-week-grid-host .wm-metrics { gap: 6px; margin-top: 10px; }
+    .inline-week-grid-host .wm-habit-list { gap: 7px; margin-top: 0; }
+
+    /* Tighter chip to match the new primary size */
+    .inline-week-grid-host .wm-chip { width: 28px; height: 28px; border-radius: 8px; }
+    .inline-week-grid-host .wm-chip .wm-ico { width: 15px; height: 15px; }
+
+    /* Section inside each column */
+    .wm-section {
+      padding: 10px 12px 10px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .wm-section:last-child {
+      border-bottom: 0;
+    }
+
+    .wm-section-meta {
+      font-family: var(--font-geist-mono);
+      font-size: 10px;
+      color: var(--ink-3);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wm-section-meta.ok  { color: var(--ok); }
+    .wm-section-meta.warn { color: #a85a18; }
+    .wm-section-meta.bad { color: var(--bad); }
+
+    [data-theme="dark"] .wm-section-meta.warn { color: var(--warn); }
+
+    .wm-habit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: 4px;
+    }
+
+    .wm-habit-item {
+      font-family: var(--font-dm-sans);
+      font-size: 14px;
+      color: var(--ink-3);
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wm-habit-item .wm-ico,
+    .wm-habit-item .wm-ico-sm { width: 23px; height: 23px; }
+
+    .wm-habit-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 4px;
+      opacity: 0.6;
+    }
+
+    /* Changed training row: accent the name + icon chip */
+    .wm-day-col.is-changed .wm-section--training .wm-act-name {
+      color: var(--accent-deep);
+    }
+
+    [data-theme="dark"] .wm-day-col.is-changed .wm-section--training .wm-act-name {
+      color: var(--accent);
+    }
+
+    /* Footer */
+    .wm-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .wm-approve {
+      font-size: 13px;
+      padding: 9px 18px;
+    }
+
+    .wm-close-btn {
+      font-size: 13px;
+      padding: 9px 14px;
+      margin-left: auto;
+    }
+
+    /* Narrow: horizontal scroll-snap per day */
+    @media (max-width: 767px) {
+      .week-modal {
+        width: calc(100vw - 16px);
+        max-height: calc(100vh - 24px);
+        border-radius: 10px;
+      }
+
+      .wm-body {
+        overflow-x: auto;
+        overflow-y: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+      }
+
+      .wm-grid {
+        display: flex;
+        flex-direction: row;
+        width: calc(7 * 85vw);
+      }
+
+      .wm-day-col {
+        flex: 0 0 85vw;
+        scroll-snap-align: start;
+      }
+
+      .wm-head {
+        flex-wrap: wrap;
+        padding: 14px 14px 12px;
+        gap: 10px;
+      }
+
+      .wm-toggle {
+        width: 100%;
+      }
+    }
+
     /* Inline helper spinner for approve animation */
     @keyframes spin {
       to {
@@ -9577,259 +10843,973 @@
 
   <!-- Ask Zora FAB + copilot panel -->
   <style>
-    .zfab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 9px;border:none;border-radius:15px 0 0 15px;background:var(--accent);color:#fff;box-shadow:-7px 6px 22px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
-    .zfab:hover{transform:translateY(-50%) translateX(-3px);background:var(--accent-deep)}
-    .zfab.hide{transform:translateY(-50%) translateX(112%);pointer-events:none;opacity:0}
-    .zfab-spark svg{width:20px;height:20px}
-    .zfab-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-geist,sans-serif);white-space:nowrap}
-    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
-    .zcopilot.open{transform:none}
-    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
-    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
-    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
-    .zcop-orb svg{width:17px;height:17px;position:relative}
-    .zcop-id{flex:1;min-width:0;position:relative}
-    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
-    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
-    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
-    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
-    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
-    .zcop-x svg{width:16px;height:16px}
-    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
-    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
-    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
-    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
-    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
-    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
-    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
-    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
-    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
-    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
-    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
-    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
-    .zchip .zchip-ic svg{width:15px;height:15px}
-    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
-    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
-    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
-    .zcop-input:focus{outline:none}
-    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
-    .zcop-send:hover{background:var(--accent-deep)}
-    .zcop-send:active{transform:scale(.94)}
-    .zcop-send svg{width:16px;height:16px}
-    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+    .zfab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1100;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 99px;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(90, 65, 104, .30);
+      cursor: pointer;
+      transition: transform .24s cubic-bezier(.23, 1, .32, 1), background .2s
+    }
+
+    .zfab:hover {
+      transform: translateY(-2px);
+      background: var(--accent-deep)
+    }
+
+    .zfab.hide {
+      transform: translateY(150%) scale(0.9);
+      pointer-events: none;
+      opacity: 0
+    }
+
+    .zfab-spark svg {
+      width: 18px;
+      height: 18px;
+      display: block
+    }
+
+    .zfab-label {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-geist, sans-serif);
+      white-space: nowrap
+    }
+
+    .zcopilot {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1101;
+      width: 400px;
+      max-width: calc(100vw - 16px);
+      background: var(--paper-2);
+      border-left: 1px solid var(--line);
+      box-shadow: -18px 0 50px rgba(28, 18, 38, .20);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(106%);
+      transition: transform .34s cubic-bezier(.23, 1, .32, 1)
+    }
+
+    .zcopilot.open {
+      transform: none
+    }
+
+    .zcop-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 14px 14px 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, var(--paper-2)) 0%, var(--paper-2) 62%);
+      overflow: hidden
+    }
+
+    .zcop-head::before {
+      content: "";
+      position: absolute;
+      top: -54px;
+      left: -30px;
+      width: 190px;
+      height: 134px;
+      background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 42%, transparent), transparent 72%);
+      opacity: .55;
+      pointer-events: none
+    }
+
+    .zcop-orb {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      flex: none;
+      background: linear-gradient(150deg, var(--accent-soft), var(--accent) 55%, var(--accent-deep));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 40%, transparent), inset 0 1px 0 rgba(255, 255, 255, .32)
+    }
+
+    .zcop-orb svg {
+      width: 17px;
+      height: 17px;
+      position: relative
+    }
+
+    .zcop-id {
+      flex: 1;
+      min-width: 0;
+      position: relative
+    }
+
+    .zcop-title {
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--ink);
+      letter-spacing: -.01em;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      font-family: var(--font-geist, sans-serif)
+    }
+
+    .zcop-live {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 18%, transparent);
+      animation: zcLive 2s ease-in-out infinite
+    }
+
+    @keyframes zcLive {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    .zcop-sub {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-weight: 600;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .zcop-x {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper-2) 72%, transparent);
+      color: var(--ink-4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color .14s, border-color .14s, background .14s;
+      flex: none
+    }
+
+    .zcop-x:hover {
+      color: var(--bad);
+      border-color: rgba(192, 57, 43, .35);
+      background: color-mix(in oklab, var(--bad) 10%, transparent)
+    }
+
+    .zcop-x svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .zcop-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .zbubble {
+      max-width: 88%;
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 11px 14px;
+      border-radius: 16px;
+      font-family: var(--font-dm-sans, sans-serif)
+    }
+
+    .zbubble.ai {
+      background: var(--paper-3);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+      box-shadow: 0 1px 3px rgba(26, 26, 46, .04)
+    }
+
+    .zbubble.me {
+      background: linear-gradient(150deg, var(--accent), var(--accent-deep));
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px
+    }
+
+    .ztyping {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      padding: 13px 15px
+    }
+
+    .ztyping .zdot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ink-4);
+      animation: zBlink 1.2s infinite
+    }
+
+    .ztyping .zdot:nth-child(2) {
+      animation-delay: .18s
+    }
+
+    .ztyping .zdot:nth-child(3) {
+      animation-delay: .36s
+    }
+
+    @keyframes zBlink {
+
+      0%,
+      60%,
+      100% {
+        opacity: .25;
+        transform: translateY(0)
+      }
+
+      30% {
+        opacity: 1;
+        transform: translateY(-3px)
+      }
+    }
+
+    .zchips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px
+    }
+
+    .zchip {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: var(--ink);
+      cursor: pointer;
+      transition: border-color .14s, background .14s, transform .14s
+    }
+
+    .zchip:hover {
+      border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+      background: var(--accent-soft);
+      transform: translateX(2px)
+    }
+
+    .zchip .zchip-ic {
+      width: 26px;
+      height: 26px;
+      flex: none;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .zchip .zchip-ic svg {
+      width: 15px;
+      height: 15px
+    }
+
+    .zcop-foot {
+      margin: 12px;
+      padding: 6px 6px 6px 7px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: var(--paper-2);
+      box-shadow: 0 1px 3px rgba(26, 26, 46, .04);
+      transition: border-color .15s, box-shadow .15s
+    }
+
+    .zcop-foot:focus-within {
+      border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 12%, transparent)
+    }
+
+    .zcop-input {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 9px 6px 9px 10px;
+      font-size: 13px;
+      color: var(--ink);
+      font-family: inherit
+    }
+
+    .zcop-input:focus {
+      outline: none
+    }
+
+    .zcop-send {
+      width: 38px;
+      height: 38px;
+      flex: none;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, transform .12s
+    }
+
+    .zcop-send:hover {
+      background: var(--accent-deep)
+    }
+
+    .zcop-send:active {
+      transform: scale(.94)
+    }
+
+    .zcop-send svg {
+      width: 16px;
+      height: 16px
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      .zfab,
+      .zcopilot,
+      .zbubble {
+        transition: none;
+        animation: none
+      }
+    }
   </style>
 
   <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
     <span class="zfab-spark">
-      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
+      </svg>
     </span>
-    <span class="zfab-label">Ask Zora</span>
+    <span class="zfab-label">Zora</span>
   </button>
 
   <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
     <div class="zcop-head">
       <div class="zcop-orb">
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <path
+            d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
+        </svg>
       </div>
       <div class="zcop-id">
         <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
         <div class="zcop-sub">Your coaching intelligence layer</div>
       </div>
       <button class="zcop-x" id="zcop-close" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
       </button>
     </div>
     <div class="zcop-body" id="zcop-body">
       <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
       <div class="zchips">
         <button class="zchip" data-q="Explain this client's training recommendation">
-          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4l3 3" />
+            </svg></span>
           Explain this client's training recommendation
         </button>
         <button class="zchip" data-q="What signals drove these nutrition changes?">
-          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></span>
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10" />
+              <path d="M12 6v6l4 2" />
+            </svg></span>
           What signals drove these nutrition changes?
         </button>
         <button class="zchip" data-q="Draft a message about this week's plan for my client">
-          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span>
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z" />
+            </svg></span>
           Draft a message about this week's plan
         </button>
       </div>
     </div>
     <div class="zcop-foot">
-      <input class="zcop-input" id="zcop-input" placeholder="Ask about this client's plan…" autocomplete="off"/>
+      <input class="zcop-input" id="zcop-input" placeholder="Ask about this client's plan…" autocomplete="off" />
       <button class="zcop-send" id="zcop-send" aria-label="Send">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" />
+        </svg>
       </button>
     </div>
   </div>
 
   <script>
-  (function() {
-    const fab = document.getElementById('zfab');
-    const panel = document.getElementById('zcopilot');
-    const closeBtn = document.getElementById('zcop-close');
-    const body = document.getElementById('zcop-body');
-    const input = document.getElementById('zcop-input');
-    const sendBtn = document.getElementById('zcop-send');
-    if (!fab || !panel) return;
+    (function () {
+      const fab = document.getElementById('zfab');
+      const panel = document.getElementById('zcopilot');
+      const closeBtn = document.getElementById('zcop-close');
+      const body = document.getElementById('zcop-body');
+      const input = document.getElementById('zcop-input');
+      const sendBtn = document.getElementById('zcop-send');
+      if (!fab || !panel) return;
 
-    function openPanel() { panel.classList.add('open'); fab.classList.add('hide'); setTimeout(() => input && input.focus(), 200); }
-    function closePanel() { panel.classList.remove('open'); fab.classList.remove('hide'); }
+      function openPanel() { panel.classList.add('open'); fab.classList.add('hide'); setTimeout(() => input && input.focus(), 200); }
+      function closePanel() { panel.classList.remove('open'); fab.classList.remove('hide'); }
 
-    fab.addEventListener('click', openPanel);
-    closeBtn && closeBtn.addEventListener('click', closePanel);
+      fab.addEventListener('click', openPanel);
+      closeBtn && closeBtn.addEventListener('click', closePanel);
 
-    function addBubble(text, role) {
-      const b = document.createElement('div');
-      b.className = 'zbubble ' + role;
-      b.textContent = text;
-      body.appendChild(b);
-      body.scrollTop = body.scrollHeight;
-      return b;
-    }
-    function showTyping() {
-      const t = document.createElement('div');
-      t.className = 'zbubble ai';
-      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
-      body.appendChild(t);
-      body.scrollTop = body.scrollHeight;
-      return t;
-    }
-    const REPLIES = ["Analysing the client signals now.", "Pulling context from the latest session data.", "Here's what I found based on their recent trends.", "On it — checking wearable data and session logs."];
-    function sendMessage(text) {
-      if (!text) return;
-      addBubble(text, 'me');
-      if (input) input.value = '';
-      const typing = showTyping();
-      setTimeout(() => { typing.remove(); addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai'); }, 900);
-    }
-    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
-    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
-    body && body.addEventListener('click', e => { const chip = e.target.closest('.zchip'); if (!chip) return; sendMessage(chip.dataset.q || chip.textContent.trim()); });
-  })();
+      function addBubble(text, role) {
+        const b = document.createElement('div');
+        b.className = 'zbubble ' + role;
+        b.textContent = text;
+        body.appendChild(b);
+        body.scrollTop = body.scrollHeight;
+        return b;
+      }
+      function showTyping() {
+        const t = document.createElement('div');
+        t.className = 'zbubble ai';
+        t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+        body.appendChild(t);
+        body.scrollTop = body.scrollHeight;
+        return t;
+      }
+      const REPLIES = ["Analysing the client signals now.", "Pulling context from the latest session data.", "Here's what I found based on their recent trends.", "On it — checking wearable data and session logs."];
+      function sendMessage(text) {
+        if (!text) return;
+        addBubble(text, 'me');
+        if (input) input.value = '';
+        const typing = showTyping();
+        setTimeout(() => { typing.remove(); addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai'); }, 900);
+      }
+      sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+      input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+      body && body.addEventListener('click', e => { const chip = e.target.closest('.zchip'); if (!chip) return; sendMessage(chip.dataset.q || chip.textContent.trim()); });
+    })();
   </script>
 
   <!-- ===== Singleton glass tooltip for context ? buttons =====
        A single element repositioned by JS. position:fixed escapes
        overflow:hidden on .inline-day-card and floats above the action rail. -->
+  <!-- ===== Full-Week Schedule Modal ===== -->
+  <dialog class="week-modal" id="week-modal" aria-label="Full week schedule" aria-modal="true">
+    <div class="wm-inner">
+      <div class="wm-head">
+        <div class="wm-head-left">
+          <h2 class="wm-title">Week schedule</h2>
+          <span class="wm-subtitle" id="wm-subtitle"></span>
+        </div>
+        <div class="wm-head-right">
+          <!-- Mirrors the week-strip toggle -->
+          <div class="wm-toggle" id="wm-toggle" role="switch" aria-checked="false" aria-label="Show Zora's plan">
+            <span class="wm-toggle-thumb" id="wm-toggle-thumb"></span>
+            <span class="wm-toggle-end wm-toggle-end--left">Zora's plan</span>
+            <span class="wm-toggle-end wm-toggle-end--right">Current plan</span>
+          </div>
+          <button class="wm-close" id="wm-close" aria-label="Close week schedule">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="wm-body" id="wm-body">
+        <!-- Populated by JS -->
+      </div>
+      <div class="wm-foot">
+        <button class="btn-primary wm-approve" id="wm-approve-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Approve &amp; Send
+        </button>
+        <button class="wm-close-btn btn-ghost" id="wm-close-btn">Close</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="ctx-glass-tip" id="ctx-glass-tip" role="tooltip" aria-live="polite" hidden>
     <div class="ctx-glass-tip-head">Based on signals</div>
     <div id="ctx-glass-tip-body"></div>
   </div>
 
   <script>
-  (function() {
-    const tip = document.getElementById('ctx-glass-tip');
-    const tipBody = document.getElementById('ctx-glass-tip-body');
-    if (!tip || !tipBody) return;
+    (function () {
+      const tip = document.getElementById('ctx-glass-tip');
+      const tipBody = document.getElementById('ctx-glass-tip-body');
+      if (!tip || !tipBody) return;
 
-    let activeBtn = null;
-    let hideTimer = null;
+      let activeBtn = null;
+      let hideTimer = null;
 
-    function showTip(btn) {
-      clearTimeout(hideTimer);
-      if (activeBtn && activeBtn !== btn) {
-        activeBtn.classList.remove('is-open');
-      }
-      activeBtn = btn;
-      btn.classList.add('is-open');
+      function showTip(btn) {
+        clearTimeout(hideTimer);
+        // Already showing this button's tip — don't re-render/reposition (that
+        // caused flicker as the pointer moved over the trigger or tip rows).
+        if (activeBtn === btn && tip.classList.contains('is-visible')) return;
+        if (activeBtn && activeBtn !== btn) {
+          activeBtn.classList.remove('is-open');
+        }
+        activeBtn = btn;
+        btn.classList.add('is-open');
 
-      // Parse signals from data attribute
-      let signals = [];
-      try { signals = JSON.parse(decodeURIComponent(btn.dataset.ctxSignals || '[]')); } catch(e) {}
+        // Parse signals from data attribute
+        let signals = [];
+        try { signals = JSON.parse(decodeURIComponent(btn.dataset.ctxSignals || '[]')); } catch (e) { }
 
-      // Build inner HTML
-      tipBody.innerHTML = signals.map(s => {
-        const dotCls = s.state === 'flagged' ? 'flagged' : s.state === 'warn' ? 'warn' : 'ok';
-        return `<div class="ctx-glass-signal">
+        // Build inner HTML
+        tipBody.innerHTML = signals.map(s => {
+          const dotCls = s.state === 'flagged' ? 'flagged' : s.state === 'warn' ? 'warn' : 'ok';
+          return `<div class="ctx-glass-signal">
           <span class="ctx-glass-signal-dot ${dotCls}" aria-hidden="true"></span>
           <span class="ctx-glass-signal-body">
             <span class="ctx-glass-signal-label">${s.label || ''}</span>
             <span class="ctx-glass-signal-val">${s.val || ''}</span>
           </span>
         </div>`;
-      }).join('');
+        }).join('');
 
-      // Position: below the button, left-aligned, clamped to viewport
-      tip.hidden = false;
-      tip.classList.remove('is-visible');
-
-      requestAnimationFrame(() => {
-        const rect = btn.getBoundingClientRect();
-        const TIP_W = 256;
-        const GAP = 8;
-
-        let left = rect.left;
-        let top = rect.bottom + GAP;
-
-        // Clamp right edge
-        if (left + TIP_W > window.innerWidth - 12) {
-          left = window.innerWidth - TIP_W - 12;
-        }
-        // Clamp bottom edge — show above if no room below
-        const tipH = tip.offsetHeight || 160;
-        if (top + tipH > window.innerHeight - 12) {
-          top = rect.top - GAP - tipH;
-        }
-
-        tip.style.left = left + 'px';
-        tip.style.top = top + 'px';
-
-        // Align caret to button horizontal center, clamped inside the tip
-        const caretX = Math.max(10, Math.min(rect.left + rect.width / 2 - left - 4, TIP_W - 20));
-        tip.style.setProperty('--caret-x', caretX + 'px');
-
-        requestAnimationFrame(() => tip.classList.add('is-visible'));
-      });
-    }
-
-    function hideTip(immediate) {
-      clearTimeout(hideTimer);
-      const delay = immediate ? 0 : 120;
-      hideTimer = setTimeout(() => {
+        // Position: below the button, left-aligned, clamped to viewport
+        tip.hidden = false;
         tip.classList.remove('is-visible');
-        if (activeBtn) { activeBtn.classList.remove('is-open'); activeBtn = null; }
-        // Remove from DOM after transition
-        setTimeout(() => { if (!tip.classList.contains('is-visible')) tip.hidden = true; }, 200);
-      }, delay);
-    }
 
-    // Event delegation — works for dynamically rendered buttons
-    document.addEventListener('mouseover', e => {
-      const btn = e.target.closest('.ctx-tip-trigger');
-      if (btn) showTip(btn);
-    });
-    document.addEventListener('mouseout', e => {
-      const btn = e.target.closest('.ctx-tip-trigger');
-      const toEl = e.relatedTarget;
-      if (btn && (!toEl || (!toEl.closest('.ctx-tip-trigger') && !toEl.closest('#ctx-glass-tip')))) {
-        hideTip(false);
+        requestAnimationFrame(() => {
+          const rect = btn.getBoundingClientRect();
+          const TIP_W = 256;
+          const GAP = 8;
+
+          let left = rect.left;
+          let top = rect.bottom + GAP;
+
+          // Clamp right edge
+          if (left + TIP_W > window.innerWidth - 12) {
+            left = window.innerWidth - TIP_W - 12;
+          }
+          // Clamp bottom edge — show above if no room below
+          const tipH = tip.offsetHeight || 160;
+          if (top + tipH > window.innerHeight - 12) {
+            top = rect.top - GAP - tipH;
+          }
+
+          tip.style.left = left + 'px';
+          tip.style.top = top + 'px';
+
+          // Align caret to button horizontal center, clamped inside the tip
+          const caretX = Math.max(10, Math.min(rect.left + rect.width / 2 - left - 4, TIP_W - 20));
+          tip.style.setProperty('--caret-x', caretX + 'px');
+
+          requestAnimationFrame(() => tip.classList.add('is-visible'));
+        });
       }
-    });
-    tip.addEventListener('mouseover', () => clearTimeout(hideTimer));
-    tip.addEventListener('mouseout', e => {
-      if (!e.relatedTarget || !e.relatedTarget.closest('#ctx-glass-tip') && !e.relatedTarget.closest('.ctx-tip-trigger')) {
-        hideTip(false);
+
+      function hideTip(immediate) {
+        clearTimeout(hideTimer);
+        const delay = immediate ? 0 : 200;
+        hideTimer = setTimeout(() => {
+          tip.classList.remove('is-visible');
+          if (activeBtn) { activeBtn.classList.remove('is-open'); activeBtn = null; }
+          // Remove from DOM after transition
+          setTimeout(() => { if (!tip.classList.contains('is-visible')) tip.hidden = true; }, 200);
+        }, delay);
       }
-    });
 
-    // Focus/blur for keyboard accessibility
-    document.addEventListener('focusin', e => {
-      const btn = e.target.closest('.ctx-tip-trigger');
-      if (btn) showTip(btn);
-    });
-    document.addEventListener('focusout', e => {
-      const btn = e.target.closest('.ctx-tip-trigger');
-      if (btn) hideTip(true);
-    });
+      // Event delegation — works for dynamically rendered buttons
+      document.addEventListener('mouseover', e => {
+        const btn = e.target.closest('.ctx-tip-trigger');
+        if (btn) showTip(btn);
+      });
+      document.addEventListener('mouseout', e => {
+        const btn = e.target.closest('.ctx-tip-trigger');
+        const toEl = e.relatedTarget;
+        if (btn && (!toEl || (!toEl.closest('.ctx-tip-trigger') && !toEl.closest('#ctx-glass-tip')))) {
+          hideTip(false);
+        }
+      });
+      tip.addEventListener('mouseover', () => clearTimeout(hideTimer));
+      tip.addEventListener('mouseout', e => {
+        if (!e.relatedTarget || !e.relatedTarget.closest('#ctx-glass-tip') && !e.relatedTarget.closest('.ctx-tip-trigger')) {
+          hideTip(false);
+        }
+      });
 
-    // Close on Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && activeBtn) { hideTip(true); activeBtn.blur(); }
-    });
-  })();
+      // Focus/blur for keyboard accessibility
+      document.addEventListener('focusin', e => {
+        const btn = e.target.closest('.ctx-tip-trigger');
+        if (btn) showTip(btn);
+      });
+      document.addEventListener('focusout', e => {
+        const btn = e.target.closest('.ctx-tip-trigger');
+        if (btn) hideTip(true);
+      });
+
+      // Close on Escape
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && activeBtn) { hideTip(true); activeBtn.blur(); }
+      });
+    })();
+  </script>
+
+  <script>
+    /* ===== Full-Week Schedule Modal ===================================================
+       Opens a <dialog> with a 7-column grid: Training / Nutrition / Recovery per day.
+       Mirrors the main week-strip toggle so coaches can compare current vs Zora's plan.
+    ================================================================================== */
+    (function () {
+      const modal   = document.getElementById('week-modal');
+      const body    = document.getElementById('wm-body');
+      const toggle  = document.getElementById('wm-toggle');
+      const thumb   = document.getElementById('wm-toggle-thumb');
+      const closeX  = document.getElementById('wm-close');
+      const closeBtn= document.getElementById('wm-close-btn');
+      const approveBtn = document.getElementById('wm-approve-btn');
+      if (!modal) return;
+
+      let wmView = 'recommended'; // 'recommended' | 'current'
+      let _client = null;
+
+      function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+      function macroState(p, target) {
+        const r = p / target;
+        return r >= 0.9 ? 'ok' : r >= 0.75 ? 'warn' : 'bad';
+      }
+
+      // "Based on signals" tooltip: signals driving each category's plan, pulled
+      // from the client's recoBreakdown. Same singleton #ctx-glass-tip controller
+      // handles hover/focus via the .ctx-tip-trigger class.
+      function categorySignals(client, area) {
+        if (typeof window.buildRecoBreakdown !== 'function') return [];
+        const data = window.buildRecoBreakdown(client);
+        const SRC = window.RECO_SOURCES || {};
+        if (area === 'recovery' && typeof window.recoveryContextFor === 'function') {
+          return window.recoveryContextFor(client) || [];
+        }
+        const reco = (data.recommendations || []).find(r => r.area === area) || {};
+        const sigs = (reco.sources || []).map(key => {
+          const s = (data.sources || {})[key] || {};
+          return { label: SRC[key] ? SRC[key].label : key, val: s.reading || '', state: s.flagged ? 'flagged' : 'ok' };
+        });
+        if (reco.title) sigs.unshift({ label: 'Zora recommends', val: reco.detail || reco.title, state: 'ok' });
+        return sigs;
+      }
+      // Dominant state across a category's signals: flagged wins, then warn,
+      // else ok. Drives the dot color.
+      function categoryState(sigs) {
+        if (sigs.some(s => s.state === 'flagged')) return 'flagged';
+        if (sigs.some(s => s.state === 'warn')) return 'warn';
+        return 'ok';
+      }
+      function ctxDot(client, area, label) {
+        let sigs = categorySignals(client, area);
+        if (!sigs.length) {
+          sigs = [{ label: 'Zora recommends', val: 'Based on this week\'s signals', state: 'ok' }];
+        }
+        const st = categoryState(sigs);
+        const word = { flagged: 'driven by flagged signals', warn: 'watch signals', ok: 'steady signals' }[st];
+        const encoded = encodeURIComponent(JSON.stringify(sigs));
+        return `<button class="wm-ctx-spark ctx-tip-trigger is-${st}" type="button"
+          aria-label="${label}: ${word}" data-ctx-signals="${encoded}">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+        </button>`;
+      }
+
+      // --- Icon-led schedule helpers ----------------------------------------
+      // Real icons live in /Icons. Map by file name to a role so each row reads
+      // at a glance. They're full-color art, so render as <img>, not stroke SVG.
+      const ICON_DIR = 'Icons/';
+      const ICON_FILE = {
+        run:     'run-svgrepo-com.svg',
+        walk:    'person-walking-svgrepo-com.svg',
+        barbell: 'barbell-svgrepo-com.svg',
+        meal:    'meal-lunch-svgrepo-com.svg',
+        egg:     'egg-cooking-svgrepo-com.svg',
+        meds:    'medicate-svgrepo-com.svg',
+        sleep:   'sleeping-svgrepo-com.svg',
+        water:   'water-bottle-svgrepo-com.svg',
+        yoga:    'yoga-svgrepo-com.svg',
+        stretch: 'yoga-svgrepo-com2.svg',
+      };
+      function iconImg(key, cls) {
+        const f = ICON_FILE[key];
+        if (!f) return '';
+        return `<img class="${cls || 'wm-ico'}" src="${ICON_DIR}${f}" alt="" aria-hidden="true" loading="lazy">`;
+      }
+
+      // Pick the activity icon from its type. Folder has run / walking / barbell;
+      // map every workout to the nearest of those three (+ sleep for rest).
+      function activityIcon(type) {
+        const t = (type || '').toLowerCase();
+        if (/rest|off/.test(t)) return iconImg('sleep');
+        if (/mobility|stretch|yoga|pilates/.test(t)) return iconImg('stretch');
+        if (/strength|squat|deadlift|bench|push|pull|legs|accessory|arms|shoulder|lift|hypertrophy/.test(t)) return iconImg('barbell');
+        if (/walk|easy|recovery|jog/.test(t)) return iconImg('walk');
+        // run, tempo, threshold, interval, sprint, bike, conditioning, hiit, row…
+        return iconImg('run');
+      }
+
+      // Match a recovery/habit label to a folder icon by its name, and strip the
+      // word the icon already conveys so the icon — not the text — carries it.
+      // Returns { ico, label } with the leading represented verb removed.
+      function habitIconLabel(label) {
+        const raw = (label || '').trim();
+        const l = raw.toLowerCase();
+        const sm = 'wm-ico wm-ico-sm';
+        const rules = [
+          { re: /breath|breathe|breathwork|meditat/, key: 'yoga', strip: /^(\d+\s*min\s+)?(breathwork|breathing|breathe|meditation|meditate)\s*/i },
+          { re: /stretch|mobility|foam|yoga|pilates/, key: 'stretch', strip: /^(\d+\s*min\s+)?(do\s+)?(dynamic\s+)?(stretch(?:ing)?|mobility|foam\s*roll|yoga)\s*/i },
+          { re: /sleep|bed|nap/,            key: 'sleep', strip: /^(sleep(?:\s+by)?|go to bed|bed)\s*/i },
+          { re: /water|hydrat|fluid|drink/, key: 'water', strip: /^(hydrate|drink water|water|drink)\s*/i },
+          { re: /med|pill|dose|statin|insulin|magnesium/, key: 'meds', strip: /^(take\s+)?(meds?|medication|pills?)\s*/i },
+          { re: /protein|egg|meal|log every meal|eat/,    key: 'egg',  strip: /^(eat|log)\s*/i },
+          { re: /walk|step|move/,   key: 'walk', strip: /^(walk|do\s+)?/i },
+        ];
+        for (const r of rules) {
+          if (r.re.test(l)) {
+            let txt = raw.replace(r.strip, '').trim();
+            txt = txt.charAt(0).toUpperCase() + txt.slice(1);
+            return { ico: iconImg(r.key, sm), label: txt || raw };
+          }
+        }
+        return { ico: '', label: raw };
+      }
+
+
+      function buildGrid(client, view) {
+        const isReco = view === 'recommended';
+        const plan = (client.weekPlan || []);
+        const week = (typeof weekFor === 'function') ? weekFor(client) : { days: [] };
+        const habits = (typeof habitsFor === 'function') ? habitsFor(client) : { daily: [], focus: '' };
+        const dayHasChg = (typeof dayHasChange === 'function') ? dayHasChange : () => false;
+        // Today index, Mon=0 … Sun=6.
+        const todayIdx = (() => { const js = new Date().getDay(); return js === 0 ? 6 : js - 1; })();
+
+        const cols = plan.map((day, idx) => {
+          const hasChange = dayHasChg(day);
+          const isChanged = hasChange;
+          const isToday = idx === todayIdx;
+
+          // Training
+          const trainType   = isReco ? (day.type || 'Rest')           : (day.originalType   || day.type   || 'Rest');
+          const trainDetail = isReco ? (day.detail || '')             : (day.originalDetail  || day.detail || '');
+
+          // Nutrition
+          const nDay = (week.days || [])[idx] || {};
+          const prot   = nDay.protein || 0;
+          const tgt    = nDay.target  || week.target || 130;
+          const kcal   = nDay.kcal   ? nDay.kcal.toLocaleString() + ' kcal' : '';
+          const pState = macroState(prot, tgt);
+
+          // Recovery
+          const habitsRows = (habits.daily || []).slice(0, 4).map(h => {
+            const lbl = typeof h === 'string' ? h : h.label;
+            const hi = habitIconLabel(lbl);
+            const ico = hi.ico || `<span class="wm-habit-dot"></span>`;
+            return `<div class="wm-habit-item">${ico}<span>${esc(hi.label)}</span></div>`;
+          }).join('');
+
+          // --- Training, icon-led (real /Icons art on the left) -------------
+          const isRest = /rest|off/.test((trainType || '').toLowerCase());
+          // Show the full prescription as the detail line (pace, zone, sets,
+          // lift names) — not just an extracted distance.
+          const trainDetailLine = (!isRest && trainDetail)
+            ? `<div class="wm-act-detail">${esc(trainDetail)}</div>` : '';
+          const trainBlock = `
+              <div class="wm-section wm-section--training${isRest ? ' is-rest' : ''}">
+                <div class="wm-act">
+                  <span class="wm-chip">${activityIcon(trainType)}</span>
+                  <span class="wm-act-name">${esc(isRest ? 'Rest' : trainType)}</span>
+                </div>
+                ${trainDetailLine}
+              </div>`;
+
+          // --- Nutrition, icon-led ------------------------------------------
+          const kcalNum = nDay.kcal ? nDay.kcal.toLocaleString() : '';
+          const nutritionBlock = `
+              <div class="wm-section wm-section--nutrition">
+                <div class="wm-act">
+                  <span class="wm-chip">${iconImg('meal')}</span>
+                  <span class="wm-act-name">${kcalNum ? esc(kcalNum + ' kcal') : 'Meal plan'}</span>
+                </div>
+                <div class="wm-metrics">
+                  <span class="wm-metric${pState ? ' is-' + pState : ''}"><span class="wm-chip wm-chip-sm">${iconImg('egg', 'wm-ico wm-ico-sm')}</span><span>${prot}/${tgt}g</span></span>
+                </div>
+              </div>`;
+
+          // --- Recovery, icon-led -------------------------------------------
+          const recoveryBlock = `
+              <div class="wm-section wm-section--recovery">
+                <div class="wm-habit-list">${habitsRows || `<span class="wm-habit-item wm-rest">${iconImg('sleep','wm-ico wm-ico-sm')}<span>Rest</span></span>`}</div>
+              </div>`;
+
+          return `
+            <div class="wm-day-col${isChanged && isReco ? ' is-changed' : ''}${isToday ? ' is-today' : ''}" data-day="${esc(day.name)}">
+              <div class="wm-day-head">
+                <span class="wm-day-name">${isToday ? 'TODAY' : esc((day.name || '').slice(0,3))}</span>
+                ${isChanged && isReco ? '<span class="wm-adjusted-tag" title="Adjusted by Zora" aria-label="Adjusted by Zora"></span>' : ''}
+              </div>
+              ${trainBlock}
+              ${nutritionBlock}
+              ${recoveryBlock}
+            </div>`;
+        });
+
+        // Leading label column: vertical TRAINING / NUTRITION / HABITS spanning
+        // the three section rows (subgrid keeps them aligned to each band).
+        // The "Based on signals" ? lives here, one per category.
+        const labelCol = `
+            <div class="wm-day-col wm-label-col">
+              <div class="wm-day-head wm-label-head"></div>
+              <div class="wm-section wm-label-cell">${ctxDot(client, 'training', 'Training')}<span class="wm-vlabel">Training</span></div>
+              <div class="wm-section wm-label-cell">${ctxDot(client, 'nutrition', 'Nutrition')}<span class="wm-vlabel">Nutrition</span></div>
+              <div class="wm-section wm-label-cell">${ctxDot(client, 'recovery', 'Habits')}<span class="wm-vlabel">Habits</span></div>
+            </div>`;
+
+        return `<div class="wm-grid" id="wm-grid">${labelCol}${cols.join('')}</div>`;
+      }
+
+      function renderBody() {
+        if (!_client) return;
+        body.innerHTML = buildGrid(_client, wmView);
+      }
+
+      function setToggle(view) {
+        wmView = view;
+        const isReco = view === 'recommended';
+        toggle.setAttribute('aria-checked', isReco ? 'false' : 'true');
+        thumb.style.transform = isReco ? 'translateX(0)' : 'translateX(100%)';
+        renderBody();
+      }
+
+      // Sync with the main strip toggle state when opening
+      function syncFromStrip() {
+        const strip = document.getElementById('week-strip');
+        wmView = strip ? (strip.dataset.view || 'recommended') : 'recommended';
+      }
+
+      function openWeekModal(client) {
+        _client = client;
+        syncFromStrip();
+
+        // Set subtitle: "Mon 2 – Sun 8 Jun" or similar
+        const now = new Date();
+        const dayOfWeek = now.getDay();
+        const diffToMon = (dayOfWeek + 6) % 7;
+        const mon = new Date(now); mon.setDate(now.getDate() - diffToMon);
+        const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+        const fmt = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        const sub = document.getElementById('wm-subtitle');
+        if (sub) sub.textContent = `${fmt(mon)} – ${fmt(sun)}`;
+
+        setToggle(wmView);
+
+        // Wire the main strip approve button through
+        approveBtn.onclick = () => {
+          const mainApprove = document.getElementById('btn-approve');
+          if (mainApprove) mainApprove.click();
+          closeModal();
+        };
+
+        // Animate entry
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        modal.showModal();
+        if (!reduce) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => modal.classList.add('wm-entering'));
+          });
+        } else {
+          modal.classList.add('wm-entering');
+        }
+
+        // Return focus on close
+        const trigger = document.getElementById('view-week-btn');
+        modal._returnFocus = trigger;
+      }
+
+      function closeModal() {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          modal.classList.remove('wm-entering');
+          modal.close();
+          if (modal._returnFocus) modal._returnFocus.focus();
+          return;
+        }
+        modal.classList.remove('wm-entering');
+        setTimeout(() => {
+          modal.close();
+          if (modal._returnFocus) modal._returnFocus.focus();
+        }, 200);
+      }
+
+      // Toggle click
+      toggle.addEventListener('click', () => {
+        const next = wmView === 'recommended' ? 'current' : 'recommended';
+        setToggle(next);
+      });
+
+      // Close buttons
+      closeX.addEventListener('click', closeModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      // Backdrop click
+      modal.addEventListener('click', e => {
+        const rect = modal.getBoundingClientRect();
+        const outside = e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom;
+        if (outside) closeModal();
+      });
+
+      // Escape via native <dialog>
+      modal.addEventListener('cancel', e => {
+        e.preventDefault();
+        closeModal();
+      });
+
+      // Expose globally so renderInlineSchedule can call it
+      window.openWeekModal = openWeekModal;
+      // Expose the grid builder so the inline schedule can use the same
+      // 7-day Training/Nutrition/Recovery layout as its default view.
+      window.buildWeekGrid = buildGrid;
+
+      // Initial render ran before this IIFE defined buildWeekGrid, so the
+      // inline grid painted empty. Re-render now that the builder exists.
+      if (window.client && typeof window.renderInlineSchedule === 'function') {
+        window.renderInlineSchedule(window.client);
+      }
+    })();
   </script>
 </body>
 
