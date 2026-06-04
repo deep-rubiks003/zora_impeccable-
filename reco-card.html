@@ -6685,7 +6685,7 @@
           '<span>Zora optimized' + (n ? ' · ' + n + ' change' + (n > 1 ? 's' : '') : '') + '</span>';
         if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
         wrap.appendChild(chip);
-        setTimeout(() => chip.remove(), quiet ? 1800 : 1600);
+        setTimeout(() => chip.remove(), quiet ? 1800 : 1750);
       }
 
       // Wire the week switch once: flip between the two weeks.
@@ -9140,28 +9140,47 @@
       100% { box-shadow: 0 0 0 0 transparent; }
     }
 
-    /* Floating chip that rises near the toggle. */
+    /* Glassy "Zora optimized" chip — same translucent material as the info
+       hover tip. Floats centered over the schedule. */
     .zora-opt-chip {
       position: absolute;
-      top: 6px;
+      top: 44px;
       left: 50%;
       z-index: 8;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 13px;
+      gap: 7px;
+      padding: 8px 16px;
       border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
+      /* True glass: low-alpha purple-tinted fill so the blur reads. */
+      background: color-mix(in srgb, rgba(122, 84, 135, 0.10) 100%, rgba(255, 255, 255, 0.24));
+      backdrop-filter: blur(26px) saturate(200%) brightness(1.05);
+      -webkit-backdrop-filter: blur(26px) saturate(200%) brightness(1.05);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-bottom-color: rgba(255, 255, 255, 0.14);
+      color: var(--accent-deep);
       font-family: var(--font-geist);
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 650;
+      letter-spacing: -0.005em;
       white-space: nowrap;
-      box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--accent) 70%, transparent);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .5) inset,
+        0 18px 44px -12px rgba(26, 26, 46, .28),
+        0 4px 14px -2px color-mix(in srgb, var(--accent) 30%, transparent);
       pointer-events: none;
-      animation: zora-chip-rise 1600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: zora-chip-rise 1700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .zora-opt-chip svg { flex-shrink: 0; }
+    .zora-opt-chip svg { flex-shrink: 0; color: var(--accent); }
+    [data-theme="dark"] .zora-opt-chip {
+      background: rgba(28, 20, 42, 0.42);
+      border-color: rgba(255, 255, 255, .12);
+      color: #fff;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .08) inset,
+        0 18px 44px -12px rgba(0, 0, 0, .5);
+    }
+    [data-theme="dark"] .zora-opt-chip svg { color: var(--accent); }
     @keyframes zora-chip-rise {
       0%   { opacity: 0; transform: translate(-50%, 8px) scale(0.9); }
       14%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
