@@ -5379,7 +5379,7 @@
           daily: [
             { label: '15 min walk after dinner' },
             { label: 'Log glucose 4× daily' },
-            { label: 'Take meds on schedule' },
+            { label: 'Meds on schedule' },
             { label: 'Shift carbs to earlier meals' },
             { label: '5 min breathwork before dinner' },
             { label: 'Sleep 7.5 h' },
@@ -11443,6 +11443,8 @@
         stretch: 'yoga-svgrepo-com2.svg',
         salt:    'salt-svgrepo-com.svg',
         bp:      'sphygmomanometer-blood-pressure-gauge-svgrepo-com.svg',
+        sugar:   'sugar-svgrepo-com.svg',
+        snack:   'snack-fast-food-svgrepo-com.svg',
       };
       function iconImg(key, cls) {
         const f = ICON_FILE[key];
@@ -11476,7 +11478,8 @@
           { re: /stretch|mobility|foam|yoga|pilates/, key: 'stretch', strip: /^(\d+\s*min\s+)?(do\s+)?(dynamic\s+)?(stretch(?:ing)?|mobility|foam\s*roll|yoga)\s*/i },
           { re: /sleep|bed|nap/,            key: 'sleep', strip: /^(sleep(?:\s+by)?|go to bed|bed)\s*/i },
           { re: /water|hydrat|fluid|drink/, key: 'water', strip: /^(hydrate|drink water|water|drink)\s*/i },
-          { re: /med|pill|dose|statin|insulin|magnesium/, key: 'meds', strip: /^(take\s+)?(meds?|medication|pills?)\s*/i },
+          { re: /med|pill|dose|statin|insulin|magnesium/, key: 'meds', strip: /^take\s+/i },
+          { re: /carb|snack|earlier meal/, key: 'snack', strip: /^$/ },
           { re: /protein|egg|meal|log every meal|eat/,    key: 'egg',  strip: /^(eat|log)\s*/i },
           { re: /walk|step|move/,   key: 'walk', strip: /^(walk|do\s+)?/i },
         ];
@@ -11493,7 +11496,6 @@
 
       // Salt shaker (hypertension) + sugar cube (diabetes) glyphs for the
       // chronic-care intake row in the Nutrition band.
-      const M_SUGAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="14" height="11" rx="1.5"/><path d="M4 11l3-3h14l-3 3M18 19l3-3V8"/></svg>`;
 
       // Chronic intake row: condition-relevant nutrient from the day's meals vs
       // its safe limit, with an under/over flag. Hypertension -> salt (1.5 g/day);
@@ -11509,7 +11511,7 @@
           const v = nDay.sugar, lim = 40;
           const st = v <= lim ? 'ok' : (v <= lim * 1.1 ? 'warn' : 'bad');
           const flag = st === 'ok' ? '✓' : '⚠';
-          return `<span class="wm-metric wm-intake is-${st}" aria-label="Sugar ${v} of ${lim} g, ${st === 'ok' ? 'under' : 'over'} limit">${M_SUGAR}<span>${v} / ${lim}g</span><span class="wm-intake-flag">${flag}</span></span>`;
+          return `<span class="wm-metric wm-intake is-${st}" aria-label="Sugar ${v} of ${lim} g, ${st === 'ok' ? 'under' : 'over'} limit"><span class="wm-chip wm-chip-sm">${iconImg('sugar', 'wm-ico wm-ico-sm')}</span><span>${v} / ${lim}g</span><span class="wm-intake-flag">${flag}</span></span>`;
         }
         return '';
       }
