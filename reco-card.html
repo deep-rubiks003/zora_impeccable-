@@ -367,6 +367,11 @@
       flex-wrap: wrap;
     }
 
+    /* Single row: Send check-in, then Adjust plan, Schedule call, Mark resolved,
+       all left-aligned and same height; Why this? pushed to the far right (its
+       own margin-left:auto) but on the same row. */
+    .iv-actions .iv-primary { flex: 0 0 auto; }
+
     .iv-why {
       margin-left: auto;
       border: 0;
@@ -2729,8 +2734,17 @@
                      areas. Populated by renderRecoBreakdown(). -->
                 <div class="rec-narrative" id="ai-narrative" style="margin-bottom: 24px; max-width: 100%;"></div>
 
-                <!-- Schedule: full-week grid (toggle sits below the box). -->
+                <!-- Schedule: full-week grid. Plan toggle sits at the top of the
+                     box, in the gap above the day grid. -->
                 <div class="week-strip" id="week-strip" data-view="recommended">
+                  <div class="week-toggle week-toggle--top" id="week-toggle" role="switch" aria-checked="false"
+                    aria-label="Show Zora's plan instead of this week">
+                    <span class="week-toggle-thumb" id="week-toggle-thumb" aria-hidden="true"></span>
+                    <span class="week-toggle-end week-toggle-end--left" aria-hidden="true">
+                      Zora's plan<span class="week-toggle-count" id="see-schedule-count">0 changes</span>
+                    </span>
+                    <span class="week-toggle-end week-toggle-end--right" aria-hidden="true">Current Plan</span>
+                  </div>
                   <div class="week-strip-dropdown-area" id="inline-schedule-console">
                     <!-- Rendered dynamically by javascript -->
                   </div>
@@ -2761,17 +2775,6 @@
 
                   </div><!-- /sched-detail-shell -->
                 </div><!-- /week-strip -->
-
-                <!-- Plan toggle: outside the schedule box, below it, still inside
-                     the Zora's Recommendation card. -->
-                <div class="week-toggle week-toggle--below" id="week-toggle" role="switch" aria-checked="false"
-                  aria-label="Show Zora's plan instead of this week">
-                  <span class="week-toggle-thumb" id="week-toggle-thumb" aria-hidden="true"></span>
-                  <span class="week-toggle-end week-toggle-end--left" aria-hidden="true">
-                    Zora's plan<span class="week-toggle-count" id="see-schedule-count">0 changes</span>
-                  </span>
-                  <span class="week-toggle-end week-toggle-end--right" aria-hidden="true">Current Plan</span>
-                </div>
               </div>
             </div>
 
@@ -3012,6 +3015,7 @@
       diabetes: { label: 'Diabetes', icon: '', short: 'Diabetes' }
     };
     function careOf(c) { return (c && CARE_TYPES[c.careType]) ? c.careType : 'fitness'; }
+    window.careOf = careOf;
 
     // 1. Data ramp for athletes
     const clientsData = {
@@ -5049,6 +5053,9 @@
             name: DAYS[i],
             protein: r[0], target, carbs: r[1], fat: r[2], kcal: r[3],
             state: macroState(r[0], target),
+            // Optional chronic-care intake from that day's meals: r[9] = salt (g),
+            // r[10] = added sugar (g). Undefined for non-chronic weeks.
+            salt: r[9], sugar: r[10],
             meals: MEAL_SLOTS.map((s, j) => ({ slot: s.key, time: s.time, item: r[4 + j] }))
           }))
         };
@@ -5105,23 +5112,23 @@
         ], 'Protein 118 g/day on a 1,450 kcal deficit target.',
           'Protein is locked in — keep the deficit moderate so adherence and energy hold.'),
         'raj-m': buildWeek(90, [
-          [92, 200, 55, 1900, 'Oats + berries', 'Fruit', 'Dal + brown rice', 'Unsalted nuts', 'Grilled fish + veg'],
-          [88, 195, 53, 1850, 'Veg omelette', 'Banana', 'Chicken + salad', 'Yogurt', 'Lentil soup + roti'],
-          [90, 205, 54, 1880, 'Smoothie', '—', 'Rajma + rice', 'Apple', 'Baked fish + greens'],
-          [86, 190, 52, 1820, 'Poha, low salt', 'Buttermilk', 'Veg + dal', 'Nuts', 'Chicken + veg'],
-          [94, 210, 56, 1920, 'Eggs + toast', 'Fruit', 'Chole + rice', 'Yogurt', 'Fish curry, light salt'],
-          [88, 198, 53, 1860, 'Oats', 'Orange', 'Paneer + salad', 'Almonds', 'Veg stir-fry'],
-          [90, 200, 54, 1880, 'Idli + sambar', '—', 'Dal + roti', 'Fruit', 'Grilled chicken + veg']
-        ], 'Sodium under 1.5 g/day target, potassium-rich DASH pattern.',
+          [92, 200, 55, 1900, 'Oats + berries', 'Fruit', 'Dal + brown rice', 'Unsalted nuts', 'Grilled fish + veg', 1.3, 22],
+          [88, 195, 53, 1850, 'Veg omelette', 'Banana', 'Chicken + salad', 'Yogurt', 'Lentil soup + roti', 1.8, 18],
+          [90, 205, 54, 1880, 'Smoothie', '—', 'Rajma + rice', 'Apple', 'Baked fish + greens', 1.2, 26],
+          [86, 190, 52, 1820, 'Poha, low salt', 'Buttermilk', 'Veg + dal', 'Nuts', 'Chicken + veg', 1.0, 16],
+          [94, 210, 56, 1920, 'Eggs + toast', 'Fruit', 'Chole + rice', 'Yogurt', 'Fish curry, light salt', 2.1, 24],
+          [88, 198, 53, 1860, 'Oats', 'Orange', 'Paneer + salad', 'Almonds', 'Veg stir-fry', 1.4, 20],
+          [90, 200, 54, 1880, 'Idli + sambar', '—', 'Dal + roti', 'Fruit', 'Grilled chicken + veg', 1.6, 19]
+        ], 'Salt under 1.5 g/day target, potassium-rich DASH pattern.',
           'Keep sodium below 1.5 g and recheck BP in 3 days before any dose change.'),
         'lena-p': buildWeek(100, [
-          [102, 130, 48, 1800, 'Eggs + avocado', 'Greek yogurt', 'Chicken + quinoa', 'Nuts', 'Fish + greens (low carb)'],
-          [98, 125, 46, 1760, 'Veg omelette', 'Berries', 'Lentil + salad', 'Cheese', 'Tofu stir-fry, light rice'],
-          [104, 135, 49, 1820, 'Smoothie + whey', '—', 'Chicken salad', 'Apple + PB', 'Paneer + veg'],
-          [100, 128, 47, 1780, 'Oats + chia', 'Yogurt', 'Rajma + small rice', 'Nuts', 'Grilled fish + greens'],
-          [96, 122, 45, 1740, 'Eggs + spinach', '—', 'Veg + chicken bowl', 'Edamame', 'Soup + side salad'],
-          [102, 130, 48, 1800, 'Besan chilla', 'Buttermilk', 'Dal + salad', 'Almonds', 'Fish + sauteed veg'],
-          [98, 126, 46, 1770, 'Smoothie', 'Berries', 'Tofu + quinoa', 'Yogurt', 'Light dinner, low carb']
+          [102, 130, 48, 1800, 'Eggs + avocado', 'Greek yogurt', 'Chicken + quinoa', 'Nuts', 'Fish + greens (low carb)', 1.4, 32],
+          [98, 125, 46, 1760, 'Veg omelette', 'Berries', 'Lentil + salad', 'Cheese', 'Tofu stir-fry, light rice', 1.3, 28],
+          [104, 135, 49, 1820, 'Smoothie + whey', '—', 'Chicken salad', 'Apple + PB', 'Paneer + veg', 1.5, 46],
+          [100, 128, 47, 1780, 'Oats + chia', 'Yogurt', 'Rajma + small rice', 'Nuts', 'Grilled fish + greens', 1.4, 30],
+          [96, 122, 45, 1740, 'Eggs + spinach', '—', 'Veg + chicken bowl', 'Edamame', 'Soup + side salad', 1.2, 24],
+          [102, 130, 48, 1800, 'Besan chilla', 'Buttermilk', 'Dal + salad', 'Almonds', 'Fish + sauteed veg', 1.5, 38],
+          [98, 126, 46, 1770, 'Smoothie', 'Berries', 'Tofu + quinoa', 'Yogurt', 'Light dinner, low carb', 1.3, 42]
         ], 'Lower-GI plan, evening carbs reduced to flatten post-dinner spikes.',
           'Shift carbs earlier and hold the post-dinner walk before any dose change.')
       };
@@ -5393,7 +5400,6 @@
           daily: [
             { label: 'Take meds, both doses' },
             { label: 'Log BP morning + evening' },
-            { label: 'Sodium under 1.5 g today' },
             { label: '10 min breathwork to lower BP' },
             { label: '30 min walk, post-dinner' },
             { label: 'Sleep 7.5 h' },
@@ -7683,7 +7689,7 @@
           '</div>' +
 
           '<div class="iv-actions">' +
-          '<button class="btn-primary" id="btn-send-intervention">' +
+          '<button class="btn-primary iv-primary" id="btn-send-intervention">' +
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>' +
           primaryLabel +
           '</button>' +
@@ -8261,9 +8267,23 @@
             </button>`;
           }).join('');
           menu.querySelectorAll('.cs-option').forEach(opt => {
-            opt.addEventListener('click', () => { closeMenu(); switchToClient(opt.dataset.key); });
             const av = opt.querySelector('.cs-option-avatar');
             if (av && window.ZoraFaces) window.ZoraFaces.paintOne(av, clientsData[opt.dataset.key].name);
+          });
+        }
+
+        // Delegated click: survives every buildMenu() rebuild and catches clicks
+        // on any row (including the scrolled-to hypertension / diabetes rows).
+        if (menu && !menu._csClickBound) {
+          menu._csClickBound = true;
+          menu.addEventListener('click', (e) => {
+            const opt = e.target.closest('.cs-option');
+            if (!opt || !menu.contains(opt)) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const key = opt.dataset.key;
+            closeMenu();
+            switchToClient(key);
           });
         }
 
@@ -8327,9 +8347,11 @@
         prevBtn.addEventListener('click', () => step(-1));
         nextBtn.addEventListener('click', () => step(1));
 
-        // Jump-to dropdown.
+        // ===== Jump-to dropdown (click-only, rebuilt clean) =====
+        function isOpen() { return !menu.hidden; }
         function openMenu() {
           if (!menu) return;
+          buildMenu();                 // fresh rows each open
           menu.hidden = false;
           jumpBtn.setAttribute('aria-expanded', 'true');
           const current = menu.querySelector('.cs-option.is-current') || menu.querySelector('.cs-option');
@@ -8340,52 +8362,23 @@
           menu.hidden = true;
           jumpBtn.setAttribute('aria-expanded', 'false');
         }
-        let csMenuHideTimer = null;
-        function showCsMenu() {
-          clearTimeout(csMenuHideTimer);
-          openMenu();
-        }
-        function hideCsMenu(immediate) {
-          clearTimeout(csMenuHideTimer);
-          const delay = immediate ? 0 : 120;
-          csMenuHideTimer = setTimeout(() => {
-            closeMenu();
-          }, delay);
-        }
 
+        // Toggle on trigger click.
         jumpBtn.addEventListener('click', (e) => {
+          e.preventDefault();
           e.stopPropagation();
-          if (menu.hidden) openMenu(); else closeMenu();
+          if (isOpen()) closeMenu(); else openMenu();
         });
 
-        jumpBtn.addEventListener('mouseover', () => {
-          showCsMenu();
-        });
-        jumpBtn.addEventListener('mouseout', (e) => {
-          const toEl = e.relatedTarget;
-          if (!toEl || (!toEl.closest('#cs-jump') && !toEl.closest('#cs-menu'))) {
-            hideCsMenu(false);
-          }
-        });
-
-        menu.addEventListener('mouseover', () => {
-          showCsMenu();
-        });
-        menu.addEventListener('mouseout', (e) => {
-          const toEl = e.relatedTarget;
-          if (!toEl || (!toEl.closest('#cs-menu') && !toEl.closest('#cs-jump'))) {
-            hideCsMenu(false);
-          }
-        });
-        // Clicking anywhere outside the menu (or its trigger) collapses it.
+        // Outside click closes. Use capture so it runs before the row handler
+        // can't fire — but skip when the click is inside the menu/trigger.
         document.addEventListener('click', (e) => {
-          if (menu.hidden) return;
+          if (!isOpen()) return;
           if (menu.contains(e.target) || jumpBtn.contains(e.target)) return;
           closeMenu();
         });
 
-        // When the menu is open: arrow up/down move focus through the rows,
-        // Enter selects the focused client. Roving focus among the options.
+        // Keyboard inside the open menu: arrows move focus, Enter/Space pick.
         menu.addEventListener('keydown', (e) => {
           const opts = Array.from(menu.querySelectorAll('.cs-option'));
           if (!opts.length) return;
@@ -8396,17 +8389,16 @@
           else if (e.key === 'End') { e.preventDefault(); opts[opts.length - 1].focus(); }
           else if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (i >= 0) { closeMenu(); switchToClient(opts[i].dataset.key); jumpBtn.focus(); }
+            if (i >= 0) { const k = opts[i].dataset.key; closeMenu(); switchToClient(k); jumpBtn.focus(); }
           }
         });
 
-        // Keyboard: ←/→ step through the roster when not typing; Esc closes the menu.
+        // Global keys: Esc closes the menu; ←/→ step the roster when idle.
         document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && isOpen()) { closeMenu(); jumpBtn.focus(); return; }
           const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
-          const anyOverlayOpen = document.querySelector('.prompt-overlay.is-open, .chat-slideover.show, .roster-modal.is-open, .nutri-panel.show');
-          if (e.key === 'Escape' && !menu.hidden) { closeMenu(); jumpBtn.focus(); return; }
-          if (typing || anyOverlayOpen) return;
-          if (!menu.hidden) return;   // arrows navigate the open menu, not the roster
+          const anyOverlayOpen = document.querySelector('.prompt-overlay.is-open, .chat-slideover.show, .roster-modal.is-open, .nutri-panel.show, .week-modal[open]');
+          if (typing || anyOverlayOpen || isOpen()) return;
           if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
           if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
         });
@@ -8590,13 +8582,18 @@
       padding: 0;
       background: var(--paper-2);
       box-shadow: 0 24px 64px -16px rgba(26, 26, 46, 0.18), 0 4px 16px rgba(26, 26, 46, 0.06);
-      display: flex;
       flex-direction: column;
       overflow: hidden;
       /* entry animation target */
       opacity: 0;
       transform: scale(0.97) translateY(8px);
       transition: opacity 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Closed dialog must not paint or capture clicks. Only the open dialog is a
+       full-screen flex box; otherwise display:none (native dialog default). */
+    .week-modal:not([open]) {
+      display: none;
     }
 
     .week-modal[open] {
@@ -8802,8 +8799,9 @@
        Center pinned to the right viewport edge; the four buttons fan out along
        a left-facing semicircle. ===== */
     /* Plan toggle moved below the schedule box (still inside the card). */
-    .week-toggle--below {
-      margin: 16px auto 0;
+    /* Plan toggle in the gap at the top of the schedule box, above the grid. */
+    .week-toggle--top {
+      margin: 6px auto 18px;
     }
 
     /* Quick actions: pinned to the card's top-right corner, sitting above the
@@ -9104,8 +9102,8 @@
     [data-theme="dark"] .wm-ctx-spark.is-warn { color: var(--warn); }
     .wm-ctx-spark:hover,
     .wm-ctx-spark.is-open {
-      transform: scale(1.18) rotate(8deg);
-      filter: drop-shadow(0 0 5px color-mix(in srgb, currentColor 45%, transparent));
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 35%, transparent));
     }
     .wm-ctx-spark:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
     @media (prefers-reduced-motion: reduce) {
@@ -9291,6 +9289,12 @@
 
     .wm-metric .wm-ico,
     .wm-metric .wm-ico-sm { width: 18px; height: 18px; }
+
+    /* Chronic intake row (salt / sugar vs limit) reuses .wm-metric state colors;
+       the flag sits at the end, color inherits the state. */
+    .wm-intake { gap: 6px; font-weight: 600; }
+    .wm-intake svg { width: 15px; height: 15px; }
+    .wm-intake-flag { margin-left: 2px; font-weight: 700; }
 
     .wm-metric.is-ok   { color: var(--ok); }
     .wm-metric.is-ok svg   { color: var(--ok); }
@@ -11544,7 +11548,7 @@
         const encoded = encodeURIComponent(JSON.stringify(sigs));
         return `<button class="wm-ctx-spark ctx-tip-trigger is-${st}" type="button"
           aria-label="${label}: ${word}" data-ctx-signals="${encoded}">
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>
         </button>`;
       }
 
@@ -11563,6 +11567,8 @@
         water:   'water-bottle-svgrepo-com.svg',
         yoga:    'yoga-svgrepo-com.svg',
         stretch: 'yoga-svgrepo-com2.svg',
+        salt:    'salt-svgrepo-com.svg',
+        bp:      'sphygmomanometer-blood-pressure-gauge-svgrepo-com.svg',
       };
       function iconImg(key, cls) {
         const f = ICON_FILE[key];
@@ -11575,6 +11581,7 @@
       function activityIcon(type) {
         const t = (type || '').toLowerCase();
         if (/rest|off/.test(t)) return iconImg('sleep');
+        if (/\bbp\b|blood pressure|recheck/.test(t)) return iconImg('bp');
         if (/mobility|stretch|yoga|pilates/.test(t)) return iconImg('stretch');
         if (/strength|squat|deadlift|bench|push|pull|legs|accessory|arms|shoulder|lift|hypertrophy/.test(t)) return iconImg('barbell');
         if (/walk|easy|recovery|jog/.test(t)) return iconImg('walk');
@@ -11591,6 +11598,7 @@
         const sm = 'wm-ico wm-ico-sm';
         const rules = [
           { re: /breath|breathe|breathwork|meditat/, key: 'yoga', strip: /^(\d+\s*min\s+)?(breathwork|breathing|breathe|meditation|meditate)\s*/i },
+          { re: /\bbp\b|blood pressure/, key: 'bp', strip: /^(log\s+)?(bp|blood pressure)\s*/i },
           { re: /stretch|mobility|foam|yoga|pilates/, key: 'stretch', strip: /^(\d+\s*min\s+)?(do\s+)?(dynamic\s+)?(stretch(?:ing)?|mobility|foam\s*roll|yoga)\s*/i },
           { re: /sleep|bed|nap/,            key: 'sleep', strip: /^(sleep(?:\s+by)?|go to bed|bed)\s*/i },
           { re: /water|hydrat|fluid|drink/, key: 'water', strip: /^(hydrate|drink water|water|drink)\s*/i },
@@ -11609,12 +11617,36 @@
       }
 
 
+      // Salt shaker (hypertension) + sugar cube (diabetes) glyphs for the
+      // chronic-care intake row in the Nutrition band.
+      const M_SUGAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="14" height="11" rx="1.5"/><path d="M4 11l3-3h14l-3 3M18 19l3-3V8"/></svg>`;
+
+      // Chronic intake row: condition-relevant nutrient from the day's meals vs
+      // its safe limit, with an under/over flag. Hypertension -> salt (1.5 g/day);
+      // diabetes -> added sugar (40 g/day). Returns '' for other care types.
+      function chronicIntakeRow(care, nDay) {
+        if (care === 'hypertension' && nDay.salt != null) {
+          const v = nDay.salt, lim = 1.5;
+          const st = v <= lim ? 'ok' : (v <= lim * 1.1 ? 'warn' : 'bad');
+          const flag = st === 'ok' ? '✓' : '⚠';
+          return `<span class="wm-metric wm-intake is-${st}" aria-label="Salt ${v} of ${lim} g, ${st === 'ok' ? 'under' : 'over'} limit"><span class="wm-chip wm-chip-sm">${iconImg('salt', 'wm-ico wm-ico-sm')}</span><span>${v} / ${lim}g</span><span class="wm-intake-flag">${flag}</span></span>`;
+        }
+        if (care === 'diabetes' && nDay.sugar != null) {
+          const v = nDay.sugar, lim = 40;
+          const st = v <= lim ? 'ok' : (v <= lim * 1.1 ? 'warn' : 'bad');
+          const flag = st === 'ok' ? '✓' : '⚠';
+          return `<span class="wm-metric wm-intake is-${st}" aria-label="Sugar ${v} of ${lim} g, ${st === 'ok' ? 'under' : 'over'} limit">${M_SUGAR}<span>${v} / ${lim}g</span><span class="wm-intake-flag">${flag}</span></span>`;
+        }
+        return '';
+      }
+
       function buildGrid(client, view) {
         const isReco = view === 'recommended';
         const plan = (client.weekPlan || []);
         const week = (typeof weekFor === 'function') ? weekFor(client) : { days: [] };
         const habits = (typeof habitsFor === 'function') ? habitsFor(client) : { daily: [], focus: '' };
         const dayHasChg = (typeof dayHasChange === 'function') ? dayHasChange : () => false;
+        const care = (typeof window.careOf === 'function') ? window.careOf(client) : 'fitness';
         // Today index, Mon=0 … Sun=6.
         const todayIdx = (() => { const js = new Date().getDay(); return js === 0 ? 6 : js - 1; })();
 
@@ -11667,6 +11699,7 @@
                 </div>
                 <div class="wm-metrics">
                   <span class="wm-metric${pState ? ' is-' + pState : ''}"><span class="wm-chip wm-chip-sm">${iconImg('egg', 'wm-ico wm-ico-sm')}</span><span>${prot}/${tgt}g</span></span>
+                  ${chronicIntakeRow(care, nDay)}
                 </div>
               </div>`;
 
