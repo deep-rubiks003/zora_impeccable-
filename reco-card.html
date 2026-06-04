@@ -6624,10 +6624,18 @@
       // up left-to-right. All one-shot, sub-second, reduced-motion exempt.
       function celebrateReco() {
         const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce) return;
         const toggle = document.getElementById('week-toggle');
         const count = document.getElementById('see-schedule-count');
-        const track = document.getElementById('inline-schedule-console');
+        const grid = document.getElementById('inline-day-details');
+
+        // Count of changes for the chip copy.
+        const n = (window.client && window.client.weekPlan || []).filter(dayHasChange).length;
+
+        // Reduced-motion: a single quiet chip, no sweep/bloom.
+        if (reduce) {
+          if (grid) flashOptimizedChip(grid, n, true);
+          return;
+        }
 
         if (toggle) {
           toggle.classList.remove('is-blooming');
@@ -6641,13 +6649,43 @@
           count.classList.add('is-ticking');
           count.addEventListener('animationend', () => count.classList.remove('is-ticking'), { once: true });
         }
-        if (track) {
-          track.classList.remove('lighting-up');
-          void track.offsetWidth;
-          track.classList.add('lighting-up');
-          // Hold long enough for the last staggered cell to finish, then clear.
-          setTimeout(() => track.classList.remove('lighting-up'), 1200);
+        if (grid) {
+          // 1) Diagonal light sweep across the whole grid.
+          grid.querySelectorAll('.zora-sweep').forEach(el => el.remove());
+          const sweep = document.createElement('div');
+          sweep.className = 'zora-sweep';
+          if (getComputedStyle(grid).position === 'static') grid.style.position = 'relative';
+          grid.appendChild(sweep);
+          sweep.addEventListener('animationend', () => sweep.remove(), { once: true });
+
+          // 2) Stagger-pulse each changed day column left to right.
+          const changed = grid.querySelectorAll('.wm-day-col.is-changed');
+          changed.forEach((col, i) => {
+            col.classList.remove('zora-optimize-pulse');
+            void col.offsetWidth;
+            col.style.setProperty('--zp-delay', (i * 70) + 'ms');
+            col.classList.add('zora-optimize-pulse');
+            col.addEventListener('animationend', () => col.classList.remove('zora-optimize-pulse'), { once: true });
+          });
+
+          // 3) "Zora optimized" chip rises near the toggle.
+          flashOptimizedChip(grid, n, false);
         }
+      }
+
+      // Floating "✦ Zora optimized · N changes" chip that rises + fades.
+      function flashOptimizedChip(host, n, quiet) {
+        const wrap = host.closest('.week-strip') || host;
+        wrap.querySelectorAll('.zora-opt-chip').forEach(el => el.remove());
+        const chip = document.createElement('div');
+        chip.className = 'zora-opt-chip' + (quiet ? ' is-quiet' : '');
+        chip.innerHTML =
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">' +
+          '<path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>' +
+          '<span>Zora optimized' + (n ? ' · ' + n + ' change' + (n > 1 ? 's' : '') : '') + '</span>';
+        if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+        wrap.appendChild(chip);
+        setTimeout(() => chip.remove(), quiet ? 1800 : 1600);
       }
 
       // Wire the week switch once: flip between the two weeks.
@@ -6660,6 +6698,31 @@
           const isReco = toggle.getAttribute('aria-checked') === 'false';
           setWeekView(isReco ? 'current' : 'recommended');
         });
+
+        // The page lands on Zora's plan but the schedule is below the fold.
+        // Fire the "Zora optimized" reveal once it scrolls fully into view,
+        // re-arming whenever the coach switches client.
+        const strip = document.getElementById('week-strip');
+        if (strip && 'IntersectionObserver' in window) {
+          let firedFor = null;
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+              const onReco = strip.dataset.view === 'recommended';
+              if (e.isIntersecting && e.intersectionRatio >= 0.9 &&
+                  onReco && firedFor !== window.clientKey) {
+                firedFor = window.clientKey;
+                celebrateReco();
+              }
+              // Re-arm when it leaves the viewport or client changed.
+              if (!e.isIntersecting) {
+                if (firedFor !== window.clientKey) firedFor = null;
+              }
+            });
+          }, { threshold: [0, 0.9, 1] });
+          io.observe(strip);
+          // Reset the latch on client switch so each client re-celebrates.
+          window.__resetScheduleReveal = () => { firedFor = null; };
+        }
       })();
 
       // Reveal Zora's rewritten week after an Edit-with-AI merge: switch to the
@@ -9034,6 +9097,85 @@
     /* Colored category accent on the activity name */
     .inline-week-grid-host .wm-section--training .wm-act-name { color: var(--accent-deep); }
     .inline-week-grid-host .wm-section--nutrition .wm-act-name { color: var(--c-nutri); }
+
+    /* ===== "Zora optimized" reveal — fires when flipping to Zora's plan ===== */
+    /* Diagonal brand light sweep across the grid. */
+    .zora-sweep {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+      border-radius: inherit;
+      overflow: hidden;
+    }
+    .zora-sweep::before {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: -60%;
+      width: 45%;
+      height: 140%;
+      transform: skewX(-18deg);
+      background: linear-gradient(90deg,
+        transparent,
+        color-mix(in srgb, var(--accent) 26%, transparent) 45%,
+        color-mix(in srgb, var(--accent) 38%, white 10%) 50%,
+        color-mix(in srgb, var(--accent) 26%, transparent) 55%,
+        transparent);
+      filter: blur(2px);
+      animation: zora-sweep-move 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes zora-sweep-move {
+      from { left: -60%; }
+      to   { left: 120%; }
+    }
+
+    /* Each changed day column pulses its accent ring, staggered L→R. */
+    .zora-optimize-pulse {
+      animation: zora-col-pulse 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--zp-delay, 0ms) both;
+    }
+    @keyframes zora-col-pulse {
+      0%   { box-shadow: 0 0 0 0 transparent; }
+      40%  { box-shadow: 0 0 0 2px var(--accent), 0 8px 22px -8px color-mix(in srgb, var(--accent) 55%, transparent); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    /* Floating chip that rises near the toggle. */
+    .zora-opt-chip {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      z-index: 8;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+      box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--accent) 70%, transparent);
+      pointer-events: none;
+      animation: zora-chip-rise 1600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .zora-opt-chip svg { flex-shrink: 0; }
+    @keyframes zora-chip-rise {
+      0%   { opacity: 0; transform: translate(-50%, 8px) scale(0.9); }
+      14%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      78%  { opacity: 1; transform: translate(-50%, -2px) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -10px) scale(0.98); }
+    }
+    .zora-opt-chip.is-quiet { animation: zora-chip-quiet 1800ms ease forwards; }
+    @keyframes zora-chip-quiet {
+      0% { opacity: 0; } 12% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .zora-sweep, .zora-optimize-pulse { animation: none !important; }
+    }
 
     /* "Based on signals" ? trigger inside the schedule (TODAY column).
        Pinned to each section's top-right corner so all three behave the same. */
