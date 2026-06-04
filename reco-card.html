@@ -244,6 +244,9 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      /* Cap the box to a comfortable reading width, left-aligned, so it doesn't
+         stretch across the full card with empty space on the right. */
+      max-width: 70ch;
       /* Inset highlight to separate from card bg */
       box-shadow: 0 1px 0 rgba(255, 255, 255, .30) inset;
     }
@@ -372,8 +375,26 @@
        own margin-left:auto) but on the same row. */
     .iv-actions .iv-primary { flex: 0 0 auto; }
 
+    .iv-head-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* "Why this?" as an info icon (left of Edit), uses .info-effect on hover. */
+    .iv-why-icon {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: help;
+      color: var(--ink-4);
+      display: inline-grid;
+      place-items: center;
+    }
+    .iv-why-icon svg { width: 16px; height: 16px; }
+    .iv-why-icon:hover { color: var(--accent); }
+
     .iv-why {
-      margin-left: auto;
       border: 0;
       background: transparent;
       cursor: pointer;
@@ -2426,21 +2447,6 @@
         </svg>
       </button>
 
-      <button type="button" id="theme-toggle" class="theme-toggle" role="switch" aria-checked="false"
-        aria-label="Toggle dark mode" title="Toggle dark mode" style="margin-left: 12px;">
-        <span class="theme-toggle__thumb" aria-hidden="true">
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4" />
-            <path
-              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-          </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-        </span>
-      </button>
     </div>
 
     <!-- ============== SCREEN 2 MAIN CONTENT ============== -->
@@ -2789,52 +2795,8 @@
             <div class="data-card" style="margin-bottom: var(--space-lg);">
               <div class="data-card-title">Plan-Fit &amp; Fatigue Analysis</div>
 
-              <!-- Plan Quality Score -->
-              <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-md);">
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Plan Quality Score</span>
-                  <span style="font-weight: 700; font-size: 20px; color: var(--accent-deep);"
-                    id="plan-quality-score">62<span style="font-size: 11px; color: var(--ink-4);">/100</span></span>
-                </div>
-                <div
-                  style="display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--line-soft);"
-                  id="plan-quality-bar"></div>
-                <div
-                  style="display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-4); padding: 2px 4px;">
-                  <span>Complexity: 12%</span>
-                  <span>Progressivity: 15%</span>
-                  <span>Recovery: 10%</span>
-                  <span>Enjoyment: 15%</span>
-                  <span>Goal-fit: 10%</span>
-                </div>
-              </div>
-
-              <!-- Run-to-reveal: heatmap / fatigue curve / suggestions are gated
-                   behind a button. Clicking it shows an inline "analyzing" state
-                   (blinking dot + rotating copy), then floats the detail in. -->
-              <div class="planfit-gate" id="planfit-gate">
-                <button class="planfit-run" id="planfit-run" type="button">
-                  <span class="ai-sparkle-inline" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                      <path
-                        d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" />
-                    </svg>
-                  </span>
-                  <span class="planfit-run-label">Run plan analysis</span>
-                </button>
-                <div class="planfit-working" id="planfit-working" hidden aria-live="polite">
-                  <div class="pm-pulse" aria-hidden="true">
-                    <span class="pm-pulse-core"></span>
-                  </div>
-                  <p class="pm-loading-line" id="planfit-working-copy">Reading the last 6 weeks<span
-                      class="pm-cursor"></span></p>
-                </div>
-              </div>
-
-              <!-- Deferred analysis: hidden until the run completes. Charts and
-                   the behavioral signals draw only on reveal so the cascade
-                   shows them appearing. -->
-              <div class="planfit-detail" id="planfit-detail" hidden>
+              <!-- Plan-fit analysis renders directly (no run-to-reveal gate). -->
+              <div class="planfit-detail" id="planfit-detail">
 
                 <!-- Behavioral signals (moved here from a standalone card) -->
                 <div class="planfit-reveal-item bsig-section"
@@ -7423,35 +7385,6 @@
         // Behavioral signals + heatmap + suggestions are deferred to the run
         // (see armPlanFitGate). Only the score + bar render eagerly below.
 
-        // Plan fit score and bar
-        const scoreEl = document.getElementById('plan-quality-score');
-        const qBar = document.getElementById('plan-quality-bar');
-
-        if (scoreEl && qBar) {
-          if (c.planFit) {
-            scoreEl.innerHTML = `${c.planFit.score}<span style="font-size: 11px; color: var(--ink-4);">/100</span>`;
-            qBar.innerHTML = '';
-            const sc = c.planFit.scores;
-            const total = sc.complexity + sc.progressivity + sc.recovery + sc.enjoyment + sc.goalFit;
-            const segments = [
-              { val: sc.complexity, cls: 'c1' },
-              { val: sc.progressivity, cls: 'c2' },
-              { val: sc.recovery, cls: 'c3' },
-              { val: sc.enjoyment, cls: 'c4' },
-              { val: sc.goalFit, cls: 'c5' }
-            ];
-            segments.forEach(seg => {
-              const segEl = document.createElement('div');
-              segEl.className = `qbar-seg ${seg.cls}`;
-              segEl.style.width = `${(seg.val / total) * 100}%`;
-              qBar.appendChild(segEl);
-            });
-          } else {
-            scoreEl.innerHTML = `N/A`;
-            qBar.innerHTML = '<div style="height: 100%; background: var(--line-soft);"></div>';
-          }
-        }
-
         // The heatmap, fatigue curve, and suggestions are deferred: they render
         // on demand when the coach runs the analysis (see armPlanFitGate). Only
         // the score + bar are eager. History is a separate card, kept eager.
@@ -7464,31 +7397,8 @@
       // + rotating copy) -> the detail floats in (staggered) with its charts
       // drawn fresh so the reveal shows them appearing.
       function armPlanFitGate(c) {
-        const gate = document.getElementById('planfit-gate');
-        const runBtn = document.getElementById('planfit-run');
-        const working = document.getElementById('planfit-working');
-        const copyEl = document.getElementById('planfit-working-copy');
         const detail = document.getElementById('planfit-detail');
-        if (!gate || !runBtn || !working || !detail) return;
-
-        // Reset to resting state for this client (unless already revealed — see below).
-        if (window.__planFitTimers) window.__planFitTimers.forEach(clearTimeout);
-        if (window.__planFitCopyTimer) clearInterval(window.__planFitCopyTimer);
-        window.__planFitTimers = [];
-
-        const alreadyRevealed = window.__planFitRevealed === window.clientKey;
-
-        if (!alreadyRevealed) {
-          gate.hidden = false;
-          runBtn.hidden = false;
-          runBtn.disabled = false;
-          working.hidden = true;
-          working.classList.remove('is-fading');
-          detail.hidden = true;
-          detail.classList.remove('is-revealed');
-        }
-
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!detail) return;
 
         function drawDetail() {
           // Reset hover-wired flags so re-draws get fresh listeners
@@ -7587,58 +7497,10 @@
           renderSuggestions(c);
         }
 
-        function reveal() {
-          // Loading state is done: clear it out and float the analysis into its
-          // place (text gone, analysis only).
-          clearInterval(window.__planFitCopyTimer);
-          working.hidden = true;
-          working.classList.remove('is-fading');
-          gate.hidden = true;
-          detail.hidden = false;
-          window.__planFitRevealed = window.clientKey;
-          drawDetail();
-          // Trigger the staggered float-in on the next frame.
-          requestAnimationFrame(() => detail.classList.add('is-revealed'));
-        }
-
-        // If the analysis was already revealed (e.g. after Confirm & Apply re-renders
-        // the tab), re-draw suggestions in-place and stay in the revealed state.
-        if (alreadyRevealed) {
-          gate.hidden = true;
-          working.hidden = true;
-          detail.hidden = false;
-          detail.classList.add('is-revealed');
-          drawDetail();
-        }
-
-        runBtn.onclick = function () {
-          if (reduce) { reveal(); return; }
-
-          // Enter the "analyzing" state: swap button for the blinking-dot row.
-          runBtn.hidden = true;
-          working.hidden = false;
-
-          const first = (c && c.first) ? c.first : 'this client';
-          const steps = [
-            'Reading ' + first + "'s last 6 weeks",
-            'Correlating load against recovery',
-            'Scoring plan fit'
-          ];
-          // innerHTML (not textContent) so the blinking block cursor survives
-          // each copy swap, matching the Edit-with-AI loading line.
-          const cursor = '<span class="pm-cursor"></span>';
-          let i = 0;
-          copyEl.innerHTML = steps[0] + cursor;
-          window.__planFitCopyTimer = setInterval(() => {
-            i = (i + 1) % steps.length;
-            copyEl.innerHTML = steps[i] + cursor;
-          }, 720);
-
-          window.__planFitTimers.push(setTimeout(() => {
-            clearInterval(window.__planFitCopyTimer);
-            reveal();
-          }, 2300));
-        };
+        // No gate, no button: show the analysis directly.
+        detail.hidden = false;
+        detail.classList.add('is-revealed');
+        drawDetail();
       }
 
       function renderRiskCard(client) {
@@ -7659,10 +7521,17 @@
           return '<span class="iv-badge ' + badgeSev + '">' + chip + '</span>';
         }).join('');
 
+        // "Why this?" info icon hovers the glass popover with the client's
+        // reasoning (per-client whyContent), same mechanism as the schedule icon.
+        const whyState = isHealthy ? 'ok' : (sev === 'warn' ? 'warn' : 'flagged');
+        const whyPlain = (client.whyContent || '').replace(/<[^>]+>/g, '');
+        const whySignals = encodeURIComponent(JSON.stringify([
+          { label: 'Why Zora suggests this', val: whyPlain, state: whyState }
+        ]));
+
         const primaryLabel = isHealthy ? 'Send milestone message' : 'Send check-in';
         const secondaryHTML = isHealthy ? ''
-          : '<button class="btn-secondary" id="btn-adjust-plan-action">Adjust plan</button>'
-          + '<button class="btn-secondary" id="btn-schedule-call-action">Schedule call</button>';
+          : '<button class="btn-secondary" id="btn-schedule-call-action">Schedule call</button>';
 
         container.innerHTML =
           '<section class="iv-card ' + (isHealthy ? 'iv-card--ok' : '') + '" data-sev="' + sev + '">' +
@@ -7676,13 +7545,17 @@
           '<div class="iv-badges">' + badgesHTML + '</div>' +
           '</div>' +
           '</div>' +
-          '<span class="draft-tag ' + tagClass + '">' + tagText + '</span>' +
           '</div>' +
 
           '<div class="iv-suggestion">' +
           '<div class="iv-suggestion-head">' +
           '<span class="iv-suggestion-lbl">' + (isHealthy ? 'Suggested message' : 'Suggested check-in') + '</span>' +
+          '<span class="iv-head-actions">' +
+          '<button class="iv-why-icon info-effect ctx-tip-trigger" type="button" aria-label="Why Zora suggests this" data-ctx-nohead="1" data-ctx-signals="' + whySignals + '">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>' +
+          '</button>' +
           '<button class="iv-edit" id="btn-edit-intervention" type="button">Edit</button>' +
+          '</span>' +
           '</div>' +
           '<p class="iv-message" id="intervention-msg-text">' + client.draftMsg + '</p>' +
           '<textarea class="iv-message-edit" id="intervention-msg" hidden>' + client.draftMsg + '</textarea>' +
@@ -7695,10 +7568,7 @@
           '</button>' +
           secondaryHTML +
           '<button class="btn-ghost" id="btn-mark-resolved">' + (isHealthy ? 'Dismiss' : 'Mark resolved') + '</button>' +
-          '<button class="iv-why" id="btn-why-collapsible-trigger" type="button" aria-expanded="false">Why this?</button>' +
           '</div>' +
-
-          '<div class="accordion-content" id="why-collapsible-content"><div class="accordion-inner">' + client.whyContent + '</div></div>' +
           '</section>';
 
         // Edit toggles the read-first message into an editable textarea.
@@ -7713,18 +7583,8 @@
           });
         }
 
-        // Bind Collapsible drawer events
-        const whyTrigger = document.getElementById('btn-why-collapsible-trigger');
-        const whyContent = document.getElementById('why-collapsible-content');
-        if (whyTrigger && whyContent) {
-          whyTrigger.addEventListener('click', function () {
-            whyContent.classList.toggle('expanded');
-            var open = whyContent.classList.contains('expanded');
-            whyContent.style.maxHeight = open ? (whyContent.scrollHeight + "px") : "0";
-            whyTrigger.textContent = open ? "Hide explanation" : "Why this?";
-            whyTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-          });
-        }
+        // "Why this?" is a hover info icon (ctx-tip-trigger -> glass popover);
+        // no accordion binding.
 
         // Bind Check-In button click with a visual loading and success state
         const sendBtn = document.getElementById('btn-send-intervention');
@@ -8808,14 +8668,18 @@
        heading. Icon + label, horizontal, no pills, hairline dividers between. */
     .rec-actions {
       position: absolute;
-      top: 12px;
-      right: 14px;
+      top: 16px;
+      right: 16px;
       display: flex;
       align-items: center;
       flex-shrink: 0;
       gap: 0;
       z-index: 3;
     }
+    /* Last action sits flush to the card's right edge (no trailing padding),
+       so the cluster aligns with the card border. */
+    .rec-actions .rec-action-btn:last-child { padding-right: 0; }
+    .rec-actions .rec-action-btn:first-child { padding-left: 0; }
 
     .rec-action-btn {
       display: inline-flex;
@@ -9100,14 +8964,20 @@
     .wm-ctx-spark.is-warn    { color: var(--c-warn-text, #a85a18); }
     .wm-ctx-spark.is-flagged { color: var(--bad); }
     [data-theme="dark"] .wm-ctx-spark.is-warn { color: var(--warn); }
-    .wm-ctx-spark:hover,
-    .wm-ctx-spark.is-open {
+    /* ===== "info effect" — reusable hover for info-icon triggers =====
+       Scale-up + colored glow. Used by the schedule signal icon AND the
+       Engagement Insights "Why this?" info icon. Reference: class .info-effect */
+    .info-effect {
+      transition: transform 160ms var(--ease-out), color 160ms var(--ease-out), filter 160ms var(--ease-out);
+    }
+    .info-effect:hover,
+    .info-effect.is-open {
       transform: scale(1.15);
       filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 35%, transparent));
     }
-    .wm-ctx-spark:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+    .info-effect:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
     @media (prefers-reduced-motion: reduce) {
-      .wm-ctx-spark:hover, .wm-ctx-spark.is-open { transform: none; }
+      .info-effect:hover, .info-effect.is-open { transform: none; }
     }
 
     /* Vibrant day header */
@@ -9159,7 +9029,7 @@
       border-radius: 8px;
     }
     .wm-chip-sm .wm-ico,
-    .wm-chip-sm .wm-ico-sm { width: 16px; height: 16px; }
+    .wm-chip-sm .wm-ico-sm { width: 20px; height: 20px; }
 
     /* Colored category accent on the activity name */
     .inline-week-grid-host .wm-section--training .wm-act-name { color: var(--accent-deep); }
@@ -9376,7 +9246,7 @@
 
     /* Tighter chip to match the new primary size */
     .inline-week-grid-host .wm-chip { width: 28px; height: 28px; border-radius: 8px; }
-    .inline-week-grid-host .wm-chip .wm-ico { width: 15px; height: 15px; }
+    .inline-week-grid-host .wm-chip .wm-ico { width: 22px; height: 22px; }
 
     /* Section inside each column */
     .wm-section {
@@ -11368,7 +11238,7 @@
   </dialog>
 
   <div class="ctx-glass-tip" id="ctx-glass-tip" role="tooltip" aria-live="polite" hidden>
-    <div class="ctx-glass-tip-head">Based on signals</div>
+    <div class="ctx-glass-tip-head" id="ctx-glass-tip-head">Based on signals</div>
     <div id="ctx-glass-tip-body"></div>
   </div>
 
@@ -11376,6 +11246,7 @@
     (function () {
       const tip = document.getElementById('ctx-glass-tip');
       const tipBody = document.getElementById('ctx-glass-tip-body');
+      const tipHead = document.getElementById('ctx-glass-tip-head');
       if (!tip || !tipBody) return;
 
       let activeBtn = null;
@@ -11391,6 +11262,9 @@
         }
         activeBtn = btn;
         btn.classList.add('is-open');
+
+        // Hide the "Based on signals" head for triggers that opt out (Why-this).
+        if (tipHead) tipHead.style.display = btn.dataset.ctxNohead ? 'none' : '';
 
         // Parse signals from data attribute
         let signals = [];
@@ -11546,7 +11420,7 @@
         const st = categoryState(sigs);
         const word = { flagged: 'driven by flagged signals', warn: 'watch signals', ok: 'steady signals' }[st];
         const encoded = encodeURIComponent(JSON.stringify(sigs));
-        return `<button class="wm-ctx-spark ctx-tip-trigger is-${st}" type="button"
+        return `<button class="wm-ctx-spark info-effect ctx-tip-trigger is-${st}" type="button"
           aria-label="${label}: ${word}" data-ctx-signals="${encoded}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>
         </button>`;
@@ -11561,7 +11435,7 @@
         walk:    'person-walking-svgrepo-com.svg',
         barbell: 'barbell-svgrepo-com.svg',
         meal:    'meal-lunch-svgrepo-com.svg',
-        egg:     'egg-cooking-svgrepo-com.svg',
+        egg:     'chicken-christmas-food-svgrepo-com.svg',
         meds:    'medicate-svgrepo-com.svg',
         sleep:   'sleeping-svgrepo-com.svg',
         water:   'water-bottle-svgrepo-com.svg',
@@ -11724,12 +11598,15 @@
         // Leading label column: vertical TRAINING / NUTRITION / HABITS spanning
         // the three section rows (subgrid keeps them aligned to each band).
         // The "Based on signals" ? lives here, one per category.
+        // Info icon + signal context only in Zora's plan view; Current plan
+        // shows plain labels, no hover context.
+        const dot = (area, lbl) => isReco ? ctxDot(client, area, lbl) : '';
         const labelCol = `
             <div class="wm-day-col wm-label-col">
               <div class="wm-day-head wm-label-head"></div>
-              <div class="wm-section wm-label-cell">${ctxDot(client, 'training', 'Training')}<span class="wm-vlabel">Training</span></div>
-              <div class="wm-section wm-label-cell">${ctxDot(client, 'nutrition', 'Nutrition')}<span class="wm-vlabel">Nutrition</span></div>
-              <div class="wm-section wm-label-cell">${ctxDot(client, 'recovery', 'Habits')}<span class="wm-vlabel">Habits</span></div>
+              <div class="wm-section wm-label-cell">${dot('training', 'Training')}<span class="wm-vlabel">Training</span></div>
+              <div class="wm-section wm-label-cell">${dot('nutrition', 'Nutrition')}<span class="wm-vlabel">Nutrition</span></div>
+              <div class="wm-section wm-label-cell">${dot('recovery', 'Habits')}<span class="wm-vlabel">Habits</span></div>
             </div>`;
 
         return `<div class="wm-grid" id="wm-grid">${labelCol}${cols.join('')}</div>`;

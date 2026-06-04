@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zora Product OS — AI Weekly Optimization Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist:wght@100..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css?v=1">
+  <style>
+    /* ===== Collapsible context rail + denser roster ===== */
+
+    /* Header actions group: View full roster + Context dropdown + close. */
+    .roster-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Context dropdown trigger reuses the .sort-trigger-btn look; the dropdown
+       rows show a count badge on the right. */
+    .ctx-dropdown {
+      width: 220px;
+    }
+
+    .ctx-item {
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ctx-item span:first-child {
+      white-space: nowrap;
+    }
+
+    .ctx-item-count {
+      flex-shrink: 0;
+      min-width: 20px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-4);
+      background: var(--paper-3);
+      border-radius: 99px;
+      padding: 1px 7px;
+    }
+
+    .ctx-item.active .ctx-item-count {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Close button: only present while a panel is open. 28px control with a
+       compliant tap buffer. */
+    .ctx-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: var(--ink-3);
+      cursor: pointer;
+      position: relative;
+      transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+    }
+
+    .ctx-close::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+    }
+
+    .ctx-close:hover {
+      color: var(--bad);
+      border-color: color-mix(in oklab, var(--bad) 40%, var(--line));
+      background: color-mix(in oklab, var(--bad) 8%, var(--paper-2));
+    }
+
+    .ctx-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .ctx-close[hidden] {
+      display: none !important;
+    }
+
+    /* Collapsed by default: roster spans full width, no rail column. The grid
+       packs to ~4 across on desktop. */
+    .grid-2col {
+      grid-template-columns: 1fr;
+      transition: grid-template-columns 360ms var(--ease-out);
+    }
+
+    .roster-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .client-card {
+      padding: 15px;
+      gap: 12px;
+    }
+
+    /* A panel is open: the rail returns as a right column. The grid keeps its
+       auto-fill rule, so the narrower left column naturally reflows to ~3 up. */
+    .grid-2col.has-panel {
+      grid-template-columns: 1fr 300px;
+    }
+
+    /* Rail + panel reveal. The rail slides down/in; the active panel fades. */
+    .ambient-rail[hidden] {
+      display: none !important;
+    }
+
+    .ambient-rail {
+      animation: ctx-rail-in 360ms var(--ease-out);
+    }
+
+    @keyframes ctx-rail-in {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .ctx-panel[hidden] {
+      display: none !important;
+    }
+
+    .ctx-panel {
+      animation: ctx-panel-in 300ms var(--ease-out);
+    }
+
+    @keyframes ctx-panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (max-width: 1024px) {
+
+      /* On narrow widths the rail stacks under the grid instead of beside it. */
+      .grid-2col.has-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .grid-2col,
+      .ambient-rail,
+      .ctx-panel {
+        transition: none;
+        animation: none;
+      }
+    }
+
+    /* Quick Action Buttons in Client List modal */
+    .qa-btn-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+    }
+    .qa-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--ink-4);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+    .qa-btn:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .qa-btn:active {
+      transform: scale(0.92);
+    }
+    .qa-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+    .rmt-vitals,
+    .rmr-vitals {
+      justify-self: center !important;
+      text-align: center !important;
+    }
+  </style>
+  <script>
+    // Pre-paint theme boot — avoids flash of incorrect theme
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="brand" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-mark">Z</div>
+        <div class="brand-text">
+          <div class="brand-name">ZORA</div>
+          <div class="brand-sub">COACH OS</div>
+        </div>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle"
+        style="background: transparent; border: 0; color: var(--ink-3); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.25s;"
+        title="Expand Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item active" onclick="window.location.href='index.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='growth.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        <span>Growth Agent</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='copilot.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18M3 12h18M12 3a9 9 0 0 1 9 9 9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9z" style="display:none;"></path>
+          <!-- Sparkle shape resembling image -->
+          <path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>Ask Zora</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='settings.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      <div class="coach-card">
+        <div class="avatar">JH</div>
+        <div class="coach-info">
+          <div class="coach-name">Jordan Hayes</div>
+          <div class="coach-meta">142 active members</div>
+        </div>
+      </div>
+      <button id="theme-toggle" class="sidebar-theme-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <span>Theme</span>
+      </button>
+      <button onclick="window.location.href='login.html'" class="sidebar-logout-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="crumbs">
+        <strong>Home</strong>
+        <span class="sep">/</span>
+        <span id="crumb-tail">Overview</span>
+      </div>
+
+      <button class="pay-header-btn" id="pay-fab" type="button" aria-label="Payments due" aria-haspopup="dialog" style="margin-right: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; color: var(--ink-3); font-family: var(--font-geist); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-4);">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        <span>Payments Due</span>
+        <span id="pay-fab-count" style="display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 99px; background: var(--accent); color: #ffffff; font-size: 10px; font-weight: 700;">2</span>
+      </button>
+
+      <input class="search" id="topbar-search-trigger" placeholder="Search (Press '/' for palette)..." readonly
+        style="cursor:pointer;" />
+
+      <button class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- ============== SCREEN 1 ============== -->
+    <div class="page active animated-entrance" id="screen-1">
+
+      <div class="page-head page-head--hero" id="hero-head">
+        <!-- Living aurora field: layered blooms + breathing contour lines + cursor glow -->
+        <div class="hero-aurora" aria-hidden="true">
+          <span class="hero-bloom hero-bloom--1"></span>
+          <span class="hero-bloom hero-bloom--2"></span>
+          <span class="hero-bloom hero-bloom--3"></span>
+          <span class="hero-glow" id="hero-glow"></span>
+        </div>
+        <div class="hero-distilled">
+          <h1 class="page-title page-title--hero">Good morning, <em>Emily</em></h1>
+        </div>
+        <div class="page-meta-inline">
+          <span class="live">Live · synced 2 min ago</span>
+          <span class="meta-dot">·</span>
+          <span class="page-meta-date">MON · 28 MAY 2026 · 08:14</span>
+        </div>
+      </div>
+
+      <!-- AI Action Center -->
+      <div class="action-center" id="action-center-section">
+        <div class="ac-head">
+          <div class="ac-title">AI Action Center · <span class="count" id="ac-count-span">3 prioritized tasks</span>
+            prepared for today</div>
+          <button class="ac-toggle-btn" id="ac-toggle-btn" type="button" aria-expanded="true"
+            aria-label="Toggle AI Action Center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Completed Placeholder Banner -->
+        <div class="ac-completed-placeholder" id="ac-completed-placeholder" style="display: none;">
+          <span class="placeholder-icon">✓</span>
+          <span class="placeholder-text">All prioritized recommendations completed. <button class="placeholder-link-btn"
+              id="ac-recover-link" type="button">Show Action Center</button></span>
+        </div>
+
+        <div class="ac-content-wrapper" id="ac-content-wrapper">
+          <div class="draft-row" id="drafts-container">
+            <!-- Draft 1: Sarah K -->
+            <div class="draft draft-crit animated-entrance stagger-1" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=sarah-k&tab=plan'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Sarah K.</div>
+                    <div class="draft-meta">Half-Marathon · Week 8</div>
+                  </div>
+                  <span class="draft-tag tag-crit">Exhaustion Risk</span>
+                </div>
+                <div class="draft-signals">
+                  <div class="signal signal-bad">
+                    <span class="signal-val">18<span class="signal-unit">ms</span><span class="signal-arrow"
+                        aria-label="dropping">↓</span></span>
+                    <span class="signal-lbl">HRV</span>
+                  </div>
+                  <div class="signal signal-bad">
+                    <span class="signal-val">4.2<span class="signal-unit">h</span></span>
+                    <span class="signal-lbl">Sleep</span>
+                  </div>
+                </div>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Sarah K.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=sarah-k&tab=plan'"
+                    aria-label="Review deload plan for Sarah K.">Review</button>
+                </div>
+              </div>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
+                </div>
+                <button class="btn-undo" type="button">Undo</button>
+              </div>
+            </div>
+
+            <!-- Draft 2: Marcus T -->
+            <div class="draft draft-crit animated-entrance stagger-2" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=marcus-t&tab=risk'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Marcus T.</div>
+                    <div class="draft-meta">Strength · Week 6</div>
+                  </div>
+                  <span class="draft-tag tag-crit">Churn Risk</span>
+                </div>
+                <div class="draft-signals">
+                  <div class="signal signal-bad">
+                    <span class="signal-val">40<span class="signal-unit">%</span><span class="signal-arrow"
+                        aria-label="dropping">↓</span></span>
+                    <span class="signal-lbl">Completion</span>
+                  </div>
+                  <div class="signal signal-bad">
+                    <span class="signal-val">4<span class="signal-unit">d</span></span>
+                    <span class="signal-lbl">No reply</span>
+                  </div>
+                </div>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip intervention for Marcus T.">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=marcus-t&tab=risk'"
+                    aria-label="Review intervention for Marcus T.">Review</button>
+                </div>
+              </div>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
+                </div>
+                <button class="btn-undo" type="button">Undo</button>
+              </div>
+            </div>
+
+            <!-- Draft 3: Alex Carter -->
+            <div class="draft draft-deload animated-entrance stagger-3" tabindex="0"
+              onclick="window.location.href='reco-card.html?client=aman-khanna&tab=plan'">
+              <div class="draft-inner">
+                <div class="draft-head">
+                  <div>
+                    <div class="draft-name">Alex Carter</div>
+                    <div class="draft-meta">Hypertrophy · Week 14</div>
+                  </div>
+                  <span class="draft-tag tag-deload">Deload Pending</span>
+                </div>
+                <div class="draft-signals">
+                  <div class="signal signal-warn">
+                    <span class="signal-val">8<span class="signal-unit">/10</span></span>
+                    <span class="signal-lbl">Soreness</span>
+                  </div>
+                  <div class="signal signal-warn">
+                    <span class="signal-val">4<span class="signal-unit">wk</span></span>
+                    <span class="signal-lbl">Hard block</span>
+                  </div>
+                </div>
+                <div class="draft-actions">
+                  <button class="btn-skip" type="button" aria-label="Skip deload plan for Alex Carter">Skip</button>
+                  <button class="btn-edit"
+                    onclick="event.stopPropagation(); window.location.href='reco-card.html?client=aman-khanna&tab=plan'"
+                    aria-label="Review deload plan for Alex Carter">Review</button>
+                </div>
+              </div>
+              <div class="draft-skipped-state">
+                <div class="skipped-content">
+                  <span class="skipped-icon">✕</span>
+                  <span class="skipped-msg">Recommendation skipped</span>
+                </div>
+                <button class="btn-undo" type="button">Undo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pulse Metrics Ribbon -->
+      <div class="pulse-metrics-ribbon">
+        <div class="ribbon-item">
+          <span class="ribbon-label">Total Clients</span>
+          <span class="ribbon-val">142</span>
+          <span class="ribbon-sub">98% adherence</span>
+        </div>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item">
+          <span class="ribbon-label">Avg Engagement</span>
+          <span class="ribbon-val">88%</span>
+          <span class="ribbon-sub">Wearables synced</span>
+        </div>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item interactive" id="metric-at-risk" role="button" tabindex="0"
+          title="Click to filter roster">
+          <span class="ribbon-label">Count at Risk</span>
+          <span class="ribbon-val text-bad">3</span>
+          <span class="ribbon-sub text-bad">Click to filter</span>
+        </div>
+        <div class="ribbon-divider"></div>
+        <div class="ribbon-item">
+          <span class="ribbon-label">Plans Pending</span>
+          <span class="ribbon-val">6</span>
+          <span class="ribbon-sub">36 auto-approved</span>
+        </div>
+      </div>
+
+      <!-- 2-col layout. Starts collapsed (no panel): the roster spans full
+           width. Selecting a context panel adds .has-panel, bringing the rail
+           back as a right column. -->
+      <div class="grid-2col" id="roster-layout">
+
+        <!-- Left Column: Roster Grid -->
+        <div class="roster-grid-container">
+          <div class="roster-section-head">
+            <div class="roster-section-titles">
+              <h2 class="roster-section-title">Clients</h2>
+              <p class="roster-section-sub"><span id="roster-count-shown">6</span> shown of <span
+                  class="roster-count-total">142</span> active</p>
+            </div>
+            <div class="roster-head-actions">
+              <button class="view-roster-btn" id="open-full-roster-btn" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+                  <rect x="3" y="10" width="18" height="4" rx="1"></rect>
+                  <rect x="3" y="16" width="18" height="4" rx="1"></rect>
+                </svg>
+                View Clients List
+                <span class="view-roster-btn-count">142</span>
+              </button>
+
+              <!-- Context panel selector: collapses the three ambient lists into
+                   one dropdown. Picking one opens the right rail; the × collapses
+                   it and the grid returns to full width. -->
+              <div class="sort-container ctx-container">
+                <button class="sort-trigger-btn ctx-trigger" id="ctx-trigger" type="button" aria-haspopup="true"
+                  aria-expanded="false">Coach Center ▾</button>
+                <div class="sort-dropdown ctx-dropdown" id="ctx-dropdown">
+                  <button class="sort-item ctx-item" data-panel="sessions" type="button">
+                    <span>Today's Sessions</span><span class="ctx-item-count">3</span>
+                  </button>
+                  <button class="sort-item ctx-item" data-panel="messages" type="button">
+                    <span>Messages Awaiting Reply</span><span class="ctx-item-count">2</span>
+                  </button>
+                  <button class="sort-item ctx-item" data-panel="wins" type="button">
+                    <span>Recent Client Wins</span><span class="ctx-item-count">2</span>
+                  </button>
+                </div>
+              </div>
+
+              <button class="ctx-close" id="ctx-close" type="button" title="Close panel" aria-label="Close panel"
+                hidden>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="controls-bar">
+            <div class="filter-group">
+              <button class="filter-btn active" id="filter-risk">At-Risk</button>
+              <button class="filter-btn" id="filter-drifting">Drifting</button>
+              <button class="filter-btn" id="filter-payment">Payment Due</button>
+              <button class="filter-btn-clear" id="filter-clear" style="display: none;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  style="vertical-align:middle;">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Clear
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <!-- Client Type Dropdown Selector -->
+              <div class="sort-container">
+                <button class="sort-trigger-btn" id="roster-type-trigger">Type: All ▾</button>
+                <div class="sort-dropdown" id="roster-type-dropdown" style="right: 0;">
+                  <button class="sort-item type-item active" data-type="all">All Types</button>
+                  <button class="sort-item type-item" data-type="strength">Strength</button>
+                  <button class="sort-item type-item" data-type="endurance">Endurance</button>
+                  <button class="sort-item type-item" data-type="weight-loss">Weight Loss</button>
+                  <button class="sort-item type-item" data-type="performance">Performance</button>
+                  <button class="sort-item type-item" data-type="nutrition">Nutrition</button>
+                  <button class="sort-item type-item" data-type="hypertension">Hypertension</button>
+                  <button class="sort-item type-item" data-type="diabetes">Diabetes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="roster-grid" id="roster-grid">
+            <!-- Sarah K -->
+            <div class="client-card" data-client="sarah-k" data-risk="high" data-recency="2" data-type="endurance"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=sarah-k'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-1">SK</div>
+                <div>
+                  <div class="client-card-name">Sarah K.</div>
+                  <div class="client-card-program">Half-Marathon · Week 8</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">High Risk</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 98%;"></div>
+                    </div>
+                    <span>98%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>92%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>18 ms HRV · 4.2h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 2h ago</span>
+                <span style="color: var(--bad); font-weight: 600;">Exhaustion</span>
+              </div>
+            </div>
+
+            <!-- Marcus T -->
+            <div class="client-card" data-client="marcus-t" data-risk="high" data-recency="96" data-type="strength"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=marcus-t'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">MT</div>
+                <div>
+                  <div class="client-card-name">Marcus T.</div>
+                  <div class="client-card-program">Strength · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">High Risk</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill bad" style="width: 40%;"></div>
+                    </div>
+                    <span>40%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>35%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>32 ms HRV · 6.2h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 4d ago</span>
+                <span style="color: var(--bad); font-weight: 600;">Drifting</span>
+              </div>
+            </div>
+
+            <!-- Alex Carter -->
+            <div class="client-card" data-client="aman-khanna" data-risk="med" data-recency="24" data-type="strength"
+              data-payment-due="true" onclick="window.location.href='reco-card.html?client=aman-khanna'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">AC</div>
+                <div>
+                  <div class="client-card-name">Alex Carter</div>
+                  <div class="client-card-program">Hypertrophy · Week 14</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Medium Risk</span>
+                <span class="payment-due-badge">$ Due</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill warn" style="width: 71%;"></div>
+                    </div>
+                    <span>71%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>75%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>42 ms HRV · 5.4h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 1d ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Soreness peak</span>
+              </div>
+            </div>
+
+            <!-- Megan Jones -->
+            <div class="client-card" data-client="meera-joshi" data-risk="med" data-recency="5" data-type="weight-loss"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=meera-joshi'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">MJ</div>
+                <div>
+                  <div class="client-card-name">Megan Jones</div>
+                  <div class="client-card-program">Nutrition · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Medium Risk</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 91%;"></div>
+                    </div>
+                    <span>91%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>82%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>68 ms HRV · 7.8h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 5h ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Protein drift</span>
+              </div>
+            </div>
+
+            <!-- Paige I -->
+            <div class="client-card" data-client="priya-i" data-risk="low" data-recency="0.1" data-type="performance"
+              data-payment-due="true" onclick="window.location.href='reco-card.html?client=priya-i'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">PI</div>
+                <div>
+                  <div class="client-card-name">Paige I.</div>
+                  <div class="client-card-program">Performance · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+                <span class="payment-due-badge">$ Due</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 94%;"></div>
+                    </div>
+                    <span>94%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>95%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>71 ms HRV · 7.8h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 10m ago</span>
+                <span style="color: var(--ok); font-weight: 600;">Steady</span>
+              </div>
+            </div>
+
+            <!-- David L -->
+            <div class="client-card" data-client="david-l" data-risk="low" data-recency="6" data-type="nutrition"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=david-l'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-1">DL</div>
+                <div>
+                  <div class="client-card-name">David L.</div>
+                  <div class="client-card-program">Base Phase · Week 4</div>
+                </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 90%;"></div>
+                    </div>
+                    <span>90%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Engagement</span>
+                    <span>88%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Wearables</span>
+                    <span>65 ms HRV · 7.2h Sleep</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 6h ago</span>
+                <span style="color: var(--ok); font-weight: 600;">Steady</span>
+              </div>
+            </div>
+
+            <!-- Ryan M -->
+            <div class="client-card" data-client="raj-m" data-risk="high" data-recency="1" data-type="hypertension"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=raj-m'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">RM</div>
+                <div>
+                  <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>Ryan M.</span>
+                  </div>
+                  <div class="client-card-program">Hypertension · Stage 1</div>
+                </div>
+                <span class="client-card-risk-badge risk-high">Elevated</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Meds Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 86%;"></div>
+                    </div>
+                    <span>86%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Sodium Adherence</span>
+                    <span>62%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>Cuff Readings</span>
+                    <span>148/94 Latest · 142/90 Avg</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 1h ago</span>
+                <span style="color: var(--bad); font-weight: 600;">BP Above Target</span>
+              </div>
+            </div>
+
+            <!-- Lena P -->
+            <div class="client-card" data-client="lena-p" data-risk="med" data-recency="0.3" data-type="diabetes"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=lena-p'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-3">LP</div>
+                <div>
+                  <div class="client-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>Lena P.</span>
+                  </div>
+                  <div class="client-card-program">Type 2 Diabetes · Week 6</div>
+                </div>
+                <span class="client-card-risk-badge risk-med">Watch</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Meds Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 92%;"></div>
+                    </div>
+                    <span>92%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Time In Range</span>
+                    <span>54%</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>CGM Readings</span>
+                    <span>168 Latest · 162 Avg</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 20m ago</span>
+                <span style="color: var(--warn); font-weight: 600;">Low Time-In-Range</span>
+              </div>
+            </div>
+
+            <!-- David L (second view) -->
+            <div class="client-card" data-client="david-l" data-risk="low" data-recency="18" data-type="strength"
+              data-payment-due="false" onclick="window.location.href='reco-card.html?client=david-l'">
+              <div class="client-card-header">
+                <div class="client-card-avatar av-2">DL</div>
+                <div>
+                  <div class="client-card-name">David L.</div>
+                  <div class="client-card-program">Strength · Week 9</div>
+                </div>
+                <span class="client-card-risk-badge risk-low">Optimized</span>
+              </div>
+              <div class="client-card-vitals">
+                <div class="client-card-vital-row">
+                  <span>Adherence</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill ok" style="width: 96%;"></div>
+                    </div>
+                    <span>96%</span>
+                  </div>
+                </div>
+                <div class="client-card-extra-vitals">
+                  <div class="client-card-vital-row">
+                    <span>Sleep Score</span>
+                    <span>81 / 100</span>
+                  </div>
+                  <div class="client-card-vital-row">
+                    <span>HRV</span>
+                    <span>64 ms</span>
+                  </div>
+                </div>
+              </div>
+              <div class="client-card-footer">
+                <span>Active 3h ago</span>
+                <span style="color: var(--ok); font-weight: 600;">On Track</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slim Right Rail (Ambient Context). Hidden until a panel is chosen;
+             one panel shows at a time, keyed by data-panel. -->
+        <div class="ambient-rail" id="ambient-rail" hidden>
+          <!-- Today's Sessions -->
+          <div class="ambient-card ctx-panel" data-panel="sessions" hidden>
+            <div class="ambient-card-title">Today's Sessions</div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">09:00 AM</span>
+              <span class="ambient-item-name">Sarah K.</span>
+              <span class="ambient-item-desc">Virtual Call</span>
+            </div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">11:30 AM</span>
+              <span class="ambient-item-name">Paige I.</span>
+              <span class="ambient-item-desc">Coaching Chat</span>
+            </div>
+            <div class="ambient-item">
+              <span class="ambient-item-time">02:00 PM</span>
+              <span class="ambient-item-name">Alex Carter</span>
+              <span class="ambient-item-desc">Form Review</span>
+            </div>
+          </div>
+
+          <!-- Messages Awaiting Reply -->
+          <div class="ambient-card ctx-panel" data-panel="messages" hidden>
+            <div class="ambient-card-title">Messages Awaiting Reply</div>
+            <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="ambient-item-name">Megan Jones</span>
+                <span class="ambient-item-desc">5h ago</span>
+              </div>
+              <div style="font-size:12px; color:var(--ink-3); line-height:1.3;">"Struggling to hit protein on the road.
+                Any quick travel snack ideas?"</div>
+            </div>
+            <div class="ambient-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="ambient-item-name">Marcus T.</span>
+                <span class="ambient-item-desc">4d ago</span>
+              </div>
+              <div style="font-size:12px; color:var(--ink-4); line-height:1.3; font-style:italic;">No response received
+                after deload draft sent.</div>
+            </div>
+          </div>
+
+          <!-- Recent Client Wins -->
+          <div class="ambient-card ctx-panel" data-panel="wins" hidden>
+            <div class="ambient-card-title">Recent Client Wins</div>
+            <div class="ambient-item" style="gap: 8px;">
+              <span style="font-size: 16px;">🏆</span>
+              <div>
+                <div class="ambient-item-name" style="font-size:13px;">Paige I.</div>
+                <div style="font-size:11.5px; color:var(--ink-3);">Set a 5km Personal Best on Saturday!</div>
+              </div>
+            </div>
+            <div class="ambient-item" style="gap: 8px;">
+              <span style="font-size: 16px;">🔥</span>
+              <div>
+                <div class="ambient-item-name" style="font-size:13px;">David L.</div>
+                <div style="font-size:11.5px; color:var(--ink-3);">100% training adherence for 3 weeks straight!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =================== PANEL / DRAWER =================== -->
+  <div class="drawer-overlay" id="queue-drawer-overlay"></div>
+  <div class="drawer" id="queue-drawer">
+    <div class="drawer-header">
+      <div>
+        <h2 class="drawer-title">Optimized Queue</h2>
+        <p class="drawer-sub">36 plans optimized overnight</p>
+      </div>
+      <button class="icon-btn close-drawer-btn" id="close-drawer" title="Close Queue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-search-container">
+      <input type="text" class="drawer-search" id="drawer-search-input" placeholder="Search athlete or plan type..." />
+    </div>
+
+    <div class="drawer-content">
+      <div class="queue-item" data-name="Sarah K.">
+        <div class="qi-avatar av-1">SK</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Sarah K.</span>
+            <span class="qi-tag tag-crit">Exhaustion</span>
+          </div>
+          <div class="qi-meta">Half-Marathon · Week 8</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=sarah-k'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Marcus T.">
+        <div class="qi-avatar av-2">MT</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Marcus T.</span>
+            <span class="qi-tag tag-crit">Churn Alert</span>
+          </div>
+          <div class="qi-meta">Strength · Week 6</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=marcus-t'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Alex Carter">
+        <div class="qi-avatar av-2">AC</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Alex Carter</span>
+            <span class="qi-tag tag-deload">Deload</span>
+          </div>
+          <div class="qi-meta">Hypertrophy · Week 14</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini"
+            onclick="window.location.href='reco-card.html?client=aman-khanna'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Paige I.">
+        <div class="qi-avatar av-3">PI</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Paige I.</span>
+            <span class="qi-tag tag-plan">Optimized</span>
+          </div>
+          <div class="qi-meta">Performance · Week 6</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini" onclick="window.location.href='reco-card.html?client=priya-i'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-item" data-name="Megan Jones">
+        <div class="qi-avatar av-1">MJ</div>
+        <div class="qi-info">
+          <div class="qi-name-row">
+            <span class="qi-name">Megan Jones</span>
+            <span class="qi-tag tag-msg">Nutrition Drift</span>
+          </div>
+          <div class="qi-meta">Fat Loss · Week 3</div>
+        </div>
+        <div class="qi-actions">
+          <button class="btn-edit-mini"
+            onclick="window.location.href='reco-card.html?client=meera-joshi'">Review</button>
+        </div>
+      </div>
+
+      <div class="queue-placeholder-header">Other Optimized Drafts (31)</div>
+
+      <div class="queue-compact-item" data-name="David L.">
+        <span class="qci-name">David L. (Week 4 · Base Phase)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="David L.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Elena R.">
+        <span class="qci-name">Elena R. (Week 12 · Peak Volume)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Elena R.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Jordan M.">
+        <span class="qci-name">Jordan M. (Week 2 · Recovery)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Jordan M.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Travis K.">
+        <span class="qci-name">Travis K. (Week 9 · Conditioning)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Travis K.">Approve</button>
+      </div>
+      <div class="queue-compact-item" data-name="Sarah V.">
+        <span class="qci-name">Sarah V. (Week 5 · Strength)</span>
+        <span class="qci-status text-green">Ready</span>
+        <button class="btn-quick-approve" data-athlete="Sarah V.">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Bind click listeners on Draft Recommendation Cards (Action Center)
+      const drafts = document.querySelectorAll('.draft');
+      const actionCenterSection = document.getElementById('action-center-section');
+      const acContentWrapper = document.getElementById('ac-content-wrapper');
+      const acCompletedPlaceholder = document.getElementById('ac-completed-placeholder');
+      const acToggleBtn = document.getElementById('ac-toggle-btn');
+      const acRecoverLink = document.getElementById('ac-recover-link');
+
+      // Expand action center
+      const expandActionCenter = () => {
+        if (actionCenterSection) {
+          actionCenterSection.classList.remove('collapsed');
+        }
+        if (acToggleBtn) {
+          acToggleBtn.setAttribute('aria-expanded', 'true');
+        }
+      };
+
+      // Collapse action center
+      const collapseActionCenter = () => {
+        if (actionCenterSection) {
+          actionCenterSection.classList.add('collapsed');
+        }
+        if (acToggleBtn) {
+          acToggleBtn.setAttribute('aria-expanded', 'false');
+        }
+      };
+
+      const updateAlertCount = () => {
+        const activeAlertsCount = Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length;
+        const countSpan = document.getElementById('ac-count-span');
+        if (countSpan) {
+          if (activeAlertsCount === 0) {
+            countSpan.textContent = "All drafts reviewed";
+          } else {
+            countSpan.textContent = `${activeAlertsCount} alert${activeAlertsCount > 1 ? 's' : ''} waiting for review`;
+          }
+        }
+
+        // Auto-collapse and show completed banner when active drafts reach 0
+        if (activeAlertsCount === 0) {
+          setTimeout(() => {
+            // Auto collapse after skip/review animation settles
+            if (Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length === 0) {
+              collapseActionCenter();
+              if (acCompletedPlaceholder) {
+                acCompletedPlaceholder.style.display = 'flex';
+              }
+            }
+          }, 400);
+        } else {
+          // If items recovered/undone, hide placeholder and open content
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'none';
+          }
+          expandActionCenter();
+        }
+
+        // Update hero alert badge dynamically
+        const heroBadgeText = document.getElementById('hero-badge-text');
+        const heroBadge = document.getElementById('hero-alert-btn');
+        if (heroBadgeText && heroBadge) {
+          const activeCritCount = Array.from(drafts).filter(d => d.classList.contains('draft-crit') && !d.classList.contains('is-skipped')).length;
+          if (activeCritCount === 0) {
+            heroBadge.style.display = 'none';
+          } else {
+            heroBadge.style.display = 'inline-flex';
+            heroBadgeText.textContent = `${activeCritCount} urgent alert${activeCritCount > 1 ? 's' : ''}`;
+          }
+        }
+      };
+
+      // Toggle button event listener
+      if (acToggleBtn) {
+        acToggleBtn.addEventListener('click', () => {
+          const isExpanded = acToggleBtn.getAttribute('aria-expanded') === 'true';
+          if (isExpanded) {
+            collapseActionCenter();
+          } else {
+            expandActionCenter();
+          }
+        });
+      }
+
+      // Recover link event listener
+      if (acRecoverLink) {
+        acRecoverLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          expandActionCenter();
+        });
+      }
+
+      // Hero alert button interaction: smooth scroll to Action Center + flash highlight
+      const heroAlertBtn = document.getElementById('hero-alert-btn');
+      if (heroAlertBtn) {
+        heroAlertBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const ac = document.querySelector('.action-center');
+          if (ac) {
+            ac.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            expandActionCenter(); // Make sure it's open
+            ac.classList.add('highlight-pulse');
+            setTimeout(() => {
+              ac.classList.remove('highlight-pulse');
+            }, 2400);
+          }
+        });
+      }
+
+      // Bind Skip buttons directly
+      document.querySelectorAll('.btn-skip').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const draft = btn.closest('.draft');
+          if (draft) {
+            draft.classList.add('is-skipped');
+            updateAlertCount();
+          }
+        });
+      });
+
+      // Bind Undo buttons directly
+      document.querySelectorAll('.btn-undo').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const draft = btn.closest('.draft');
+          if (draft) {
+            draft.classList.remove('is-skipped');
+            updateAlertCount();
+          }
+        });
+      });
+
+      drafts.forEach((draft) => {
+        // Keydown handler for accessibility Focus Routing
+        draft.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (draft.classList.contains('is-skipped')) {
+              const undoBtn = draft.querySelector('.btn-undo');
+              if (undoBtn) undoBtn.click();
+            } else {
+              draft.click();
+            }
+          }
+        });
+      });
+
+      // Initial state parsing on load
+      const checkInitialState = () => {
+        const activeAlertsCount = Array.from(drafts).filter(d => !d.classList.contains('is-skipped')).length;
+        if (activeAlertsCount === 0) {
+          collapseActionCenter();
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'flex';
+          }
+        } else {
+          expandActionCenter();
+          if (acCompletedPlaceholder) {
+            acCompletedPlaceholder.style.display = 'none';
+          }
+        }
+      };
+      checkInitialState();
+
+      // Sort Dropdown interaction
+      const sortTrigger = document.getElementById('sort-trigger');
+      const sortDropdown = document.getElementById('sort-dropdown');
+      const sortItems = document.querySelectorAll('.sort-item');
+      const draftsContainer = document.getElementById('drafts-container');
+
+      if (sortTrigger && sortDropdown) {
+        sortTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sortDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown on click outside
+        document.addEventListener('click', () => {
+          sortDropdown.classList.remove('show');
+        });
+
+        // Handle sort selection
+        sortItems.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const sortType = item.getAttribute('data-sort');
+
+            // Highlight active sort option
+            sortItems.forEach(si => {
+              si.classList.remove('active');
+              si.querySelector('svg').style.display = 'none';
+            });
+            item.classList.add('active');
+            item.querySelector('svg').style.display = 'block';
+
+            // Update button label
+            sortTrigger.textContent = `Sort: ${item.querySelector('span').textContent} ▾`;
+            sortDropdown.classList.remove('show');
+
+            // Apply crossfade state blur transition
+            draftsContainer.classList.add('transitioning');
+
+            setTimeout(() => {
+              // Perform actual sorting
+              const draftsArray = Array.from(draftsContainer.children);
+              draftsArray.sort((a, b) => {
+                let valA, valB;
+                if (sortType === 'priority') {
+                  valA = parseInt(a.getAttribute('data-priority'));
+                  valB = parseInt(b.getAttribute('data-priority'));
+                  return valA - valB;
+                } else if (sortType === 'recency') {
+                  valA = parseInt(a.getAttribute('data-recency'));
+                  valB = parseInt(b.getAttribute('data-recency'));
+                  return valA - valB;
+                } else if (sortType === 'name') {
+                  valA = a.getAttribute('data-name');
+                  valB = b.getAttribute('data-name');
+                  return valA.localeCompare(valB);
+                }
+                return 0;
+              });
+
+              // Re-append sorted draft elements
+              draftsArray.forEach(el => draftsContainer.appendChild(el));
+
+              // End transition
+              draftsContainer.classList.remove('transitioning');
+            }, 180);
+          });
+        });
+      }
+
+      // Queue Drawer interaction
+      const openQueueBtn = document.getElementById('open-queue-btn');
+      const closeQueueBtn = document.getElementById('close-drawer');
+      const queueDrawer = document.getElementById('queue-drawer');
+      const queueDrawerOverlay = document.getElementById('queue-drawer-overlay');
+      const drawerSearchInput = document.getElementById('drawer-search-input');
+
+      if (openQueueBtn && queueDrawer && queueDrawerOverlay) {
+        // Open
+        const openDrawer = () => {
+          queueDrawer.classList.add('show');
+          queueDrawerOverlay.classList.add('show');
+          document.body.style.overflow = 'hidden';
+        };
+
+        // Close
+        const closeDrawer = () => {
+          queueDrawer.classList.remove('show');
+          queueDrawerOverlay.classList.remove('show');
+          document.body.style.overflow = '';
+        };
+
+        openQueueBtn.addEventListener('click', openDrawer);
+        if (closeQueueBtn) closeQueueBtn.addEventListener('click', closeDrawer);
+        queueDrawerOverlay.addEventListener('click', closeDrawer);
+
+        // Escape key to close drawer (A11y)
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && queueDrawer.classList.contains('show')) {
+            closeDrawer();
+          }
+        });
+
+        // Search filtering in Drawer
+        if (drawerSearchInput) {
+          drawerSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const queueItems = queueDrawer.querySelectorAll('.queue-item');
+            const compactItems = queueDrawer.querySelectorAll('.queue-compact-item');
+
+            queueItems.forEach(item => {
+              const name = item.getAttribute('data-name').toLowerCase();
+              item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+
+            compactItems.forEach(item => {
+              const name = item.getAttribute('data-name').toLowerCase();
+              item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+          });
+        }
+
+        // Quick Approve action inside Drawer
+        const quickApproveBtns = queueDrawer.querySelectorAll('.btn-quick-approve');
+        quickApproveBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const athleteName = btn.getAttribute('data-athlete');
+            const item = btn.closest('.queue-compact-item');
+
+            // Animate exit in drawer
+            if (item) {
+              item.classList.add('is-approved');
+
+              // Remove element after transition ends
+              setTimeout(() => {
+                item.remove();
+              }, 200);
+            }
+
+            // Launch success toast
+            const toast = document.getElementById('success-toast');
+            const toastClient = document.getElementById('toast-client-name');
+            if (toast && toastClient) {
+              toastClient.textContent = athleteName;
+              toast.classList.add('show');
+              setTimeout(() => {
+                toast.classList.remove('show');
+              }, 4000);
+            }
+          });
+        });
+      }
+
+      // 2. Bind click + keyboard listeners on Threads rows
+      const threadRows = document.querySelectorAll('.thread');
+      threadRows.forEach((row) => {
+        const open = () => {
+          const clientKey = row.getAttribute('data-client') || 'sarah-k';
+          window.location.href = `reco-card.html?client=${clientKey}`;
+        };
+        row.addEventListener('click', open);
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open();
+          }
+        });
+      });
+
+      // 3. Bind click listeners on "Roster pulse" rows
+      const rosterRows = document.querySelectorAll('.roster-row');
+      rosterRows.forEach((row) => {
+        row.addEventListener('click', () => {
+          const nameEl = row.querySelector('.tile-name');
+          if (nameEl) {
+            const nameText = nameEl.textContent.trim().toLowerCase();
+            let clientKey = 'sarah-k';
+            if (nameText.includes('marcus')) clientKey = 'marcus-t';
+            if (nameText.includes('aman') || nameText.includes('alex')) clientKey = 'aman-khanna';
+            if (nameText.includes('priya') || nameText.includes('paige')) clientKey = 'priya-i';
+            if (nameText.includes('meera') || nameText.includes('megan')) clientKey = 'meera-joshi';
+            if (nameText.includes('raj') || nameText.includes('ryan')) clientKey = 'raj-m';
+            window.location.href = `reco-card.html?client=${clientKey}`;
+          }
+        });
+
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            row.click();
+          }
+        });
+      });
+
+      // 4. Progress Rings & Percentage values loading animations (Delight)
+      const rings = document.querySelectorAll('.ring-fg');
+      rings.forEach((ring, idx) => {
+        const offset = ring.getAttribute('data-offset');
+        const valEl = document.getElementById(`ring-val-${idx + 1}`);
+        const targetPercent = parseInt(valEl.getAttribute('data-percent'));
+
+        setTimeout(() => {
+          ring.style.strokeDashoffset = offset;
+        }, 150);
+
+        let current = 0;
+        const duration = 1000;
+        const steps = 30;
+        const stepTime = duration / steps;
+        const increment = targetPercent / steps;
+
+        let step = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          step++;
+          if (step >= steps) {
+            valEl.textContent = `${targetPercent}%`;
+            clearInterval(timer);
+          } else {
+            valEl.textContent = `${Math.round(current)}%`;
+          }
+        }, stepTime);
+      });
+
+      // 5. Hours Saved Count Up digital animation (Delight)
+      const hoursVal = document.getElementById('hours-saved-val');
+      if (hoursVal) {
+        const target = parseFloat(hoursVal.getAttribute('data-target'));
+        let current = 0;
+        const duration = 1000;
+        const steps = 40;
+        const stepTime = duration / steps;
+        const increment = target / steps;
+
+        let step = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          step++;
+          if (step >= steps) {
+            hoursVal.textContent = target.toFixed(1);
+            clearInterval(timer);
+          } else {
+            hoursVal.textContent = current.toFixed(1);
+          }
+        }, stepTime);
+      }
+
+      // 6. Check for success parameter to launch success toast (Delight)
+      const urlParams = new URLSearchParams(window.location.search);
+      const successClient = urlParams.get('success');
+      if (successClient) {
+        const toast = document.getElementById('success-toast');
+        const toastClient = document.getElementById('toast-client-name');
+        if (toast && toastClient) {
+          toastClient.textContent = successClient;
+
+          setTimeout(() => {
+            toast.classList.add('show');
+          }, 350);
+
+          setTimeout(() => {
+            toast.classList.remove('show');
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+          }, 4350);
+        }
+      }
+    });
+  </script>
+
+  <!-- Success Toast (Delight Moment) -->
+  <div id="success-toast" class="toast">
+    <div class="toast-icon">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    </div>
+    <div>
+      <span id="toast-title" style="font-weight: 600; display: block; line-height: 1.2;">Plan adjustment sent!</span>
+      <span id="toast-sub" style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px;">
+        <span id="toast-client-name" style="font-weight: 600; color: #ffffff;">Sarah K.</span> was notified via their
+        mobile feed.
+      </span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      function sync() {
+        var isDark = root.getAttribute('data-theme') === 'dark';
+        btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        btn.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+
+      sync();
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) { }
+        sync();
+      });
+
+      // Follow OS changes only when user hasn't explicitly chosen
+      var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq && mq.addEventListener) {
+        mq.addEventListener('change', function (e) {
+          if (localStorage.getItem('theme')) return;
+          root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          sync();
+        });
+      }
+    })();
+  </script>
+
+
+
+  <!-- Ask Zora FAB + copilot panel -->
+  <style>
+    .zfab{position:fixed;right:24px;bottom:24px;z-index:1100;display:flex;flex-direction:row;align-items:center;gap:8px;padding:10px 16px;border:none;border-radius:99px;background:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(90,65,104,.30);cursor:pointer;transition:transform .24s cubic-bezier(.23,1,.32,1),background .2s}
+    .zfab:hover{transform:translateY(-2px);background:var(--accent-deep)}
+    .zfab.hide{transform:translateY(150%) scale(0.9);pointer-events:none;opacity:0}
+    .zfab-spark svg{width:18px;height:18px;display:block}
+    .zfab-label{font-size:13px;font-weight:600;font-family:var(--font-geist,sans-serif);white-space:nowrap}
+    .zcopilot{position:fixed;top:0;right:0;bottom:0;z-index:1101;width:400px;max-width:calc(100vw - 16px);background:var(--paper-2);border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(28,18,38,.20);display:flex;flex-direction:column;overflow:hidden;transform:translateX(106%);transition:transform .34s cubic-bezier(.23,1,.32,1)}
+    .zcopilot.open{transform:none}
+    .zcop-head{position:relative;display:flex;align-items:center;gap:11px;padding:14px 14px 14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)) 0%,var(--paper-2) 62%);overflow:hidden}
+    .zcop-head::before{content:"";position:absolute;top:-54px;left:-30px;width:190px;height:134px;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%);opacity:.55;pointer-events:none}
+    .zcop-orb{position:relative;width:34px;height:34px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--accent-soft),var(--accent) 55%,var(--accent-deep));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.32)}
+    .zcop-orb svg{width:17px;height:17px;position:relative}
+    .zcop-id{flex:1;min-width:0;position:relative}
+    .zcop-title{font-weight:800;font-size:13px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--font-geist,sans-serif)}
+    .zcop-live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in oklab,var(--ok) 18%,transparent);animation:zcLive 2s ease-in-out infinite}
+    @keyframes zcLive{0%,100%{opacity:1}50%{opacity:.4}}
+    .zcop-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .zcop-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper-2) 72%,transparent);color:var(--ink-4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color .14s,border-color .14s,background .14s;flex:none}
+    .zcop-x:hover{color:var(--bad);border-color:rgba(192,57,43,.35);background:color-mix(in oklab,var(--bad) 10%,transparent)}
+    .zcop-x svg{width:16px;height:16px}
+    .zcop-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+    .zbubble{max-width:88%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:16px;font-family:var(--font-dm-sans,sans-serif)}
+    .zbubble.ai{background:var(--paper-3);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-bottom-left-radius:5px;box-shadow:0 1px 3px rgba(26,26,46,.04)}
+    .zbubble.me{background:linear-gradient(150deg,var(--accent),var(--accent-deep));color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+    .ztyping{display:inline-flex;gap:5px;align-items:center;padding:13px 15px}
+    .ztyping .zdot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:zBlink 1.2s infinite}
+    .ztyping .zdot:nth-child(2){animation-delay:.18s}.ztyping .zdot:nth-child(3){animation-delay:.36s}
+    @keyframes zBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    .zchips{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .zchip{display:flex;align-items:center;gap:11px;text-align:left;font-size:13px;font-weight:600;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;transition:border-color .14s,background .14s,transform .14s}
+    .zchip:hover{border-color:color-mix(in oklab,var(--accent) 35%,transparent);background:var(--accent-soft);transform:translateX(2px)}
+    .zchip .zchip-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center}
+    .zchip .zchip-ic svg{width:15px;height:15px}
+    .zcop-foot{margin:12px;padding:6px 6px 6px 7px;border:1px solid var(--line);border-radius:18px;display:flex;gap:6px;align-items:center;background:var(--paper-2);box-shadow:0 1px 3px rgba(26,26,46,.04);transition:border-color .15s,box-shadow .15s}
+    .zcop-foot:focus-within{border-color:color-mix(in oklab,var(--accent) 35%,transparent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 12%,transparent)}
+    .zcop-input{flex:1;border:0;background:transparent;padding:9px 6px 9px 10px;font-size:13px;color:var(--ink);font-family:inherit}
+    .zcop-input:focus{outline:none}
+    .zcop-send{width:38px;height:38px;flex:none;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s}
+    .zcop-send:hover{background:var(--accent-deep)}
+    .zcop-send:active{transform:scale(.94)}
+    .zcop-send svg{width:16px;height:16px}
+    @media(prefers-reduced-motion:reduce){.zfab,.zcopilot,.zbubble{transition:none;animation:none}}
+  </style>
+
+  <button class="zfab" id="zfab" aria-label="Open Ask Zora" title="Ask Zora">
+    <span class="zfab-spark">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+    </span>
+    <span class="zfab-label">Zora</span>
+  </button>
+
+  <div class="zcopilot" id="zcopilot" role="dialog" aria-modal="true" aria-label="Ask Zora">
+    <div class="zcop-head">
+      <div class="zcop-orb">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 5.523 4.477 10 10 10-5.523 0-10 4.477-10 10 0-5.523-4.477-10-10-10 5.523 0 10-4.477 10-10z"/></svg>
+      </div>
+      <div class="zcop-id">
+        <div class="zcop-title">Ask Zora <span class="zcop-live"></span></div>
+        <div class="zcop-sub">Your coaching intelligence layer</div>
+      </div>
+      <button class="zcop-x" id="zcop-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="zcop-body" id="zcop-body">
+      <div class="zbubble ai">Hey — I'm Zora. What do you want to work on?</div>
+      <div class="zchips">
+        <button class="zchip" data-q="Show me clients at risk this week">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          Show me clients at risk this week
+        </button>
+        <button class="zchip" data-q="Draft a check-in message for low-adherence clients">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.6 7.8L3 21l1.7-6.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span>
+          Draft a check-in for low-adherence clients
+        </button>
+        <button class="zchip" data-q="What's my revenue forecast for next 30 days?">
+          <span class="zchip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+          What's my revenue forecast for next 30 days?
+        </button>
+      </div>
+    </div>
+    <div class="zcop-foot">
+      <input class="zcop-input" id="zcop-input" placeholder="Ask anything about your clients…" autocomplete="off"/>
+      <button class="zcop-send" id="zcop-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const fab = document.getElementById('zfab');
+    const panel = document.getElementById('zcopilot');
+    const closeBtn = document.getElementById('zcop-close');
+    const body = document.getElementById('zcop-body');
+    const input = document.getElementById('zcop-input');
+    const sendBtn = document.getElementById('zcop-send');
+    if (!fab || !panel) return;
+
+    function openPanel() {
+      panel.classList.add('open');
+      fab.classList.add('hide');
+      setTimeout(() => input && input.focus(), 200);
+    }
+    function closePanel() {
+      panel.classList.remove('open');
+      fab.classList.remove('hide');
+    }
+
+    fab.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
+
+    function addBubble(text, role) {
+      const b = document.createElement('div');
+      b.className = 'zbubble ' + role;
+      b.textContent = text;
+      body.appendChild(b);
+      body.scrollTop = body.scrollHeight;
+      return b;
+    }
+
+    function showTyping() {
+      const t = document.createElement('div');
+      t.className = 'zbubble ai';
+      t.innerHTML = '<span class="ztyping"><span class="zdot"></span><span class="zdot"></span><span class="zdot"></span></span>';
+      body.appendChild(t);
+      body.scrollTop = body.scrollHeight;
+      return t;
+    }
+
+    const REPLIES = [
+      "On it — pulling the latest signals now.",
+      "Great question. Let me check your client data.",
+      "Analysing patterns across your roster…",
+      "Here's what I found based on recent activity.",
+    ];
+
+    function sendMessage(text) {
+      if (!text) return;
+      addBubble(text, 'me');
+      if (input) input.value = '';
+      const typing = showTyping();
+      setTimeout(() => {
+        typing.remove();
+        addBubble(REPLIES[Math.floor(Math.random() * REPLIES.length)], 'ai');
+      }, 900);
+    }
+
+    sendBtn && sendBtn.addEventListener('click', () => sendMessage(input.value.trim()));
+    input && input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(input.value.trim()); });
+
+    body && body.addEventListener('click', e => {
+      const chip = e.target.closest('.zchip');
+      if (!chip) return;
+      sendMessage(chip.dataset.q || chip.textContent.trim());
+    });
+  })();
+  </script>
+
+  <!-- Payments Due: slide-in panel -->
+  <div class="pay-drawer-overlay" id="pay-drawer-overlay"></div>
+  <aside class="pay-drawer" id="pay-drawer" role="dialog" aria-modal="true" aria-labelledby="pay-drawer-title"
+    aria-hidden="true">
+    <div class="pay-drawer-head">
+      <div>
+        <h2 class="pay-drawer-title" id="pay-drawer-title">Payments due</h2>
+        <p class="pay-drawer-sub"><span id="pay-drawer-count">2</span> need collecting this week</p>
+      </div>
+      <button class="icon-btn close-pay-btn" id="close-pay-drawer" type="button" title="Close"
+        aria-label="Close payments panel">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="pay-drawer-body" id="pay-drawer-body">
+      <!-- Overdue first -->
+      <div class="pay-item is-overdue" data-name="Paige I." data-amount="$99">
+        <div class="pay-item-avatar av-3">PI</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Paige I.</span>
+            <span class="pay-item-amount">$99</span>
+          </div>
+          <span class="pay-chip pay-chip-overdue">5 days overdue</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-item" data-name="Alex Carter" data-amount="$149">
+        <div class="pay-item-avatar av-2">AC</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Alex Carter</span>
+            <span class="pay-item-amount">$149</span>
+          </div>
+          <span class="pay-chip pay-chip-soon">due in 3 days</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-item" data-name="Travis K." data-amount="$120">
+        <div class="pay-item-avatar av-1">TK</div>
+        <div class="pay-item-main">
+          <div class="pay-item-top">
+            <span class="pay-item-name">Travis K.</span>
+            <span class="pay-item-amount">$120</span>
+          </div>
+          <span class="pay-chip pay-chip-soon">due in 4 days</span>
+          <div class="pay-item-actions">
+            <button class="pay-action pay-action-chat" data-kind="reminder">Send reminder</button>
+            <button class="pay-action pay-action-link" data-kind="link">Send link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-drawer-empty" id="pay-drawer-empty" hidden>
+      <div class="pay-empty-check" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <p class="pay-empty-title">All payments collected</p>
+      <p class="pay-empty-sub">Nothing due in the next few days.</p>
+    </div>
+  </aside>
+
+  <!-- Full Roster Modal -->
+  <div class="roster-modal-overlay" id="full-roster-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="full-roster-title" aria-hidden="true">
+    <div class="roster-modal">
+      <div class="roster-modal-head">
+        <div class="roster-modal-titles">
+          <h2 class="roster-modal-title" id="full-roster-title">Clients</h2>
+          <p class="roster-modal-sub"><span id="roster-modal-visible-count">142</span> of <span
+              class="roster-count-total">142</span> active members</p>
+        </div>
+        <button class="icon-btn close-roster-btn" id="close-full-roster-btn" type="button" title="Close roster"
+          aria-label="Close roster">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="roster-modal-toolbar">
+        <div class="roster-search-wrapper">
+          <svg class="roster-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" class="roster-modal-search" id="roster-modal-search"
+            placeholder="Search by name or program..." autocomplete="off" />
+        </div>
+        <div class="roster-modal-filters" id="roster-modal-filters" role="group" aria-label="Filter roster by status">
+          <button class="roster-chip active" data-status="all" type="button">All</button>
+          <button class="roster-chip" data-status="high" type="button">At-Risk</button>
+          <button class="roster-chip" data-status="med" type="button">Watch</button>
+          <button class="roster-chip" data-status="low" type="button">Steady</button>
+        </div>
+      </div>
+
+      <div class="roster-modal-table" role="table" aria-label="Full client roster">
+        <div class="roster-modal-table-head" role="row">
+          <span role="columnheader">Member</span>
+          <span role="columnheader">Program</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader" class="rmt-vitals" style="text-align: center;">Actions</span>
+          <span role="columnheader" class="rmt-last">Last active</span>
+        </div>
+        <div class="roster-modal-table-body" id="roster-modal-table-body" role="rowgroup">
+          <!-- rows injected by JS -->
+        </div>
+        <div class="roster-modal-empty" id="roster-modal-empty" hidden>
+          <p>No members match this filter.</p>
+        </div>
+      </div>
+
+      <div class="roster-modal-foot">
+        <span class="roster-modal-foot-hint">Select a member to open their plan. Press <kbd>Esc</kbd> to close.</span>
+        <span class="roster-modal-foot-legend">
+          <span class="rml-item"><span class="status-indicator status-red"></span> At-Risk</span>
+          <span class="rml-item"><span class="status-indicator status-amber"></span> Watch</span>
+          <span class="rml-item"><span class="status-indicator status-green"></span> Steady</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette Overlay -->
+  <div class="palette-overlay" id="command-palette-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="palette-container">
+      <div class="palette-search-wrapper">
+        <span class="palette-search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input type="text" class="palette-input" id="palette-search-input"
+          placeholder="Search clients, actions, tabs..." />
+      </div>
+      <div class="palette-results" id="palette-results">
+        <!-- populated dynamically -->
+      </div>
+      <div class="palette-shortcuts-footer">
+        <span>Select with <kbd>↑</kbd><kbd>↓</kbd> and <kbd>Enter</kbd></span>
+        <span>Press <kbd>Esc</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Command Palette Logic
+      const paletteOverlay = document.getElementById('command-palette-overlay');
+      const paletteInput = document.getElementById('palette-search-input');
+      const paletteResults = document.getElementById('palette-results');
+      const searchTrigger = document.getElementById('topbar-search-trigger');
+
+      const paletteItems = [
+        { name: 'Sarah K.', desc: 'Half-Marathon · Exhaustion Risk (Plan & Performance)', url: 'reco-card.html?client=sarah-k&tab=plan' },
+        { name: 'Marcus T.', desc: 'Strength · Churn Risk (Engagement & Risk)', url: 'reco-card.html?client=marcus-t&tab=risk' },
+        { name: 'Alex Carter', desc: 'Hypertrophy · Deload Pending (Plan & Performance)', url: 'reco-card.html?client=aman-khanna&tab=plan' },
+        { name: 'Megan Jones', desc: 'Nutrition · Nutrition Drift (Engagement & Risk)', url: 'reco-card.html?client=meera-joshi&tab=risk' },
+        { name: 'Paige I.', desc: 'Performance · Optimized State (Plan & Performance)', url: 'reco-card.html?client=priya-i&tab=plan' },
+        { name: 'David L.', desc: 'Base Phase · Optimized (Plan & Performance)', url: 'reco-card.html?client=david-l&tab=plan' },
+        { name: 'Filter: At-Risk', desc: 'Filter client roster by At-Risk status', action: 'filter-risk' },
+        { name: 'Filter: Payment Due', desc: 'Filter client roster by Payment Due status', action: 'filter-payment' }
+      ];
+
+      let selectedIndex = 0;
+
+      function renderPalette(query = '') {
+        paletteResults.innerHTML = '';
+        const filtered = paletteItems.filter(item =>
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.desc.toLowerCase().includes(query.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          paletteResults.innerHTML = '<div style="padding: 12px; font-size:13px; color:var(--ink-4); text-align:center;">No results found</div>';
+          return;
+        }
+
+        filtered.forEach((item, index) => {
+          const opt = document.createElement('div');
+          opt.className = 'palette-option' + (index === selectedIndex ? ' selected' : '');
+          opt.innerHTML = `
+            <div>
+              <div class="palette-option-name">${item.name}</div>
+              <div style="font-size: 11px; color: var(--ink-4); margin-top:2px;">${item.desc}</div>
+            </div>
+            <span class="palette-option-type">${item.url ? 'Detail Page' : 'Command'}</span>
+          `;
+          opt.addEventListener('click', () => triggerOption(item));
+          paletteResults.appendChild(opt);
+        });
+      }
+
+      function triggerOption(item) {
+        if (item.url) {
+          window.location.href = item.url;
+        } else if (item.action) {
+          if (item.action.startsWith('filter-')) {
+            if (window.__applyFilter) {
+              window.__applyFilter(item.action);
+            }
+          }
+          closePalette();
+        }
+      }
+
+      function openPalette() {
+        paletteOverlay.classList.add('show');
+        paletteOverlay.setAttribute('aria-hidden', 'false');
+        paletteInput.value = '';
+        selectedIndex = 0;
+        renderPalette();
+        setTimeout(() => paletteInput.focus(), 100);
+      }
+
+      function closePalette() {
+        paletteOverlay.classList.remove('show');
+        paletteOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      if (searchTrigger) {
+        searchTrigger.addEventListener('click', openPalette);
+      }
+
+      paletteOverlay.addEventListener('click', (e) => {
+        if (e.target === paletteOverlay) closePalette();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/') {
+          const activeEl = document.activeElement;
+          if (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            openPalette();
+          }
+        }
+        if (e.key === 'Escape' && paletteOverlay.classList.contains('show')) {
+          closePalette();
+        }
+
+        if (paletteOverlay.classList.contains('show')) {
+          const options = paletteResults.querySelectorAll('.palette-option');
+          if (options.length === 0) return;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex + 1) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex - 1 + options.length) % options.length;
+            renderPalette(paletteInput.value);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const filtered = paletteItems.filter(item =>
+              item.name.toLowerCase().includes(paletteInput.value.toLowerCase()) ||
+              item.desc.toLowerCase().includes(paletteInput.value.toLowerCase())
+            );
+            if (filtered[selectedIndex]) {
+              triggerOption(filtered[selectedIndex]);
+            }
+          }
+        }
+      });
+
+      paletteInput.addEventListener('input', (e) => {
+        selectedIndex = 0;
+        renderPalette(e.target.value);
+      });
+
+      // 2. Filter & Sort Logic for Client Cards
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const rosterGrid = document.getElementById('roster-grid');
+      const clientCards = Array.from(document.querySelectorAll('.client-card'));
+      const atRiskMetric = document.getElementById('metric-at-risk');
+
+      // Client Type Dropdown Selector
+      const typeDropdownTrigger = document.getElementById('roster-type-trigger');
+      const typeDropdown = document.getElementById('roster-type-dropdown');
+      const typeItems = typeDropdown.querySelectorAll('.type-item');
+
+      // Parse initial filter from URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialFilter = urlParams.get('filter');
+
+      let activeStatusFilter = 'filter-risk'; // Default active filter on load
+      if (initialFilter === 'all') activeStatusFilter = 'all';
+      else if (initialFilter === 'risk') activeStatusFilter = 'filter-risk';
+      else if (initialFilter === 'payment') activeStatusFilter = 'filter-payment';
+      else if (initialFilter === 'drifting') activeStatusFilter = 'filter-drifting';
+
+      let activeTypeFilter = 'all';
+
+      const clearBtn = document.getElementById('filter-clear');
+
+      function updateFilters() {
+        rosterGrid.classList.add('transitioning');
+        setTimeout(() => {
+          clientCards.forEach(card => {
+            const risk = card.getAttribute('data-risk');
+            const footerSpanText = card.querySelector('.client-card-footer span:last-child').textContent.toLowerCase();
+            const badgeText = card.querySelector('.client-card-risk-badge').textContent.toLowerCase();
+            const clientType = card.getAttribute('data-type');
+            const isPaymentDue = card.getAttribute('data-payment-due') === 'true';
+
+            // 1. Check Status Filter
+            let matchesStatus = false;
+            if (activeStatusFilter === 'all') {
+              matchesStatus = true;
+            } else if (activeStatusFilter === 'filter-risk') {
+              matchesStatus = (risk === 'high' || risk === 'med');
+            } else if (activeStatusFilter === 'filter-drifting') {
+              matchesStatus = (footerSpanText.includes('drifting') || badgeText.includes('drifting'));
+            } else if (activeStatusFilter === 'filter-payment') {
+              matchesStatus = isPaymentDue;
+            }
+
+            // 2. Check Type Filter
+            let matchesType = false;
+            if (activeTypeFilter === 'all') {
+              matchesType = true;
+            } else {
+              matchesType = (clientType === activeTypeFilter);
+            }
+
+            // 3. Combine
+            if (matchesStatus && matchesType) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          rosterGrid.classList.remove('transitioning');
+
+          // Show or hide clear button
+          const isFiltered = (activeStatusFilter !== 'all' || activeTypeFilter !== 'all');
+          if (clearBtn) {
+            clearBtn.style.display = isFiltered ? 'inline-flex' : 'none';
+          }
+
+          // Sync sidebar active classes visually
+          document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+          if (activeStatusFilter === 'all' && activeTypeFilter === 'all') {
+            const navAll = document.getElementById('nav-all-members');
+            if (navAll) navAll.classList.add('active');
+          } else if (activeStatusFilter === 'filter-risk') {
+            const navRisk = document.getElementById('nav-at-risk');
+            if (navRisk) navRisk.classList.add('active');
+          } else if (activeStatusFilter === 'filter-payment') {
+            const navPlans = document.getElementById('nav-plans-due');
+            if (navPlans) navPlans.classList.add('active');
+          } else {
+            // Keep default workspace active if none matched
+            const defaultActive = document.querySelector('.sidebar .nav-section:first-child .nav-item:first-child');
+            if (defaultActive) defaultActive.classList.add('active');
+          }
+
+        }, 150);
+      }
+
+      // Globally accessible filter function for search palette
+      window.__applyFilter = function (filterId) {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById(filterId);
+        if (btn) btn.classList.add('active');
+        activeStatusFilter = filterId;
+        updateFilters();
+      };
+
+      function clearAllFilters() {
+        activeStatusFilter = 'all';
+        activeTypeFilter = 'all';
+        filterBtns.forEach(b => b.classList.remove('active'));
+        if (typeDropdownTrigger) {
+          typeDropdownTrigger.textContent = 'Type: All ▾';
+        }
+        typeItems.forEach(ti => ti.classList.remove('active'));
+        const typeAllBtn = typeDropdown.querySelector('[data-type="all"]');
+        if (typeAllBtn) typeAllBtn.classList.add('active');
+        updateFilters();
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllFilters);
+      }
+
+      // Wire up sidebar elements click handler
+      const navAll = document.getElementById('nav-all-members');
+      if (navAll) {
+        navAll.addEventListener('click', () => {
+          window.location.href = 'members.html';
+        });
+      }
+
+      const navRisk = document.getElementById('nav-at-risk');
+      if (navRisk) navRisk.addEventListener('click', () => window.__applyFilter('filter-risk'));
+
+      const navPlans = document.getElementById('nav-plans-due');
+      if (navPlans) navPlans.addEventListener('click', () => window.__applyFilter('filter-payment'));
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.__applyFilter(btn.id);
+        });
+      });
+
+      if (atRiskMetric) {
+        atRiskMetric.addEventListener('click', () => {
+          window.__applyFilter('filter-risk');
+          rosterGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+
+      if (typeDropdownTrigger) {
+        typeDropdownTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          typeDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => typeDropdown.classList.remove('show'));
+
+        typeItems.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            typeItems.forEach(ti => ti.classList.remove('active'));
+            item.classList.add('active');
+
+            const selectedText = item.textContent;
+            typeDropdownTrigger.textContent = `Type: ${selectedText.replace('All Types', 'All')} ▾`;
+            typeDropdown.classList.remove('show');
+
+            activeTypeFilter = item.getAttribute('data-type');
+            updateFilters();
+          });
+        });
+      }
+
+      // Initial filter on load
+      updateFilters();
+
+      // Sidebar logic: collapsed on load/refresh, toggleable at will
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      if (sidebar) {
+        sidebar.classList.add('collapsed');
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebarToggle.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+          });
+        }
+      }
+
+      // ===== Collapsible context rail (Sessions / Messages / Wins) =====
+      (function () {
+        const trigger = document.getElementById('ctx-trigger');
+        const dropdown = document.getElementById('ctx-dropdown');
+        const closeBtn = document.getElementById('ctx-close');
+        const rail = document.getElementById('ambient-rail');
+        const layout = document.getElementById('roster-layout');
+        if (!trigger || !dropdown || !rail || !layout) return;
+
+        const items = Array.from(dropdown.querySelectorAll('.ctx-item'));
+        const panels = Array.from(rail.querySelectorAll('.ctx-panel'));
+        const labels = { sessions: "Today's Sessions", messages: 'Messages', wins: 'Client Wins' };
+
+        function openPanel(key) {
+          // Show only the chosen panel; bring the rail + right column back.
+          panels.forEach(p => { p.hidden = (p.dataset.panel !== key); });
+          rail.hidden = false;
+          layout.classList.add('has-panel');
+          closeBtn.hidden = false;
+          items.forEach(i => i.classList.toggle('active', i.dataset.panel === key));
+          trigger.innerHTML = (labels[key] || 'Coach Center') + ' ▾';
+          // Re-seed avatar faces inside the freshly shown panel, if present.
+          if (window.ZoraFaces && window.ZoraFaces.paint) window.ZoraFaces.paint(rail);
+        }
+
+        function collapse() {
+          layout.classList.remove('has-panel');
+          rail.hidden = true;
+          panels.forEach(p => { p.hidden = true; });
+          closeBtn.hidden = true;
+          items.forEach(i => i.classList.remove('active'));
+          trigger.innerHTML = 'Coach Center ▾';
+        }
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+
+        items.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openPanel(item.dataset.panel);
+            dropdown.classList.remove('show');
+          });
+        });
+
+        closeBtn.addEventListener('click', collapse);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && layout.classList.contains('has-panel')) collapse();
+        });
+      })();
+
+
+    });
+  </script>
+
+  <!-- Full Roster Modal Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('full-roster-overlay');
+      const openBtn = document.getElementById('open-full-roster-btn');
+      const closeBtn = document.getElementById('close-full-roster-btn');
+      const searchInput = document.getElementById('roster-modal-search');
+      const tableBody = document.getElementById('roster-modal-table-body');
+      const emptyState = document.getElementById('roster-modal-empty');
+      const visibleCountEl = document.getElementById('roster-modal-visible-count');
+      const filterGroup = document.getElementById('roster-modal-filters');
+      if (!overlay || !openBtn) return;
+
+      // The eight clients with real detail-page keys, plus the wider roster so the
+      const roster = [
+        { name: 'Sarah K.', program: 'Half-Marathon · Wk 8', type: 'endurance', hrv: 18, sleep: 4.2, rhr: 74, steps: 3420, risk: 'high', last: '2h ago', key: 'sarah-k' },
+        { name: 'Marcus T.', program: 'Strength · Wk 6', type: 'strength', hrv: 32, sleep: 6.2, rhr: 68, steps: 5100, risk: 'high', last: '4d ago', key: 'marcus-t' },
+        { name: 'Alex Carter', program: 'Hypertrophy · Wk 14', type: 'strength', hrv: 42, sleep: 5.4, rhr: 71, steps: 4800, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Megan Jones', program: 'Nutrition · Wk 6', type: 'weight-loss', hrv: 68, sleep: 7.8, rhr: 56, steps: 11200, risk: 'med', last: '5h ago', key: 'meera-joshi' },
+        { name: 'Paige I.', program: 'Performance · Wk 6', type: 'performance', hrv: 71, sleep: 7.8, rhr: 52, steps: 13400, risk: 'low', last: '10m ago', key: 'priya-i' },
+        { name: 'David L.', program: 'Base Phase · Wk 4', type: 'nutrition', hrv: 65, sleep: 7.2, rhr: 58, steps: 10500, risk: 'low', last: '6h ago', key: 'david-l' },
+        { name: 'Ryan M.', program: 'Hypertension · Stage 1', type: 'hypertension', hrv: 0, sleep: 0, rhr: 0, steps: 6200, risk: 'high', last: '1h ago', key: 'raj-m', bp: '148/94' },
+        { name: 'Lena P.', program: 'Type 2 Diabetes · Wk 6', type: 'diabetes', hrv: 0, sleep: 0, rhr: 0, steps: 5800, risk: 'med', last: '20m ago', key: 'lena-p', glucose: 168 },
+        { name: 'Elena R.', program: 'Peak Volume · Wk 12', type: 'strength', hrv: 74, sleep: 8.0, rhr: 54, steps: 12800, risk: 'low', last: '3h ago', key: 'priya-i' },
+        { name: 'Jordan M.', program: 'Recovery · Wk 2', type: 'performance', hrv: 48, sleep: 5.8, rhr: 65, steps: 8200, risk: 'med', last: '2d ago', key: 'david-l' },
+        { name: 'Travis K.', program: 'Conditioning · Wk 9', type: 'endurance', hrv: 80, sleep: 7.5, rhr: 50, steps: 14100, risk: 'low', last: '8h ago', key: 'priya-i' },
+        { name: 'Sarah V.', program: 'Strength · Wk 5', type: 'strength', hrv: 55, sleep: 6.5, rhr: 62, steps: 9300, risk: 'med', last: '1d ago', key: 'aman-khanna' },
+        { name: 'Liam P.', program: 'Marathon · Wk 18', type: 'endurance', hrv: 28, sleep: 4.8, rhr: 72, steps: 4100, risk: 'high', last: '6d ago', key: 'marcus-t' },
+        { name: 'Nina F.', program: 'Fat Loss · Wk 7', type: 'weight-loss', hrv: 82, sleep: 8.2, rhr: 53, steps: 11900, risk: 'low', last: '4h ago', key: 'meera-joshi' },
+        { name: 'Oscar B.', program: 'Hypertrophy · Wk 11', type: 'strength', hrv: 58, sleep: 6.0, rhr: 63, steps: 9500, risk: 'med', last: '2d ago', key: 'aman-khanna' },
+        { name: 'Grace W.', program: 'Performance · Wk 3', type: 'performance', hrv: 88, sleep: 8.4, rhr: 48, steps: 15200, risk: 'low', last: '25m ago', key: 'priya-i' },
+        { name: 'Hunter R.', program: 'Base Phase · Wk 1', type: 'nutrition', hrv: 50, sleep: 5.5, rhr: 66, steps: 7800, risk: 'med', last: '3d ago', key: 'david-l' },
+        { name: 'Chloe N.', program: 'Half-Marathon · Wk 10', type: 'endurance', hrv: 22, sleep: 4.0, rhr: 75, steps: 3100, risk: 'high', last: '5d ago', key: 'sarah-k' },
+        { name: 'Devon A.', program: 'Strength · Wk 8', type: 'strength', hrv: 78, sleep: 7.6, rhr: 55, steps: 12100, risk: 'low', last: '7h ago', key: 'aman-khanna' },
+        { name: 'Rachel S.', program: 'Fat Loss · Wk 4', type: 'weight-loss', hrv: 60, sleep: 6.8, rhr: 61, steps: 10200, risk: 'med', last: '1d ago', key: 'meera-joshi' },
+        { name: 'Felix O.', program: 'Conditioning · Wk 6', type: 'endurance', hrv: 84, sleep: 8.1, rhr: 49, steps: 13800, risk: 'low', last: '2h ago', key: 'priya-i' },
+        { name: 'Maya T.', program: 'Performance · Wk 9', type: 'performance', hrv: 76, sleep: 7.4, rhr: 52, steps: 11500, risk: 'low', last: '9h ago', key: 'david-l' }
+      ];
+
+      const avClasses = ['av-1', 'av-2', 'av-3'];
+      const initials = (n) => n.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+      const statusMeta = {
+        high: { dot: 'status-red', text: 'text-red', label: 'At-Risk' },
+        med: { dot: 'status-amber', text: 'text-amber', label: 'Watch' },
+        low: { dot: 'status-green', text: 'text-green', label: 'Steady' }
+      };
+
+      let activeStatus = 'all';
+      let query = '';
+      let lastFocused = null;
+
+      function render() {
+        const q = query.trim().toLowerCase();
+        const matches = roster.filter(c => {
+          const okStatus = activeStatus === 'all' || c.risk === activeStatus;
+          const okQuery = !q || c.name.toLowerCase().includes(q) || c.program.toLowerCase().includes(q);
+          return okStatus && okQuery;
+        });
+
+        tableBody.innerHTML = matches.map((c, i) => {
+          const s = statusMeta[c.risk];
+          const av = avClasses[i % avClasses.length];
+
+          let vitalsSummaryHtml = '';
+          let tooltipHtml = '';
+          if (c.type === 'hypertension') {
+            vitalsSummaryHtml = `<span class="vitals-summary" style="color: var(--bad); font-weight: 600;">${c.bp || '148/94'} BP</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Hypertension Vitals</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Cuff ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Latest BP</span>
+                <span class="tooltip-row-val text-red">${c.bp || '148/94'}</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">7-day avg</span>
+                <span class="tooltip-row-val text-amber">142/90</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          } else if (c.type === 'diabetes') {
+            vitalsSummaryHtml = `<span class="vitals-summary" style="color: var(--bad); font-weight: 600;">${c.glucose || '168'} mg/dL</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Diabetes Vitals</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">CGM ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Latest Glucose</span>
+                <span class="tooltip-row-val text-red">${c.glucose || '168'} mg/dL</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Time in Range</span>
+                <span class="tooltip-row-val text-amber">54%</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          } else {
+            vitalsSummaryHtml = `<span class="vitals-summary">${c.hrv}ms / ${c.sleep}h</span>`;
+            tooltipHtml = `
+              <div class="tooltip-header">
+                <span>Biometric Sync</span>
+                <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.4); text-transform: none;">Live ⚡</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">HRV (7d Avg)</span>
+                <span class="tooltip-row-val ${c.hrv < 40 ? 'text-red' : c.hrv < 60 ? 'text-amber' : 'text-green'}">${c.hrv} ms</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Sleep Duration</span>
+                <span class="tooltip-row-val ${c.sleep < 6 ? 'text-red' : c.sleep < 7 ? 'text-amber' : 'text-green'}">${c.sleep}h</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Resting Heart Rate</span>
+                <span class="tooltip-row-val">${c.rhr} bpm</span>
+              </div>
+              <div class="tooltip-row">
+                <span class="tooltip-row-lbl">Daily Steps</span>
+                <span class="tooltip-row-val">${c.steps.toLocaleString()}</span>
+              </div>
+            `;
+          }
+
+          const careBadge = c.type === 'hypertension' || c.type === 'diabetes'
+            ? ` <span class="care-badge care-badge--sm" data-care="${c.type}"><span class="care-badge-ico">${c.type === 'hypertension' ? '' : ''}</span>${c.type === 'hypertension' ? 'Hypertension' : 'Diabetes'}</span>`
+            : '';
+
+          return `
+            <div class="roster-modal-row" role="row" data-key="${c.key}" tabindex="0">
+              <span class="rmr-member" role="cell">
+                <span class="roster-modal-avatar ${av}" data-name="${c.name}">${initials(c.name)}</span>
+                <span class="rmr-name">${c.name}${careBadge}</span>
+              </span>
+              <span class="rmr-program" role="cell">${c.program}</span>
+              <span class="rmr-status" role="cell">
+                <span class="status-indicator ${s.dot}"></span>
+                <span class="status-text ${s.text}">${s.label}</span>
+              </span>
+              <span class="rmr-vitals" role="cell" style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                <button class="qa-btn" data-action="nutrition" title="Nutrition" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v3M9 3v2M15 3v2M3 11h18"/>
+                    <path d="M4 11a8 8 0 0 0 16 0z"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="schedule" title="Schedule" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="chat" title="Chat" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </button>
+                <button class="qa-btn" data-action="call" title="Call" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </button>
+              </span>
+              <span class="rmr-last" role="cell">${c.last}</span>
+            </div>`;
+        }).join('');
+
+        const has = matches.length > 0;
+        emptyState.hidden = has;
+        visibleCountEl.textContent = matches.length;
+        if (window.ZoraFaces) window.ZoraFaces.paint(tableBody);
+      }
+
+      function openModal() {
+        lastFocused = document.activeElement;
+        render();
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => searchInput.focus(), 120);
+      }
+
+      function closeModal() {
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+      }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('show')) {
+          e.stopPropagation();
+          closeModal();
+        }
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        query = e.target.value;
+        render();
+      });
+
+      filterGroup.addEventListener('click', (e) => {
+        const chip = e.target.closest('.roster-chip');
+        if (!chip) return;
+        filterGroup.querySelectorAll('.roster-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeStatus = chip.getAttribute('data-status');
+        render();
+      });
+
+      // Row navigation (click + keyboard) → client detail page
+      tableBody.addEventListener('click', (e) => {
+        const qaBtn = e.target.closest('.qa-btn');
+        if (qaBtn) {
+          e.stopPropagation();
+          const row = qaBtn.closest('.roster-modal-row');
+          if (row) {
+            const clientKey = row.getAttribute('data-key');
+            const action = qaBtn.getAttribute('data-action');
+            window.location.href = `reco-card.html?client=${clientKey}&open=${action}`;
+          }
+          return;
+        }
+        const row = e.target.closest('.roster-modal-row');
+        if (!row) return;
+        window.location.href = `reco-card.html?client=${row.getAttribute('data-key')}`;
+      });
+      tableBody.addEventListener('keydown', (e) => {
+        const row = e.target.closest('.roster-modal-row');
+        if (!row) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.location.href = `reco-card.html?client=${row.getAttribute('data-key')}`;
+        }
+      });
+
+      // (full roster) keep the section-head "shown" count synced with the visible cards on the page.
+      const shownCountEl = document.getElementById('roster-count-shown');
+      if (shownCountEl) {
+        const grid = document.getElementById('roster-grid');
+        const sync = () => {
+          const visible = Array.from(grid.querySelectorAll('.client-card'))
+            .filter(c => c.style.display !== 'none').length;
+          shownCountEl.textContent = visible;
+        };
+        const mo = new MutationObserver(sync);
+        mo.observe(grid, { attributes: true, subtree: true, attributeFilter: ['style'] });
+        sync();
+      }
+
+      // Expose opener globally
+      window.__openRosterModal = openModal;
+
+      // Check query parameter to auto-open roster modal
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('roster') === 'open') {
+        setTimeout(openModal, 150);
+      }
+    });
+  </script>
+
+  <!-- Payments Due: pill + slide-in logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fab = document.getElementById('pay-fab');
+      const fabCount = document.getElementById('pay-fab-count');
+      const overlay = document.getElementById('pay-drawer-overlay');
+      const drawer = document.getElementById('pay-drawer');
+      const closeBtn = document.getElementById('close-pay-drawer');
+      const body = document.getElementById('pay-drawer-body');
+      const emptyState = document.getElementById('pay-drawer-empty');
+      const drawerCount = document.getElementById('pay-drawer-count');
+      if (!fab || !drawer) return;
+
+      const toast = document.getElementById('success-toast');
+      const toastTitle = document.getElementById('toast-title');
+      const toastSub = document.getElementById('toast-sub');
+      let toastTimer = null;
+      let lastFocused = null;
+
+      function fireToast(title, subHTML) {
+        if (!toast) return;
+        toastTitle.textContent = title;
+        toastSub.innerHTML = subHTML;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+
+      function remaining() {
+        return body.querySelectorAll('.pay-item:not(.is-resolved)').length;
+      }
+
+      function syncCounts() {
+        const n = remaining();
+        fabCount.textContent = n;
+        drawerCount.textContent = n;
+        fab.style.display = n === 0 ? 'none' : 'inline-flex';
+        fab.setAttribute('aria-label', n === 0 ? 'All payments collected' : `${n} payment${n === 1 ? '' : 's'} due`);
+        emptyState.hidden = n !== 0;
+      }
+
+      function openDrawer() {
+        lastFocused = document.activeElement;
+        drawer.classList.add('show');
+        overlay.classList.add('show');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('pay-drawer-open');
+        setTimeout(() => closeBtn.focus(), 120);
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('show');
+        overlay.classList.remove('show');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        document.body.classList.remove('pay-drawer-open');
+        if (lastFocused && lastFocused.focus) lastFocused.focus();
+      }
+
+      fab.addEventListener('click', () => {
+        if (remaining() === 0) return;
+        openDrawer();
+      });
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('show')) {
+          e.stopPropagation();
+          closeDrawer();
+        }
+      });
+
+      body.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pay-action');
+        if (!btn) return;
+        const item = btn.closest('.pay-item');
+        if (!item || item.classList.contains('is-resolved')) return;
+
+        const name = item.getAttribute('data-name');
+        const amount = item.getAttribute('data-amount');
+        const kind = btn.getAttribute('data-kind');
+
+        item.classList.add('is-resolved');
+        // After the collapse animation, sync counts (and reveal empty state if last).
+        setTimeout(syncCounts, 260);
+
+        if (kind === 'reminder') {
+          fireToast('Reminder sent', `<span style="font-weight:600;color:#fff;">${name}</span> got a payment reminder in Zora chat.`);
+        } else {
+          fireToast('Payment link sent', `<span style="font-weight:600;color:#fff;">${name}</span> can pay <span style="font-weight:600;color:#fff;">${amount}</span> from the link.`);
+        }
+      });
+
+      syncCounts();
+    });
+  </script>
+
+  <!-- Notion-style illustrated face avatars (DiceBear notionists, seeded by name) -->
+  <script>
+    window.ZoraFaces = (function () {
+      var SEL = '.avatar, .client-card-avatar, .qi-avatar, .pay-item-avatar, .roster-modal-avatar, .strip-avatar, .thread-avatar, .col-athlete .tile-avatar, .s2-avatar, .chat-client-avatar';
+      function url(seed) {
+        return 'url("https://api.dicebear.com/9.x/notionists/svg?seed=' +
+          encodeURIComponent(seed || 'zora') +
+          '&backgroundColor=transparent&scale=120")';
+      }
+      function seedFor(el) {
+        var row = el.closest('[data-name],[data-client]');
+        var seed = (row && (row.getAttribute('data-name') || row.getAttribute('data-client')))
+          || el.getAttribute('data-name')
+          || (el.textContent || '').trim();
+        return seed || 'zora';
+      }
+      function paintOne(el, seed) {
+        el.style.setProperty('--face', url(seed || seedFor(el)));
+        el.classList.add('has-face');
+      }
+      function paint(root) {
+        (root || document).querySelectorAll(SEL).forEach(function (el) { paintOne(el); });
+      }
+      return { paint: paint, paintOne: paintOne };
+    })();
+    document.addEventListener('DOMContentLoaded', function () { window.ZoraFaces.paint(); });
+  </script>
+
+  <!-- Hero aurora: cursor-tracked glow (rAF-throttled, CSS-var only, no re-renders) -->
+  <script>
+    (function () {
+      var hero = document.getElementById('hero-head');
+      if (!hero) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(hover: none)').matches) return; // skip touch
+
+      var raf = null, mx = 0, my = 0;
+      function apply() {
+        raf = null;
+        hero.style.setProperty('--mx', mx + 'px');
+        hero.style.setProperty('--my', my + 'px');
+      }
+      hero.addEventListener('pointermove', function (e) {
+        var r = hero.getBoundingClientRect();
+        mx = e.clientX - r.left;
+        my = e.clientY - r.top;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+    })();
+  </script>
+</body>
+
+</html>
